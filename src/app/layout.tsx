@@ -1,23 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
-// 1. Importa il componente del Cookie Banner
 import CookieBanner from '@/components/CookieBanner';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
+  weight: ["600"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
+  weight: ["600"],
 });
 
-// 2. Aggiorna i metadati del progetto
 export const metadata: Metadata = {
-  title: "Jetop Project",
-  description: "Descrizione del progetto",
+  title: "Mole Venture",
+  description: "Un meccanismo di ETA come linfa di cambiamento per una nuova fase di sviluppo.",
 };
 
 export default function RootLayout({
@@ -26,14 +28,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // 3. Cambia la lingua in "it"
     <html
       lang="it"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {children}
-        {/* 4. Inserisci il banner subito dopo i children */}
+      <body className="min-h-full flex flex-col font-body font-semibold text-[1.25rem]">
+        <Navbar />
+        <main className="flex-1 w-full flex flex-col">{children}</main>
+        <Footer />
         <CookieBanner />
       </body>
     </html>
