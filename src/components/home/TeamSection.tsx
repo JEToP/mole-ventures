@@ -116,14 +116,14 @@ export default function TeamSection() {
                 onClick={() => setSelectedId(member.id)}
                 aria-pressed={isActive}
                 className={`flex flex-col items-center gap-2 focus:outline-none transition-all duration-300 ${isActive
-                    ? "scale-110 opacity-100"
-                    : "scale-100 opacity-55 hover:opacity-90 hover:scale-105"
+                  ? "scale-110 opacity-100"
+                  : "scale-100 opacity-55 hover:opacity-90 hover:scale-105"
                   }`}
               >
                 <div
                   className={`rounded-xl border flex items-center justify-center transition-all duration-300 ${isActive
-                      ? "w-28 h-36 bg-white/20 border-white/40"
-                      : "w-24 h-32 bg-white/10 border-white/10"
+                    ? "w-28 h-36 bg-white/20 border-white/40"
+                    : "w-24 h-32 bg-white/10 border-white/10"
                     }`}
                 >
                   <PersonIcon
