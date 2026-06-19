@@ -41,11 +41,17 @@ function MetodoHero() {
 
 function MetodoFasi() {
   return (
-    <section className="relative overflow-hidden bg-blue-kinetic pb-12 pl-6 pr-6 pt-10 md:min-h-[980px] md:pb-16 md:pl-10 md:pr-12 md:pt-10">
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_40%,rgba(76,172,248,0.42),transparent_34%)]" />
-      <div className="absolute left-1/2 top-24 h-[34rem] w-[22rem] -translate-x-1/2 rotate-3 bg-blue-soft/20 blur-3xl" />
-      <div className="absolute left-[42%] top-28 h-[26rem] w-px rotate-6 bg-white/30 shadow-[0_0_80px_34px_rgba(76,172,248,0.28)]" /> */}
-
+    <section
+      className="relative overflow-hidden pb-12 pl-6 pr-6 pt-10 md:min-h-[980px] md:pb-16 md:pl-10 md:pr-12 md:pt-10"
+      style={{
+        background: `
+          conic-gradient(from 269.24deg at 50% 37.26%, #062EB5 -160deg, #4CACF8 0.2deg, #040A44 0.22deg, #06299F 58.85deg, #B3D9FF 105.58deg, #062EB5 200deg, #4CACF8 360.2deg),
+          conic-gradient(from 0deg at 74.51% 44.72%, #4CACF8 0deg, #04091A 0.8deg, #062EB5 289.35deg, #4CACF8 360deg),
+          conic-gradient(from 90deg at 20.76% 57.9%, #062EB5 -176.63deg, #4CACF8 0.35deg, #0D2167 1.02deg, #062EB5 183.37deg, #4CACF8 360.35deg),
+          conic-gradient(from 0deg at 50% 37.53%, #6BBDFF -359.34deg, #062EB5 0.03deg, #6BBDFF 0.66deg, #062EB5 360.03deg)
+        `,
+      }}
+    >
       <div className="relative z-10 max-w-7xl">
         <header className="max-w-5xl">
           <h2 className="font-heading h-[36px] w-[418px] max-w-full text-[36px] font-semibold leading-none tracking-normal text-white">
@@ -59,7 +65,7 @@ function MetodoFasi() {
           </p>
         </header>
 
-        <div className="mt-14 grid gap-12 md:grid-cols-3 md:gap-x-16 md:gap-y-20">
+        <div className="mt-14 grid gap-12 md:grid-cols-12 md:gap-x-16 md:gap-y-20">
           <MetodoFaseUno />
           <MetodoFaseDue />
           <MetodoFaseTre />
@@ -73,11 +79,11 @@ function MetodoFasi() {
 
 function MetodoFaseUno() {
   return (
-    <article className="md:col-span-2 md:max-w-[34rem]">
+    <article className="md:col-span-6 md:self-start">
       <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:h-[72px] md:text-[72px]">
         01
       </span>
-      <h3 className="mt-5 h-[24px] w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white">
+      <h3 className="mt-5 w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white">
         Ascolto e analisi
       </h3>
       <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white">
@@ -92,14 +98,14 @@ function MetodoFaseUno() {
 
 function MetodoFaseDue() {
   return (
-    <article className="md:contents">
-      <span className="block w-[90px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:absolute md:left-[937px] md:top-[163px] md:h-[72px] md:text-[72px]">
+    <article className="md:col-span-3  md:self-center">
+      <span className="block w-[90px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:h-[72px] md:text-[72px]">
         02
       </span>
-      <h3 className="mt-5 h-[65px] w-[242px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white md:absolute md:left-[785px] md:top-[247px] md:mt-0 md:text-right">
+      <h3 className="mt-5 w-[242px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white">
         Acquisizione e ingresso
       </h3>
-      <p className="mt-4 h-[209px] w-[228px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white md:absolute md:left-[799px] md:top-[334px] md:mt-0 md:text-right">
+      <p className="mt-4 h-[209px] w-[228px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white">
         Una volta finalizzata la ricognizione, partecipiamo alla vita dell&apos;azienda con il
         management esistente, introducendo nuovi elementi identitari nella fase di discussione.
       </p>
@@ -109,14 +115,14 @@ function MetodoFaseDue() {
 
 function MetodoFaseTre() {
   return (
-    <article className="md:contents">
-      <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:absolute md:left-[1140px] md:top-[321px] md:h-[72px] md:text-[72px]">
+    <article className="md:col-span-3 ">
+      <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:h-[72px] md:text-[72px]">
         03
       </span>
-      <h3 className="mt-5 h-[24px] w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white md:absolute md:left-[1140px] md:top-[410px] md:mt-0">
+      <h3 className="mt-5 w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white">
         Piano industriale e discontinuita
       </h3>
-      <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white md:absolute md:left-[1140px] md:top-[490px] md:mt-0">
+      <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white">
         Avviamo il deployment del piano industriale e le azioni di discontinuita identificate,
         puntando su crescita, rafforzamento organizzativo e valorizzazione delle risorse.
       </p>
@@ -126,14 +132,14 @@ function MetodoFaseTre() {
 
 function MetodoFaseQuattro() {
   return (
-    <article className="md:contents">
-      <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:absolute md:left-[744px] md:top-[576px] md:h-[72px] md:text-[72px]">
+    <article className="md:col-span-7">
+      <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:h-[72px] md:text-[72px]">
         04
       </span>
-      <h3 className="mt-5 h-[24px] w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white md:absolute md:left-[66px] md:top-[546px] md:mt-0">
+      <h3 className="mt-5 w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white">
         Esecuzione e presidio
       </h3>
-      <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white md:absolute md:left-[66px] md:top-[591px] md:mt-0">
+      <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white">
         Il processo di managerializzazione, trasparenza e follow-up serve a mettere in sicurezza i
         principali KPI e a tradurre il progetto condiviso in risultati misurabili.
       </p>
@@ -143,14 +149,14 @@ function MetodoFaseQuattro() {
 
 function MetodoFaseCinque() {
   return (
-    <article className="md:contents">
-      <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:absolute md:left-[206px] md:top-[850px] md:h-[72px] md:text-[72px]">
+    <article className="md:col-span-5 md:col-start-3">
+      <span className="block w-[76px] font-heading text-center text-5xl font-semibold leading-none tracking-normal text-white md:h-[72px] md:text-[72px]">
         05
       </span>
-      <h3 className="mt-5 h-[24px] w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white md:absolute md:left-[338px] md:top-[820px] md:mt-0">
+      <h3 className="mt-5 w-[329px] max-w-full font-heading text-[30px] font-semibold leading-none tracking-normal text-white">
         La fase successiva
       </h3>
-      <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white md:absolute md:left-[338px] md:top-[869px] md:mt-0">
+      <p className="mt-4 h-[77px] w-[527px] max-w-full font-body text-[16px] font-normal leading-none tracking-normal text-white">
         Durante l&apos;attuazione del piano di sviluppo analizziamo le logiche che accompagnano
         l&apos;investimento, preparando l&apos;azienda a un nuovo punto di svolta piu maturo e
         consapevole.
