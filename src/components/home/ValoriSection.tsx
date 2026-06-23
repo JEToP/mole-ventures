@@ -2,7 +2,6 @@
 import Image from "next/image";
 
 // ── Dati valori ──────────────────────────────────────────────────────────────
-// Inserire le icone in public/images/icons/<id>.png
 const valori = [
   {
     id: "rispetto",
