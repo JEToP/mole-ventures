@@ -9,24 +9,33 @@ export default function ContattiPage() {
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative w-full min-h-screen flex flex-col justify-center md:justify-end pb-24 md:pb-32 pt-40 px-6 md:px-16 overflow-hidden">
+      <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center md:justify-end pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
         {/* Background Image */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[0.90]"
           style={{ backgroundImage: "url('/images/contatti-bg.webp')" }}
         />
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
+        {/* Overlay brand: sfumatura navy profondo → blue deep per profondità e identità */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/85 via-[#05155E]/55 to-[#05155E]/0 md:to-black/70" />
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full">
-          <h1 className="font-heading text-white text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-8 max-w-4xl">
-            Costruiamo insieme la prossima fase della tua impresa
-          </h1>
+        {/* Sfumatura in alto: navy profondo nella safe area che sfuma molto dolcemente verso il basso (visibile solo su mobile) */}
+        <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
 
-          <div className="border-l-2 border-white pl-4 max-w-2xl">
-            <p className="font-body text-white/90 text-sm md:text-base leading-relaxed font-medium">
-              Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
-            </p>
+        {/* Overlay laterale */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent" />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
+          <div className="max-w-4xl">
+            <h1 className="font-heading text-white/85 text-[2.4rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10 [text-shadow:_0_2px_16px_rgba(0,0,0,0.5)]">
+              Costruiamo insieme la prossima fase{' '}
+              <span className="bg-[linear-gradient(115deg,_#2E73C4_0%,_#4CACF8_35%,_#9FD2FB_50%,_#4CACF8_65%,_#2E73C4_100%)] bg-clip-text text-transparent [text-shadow:none] font-bold">della tua impresa</span>
+            </h1>
+
+            <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
+              <p className="font-body font-light text-white/75 text-[0.95rem] md:text-base leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+                Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -44,7 +53,7 @@ export default function ContattiPage() {
                   id="nome"
                   name="nome"
                   placeholder="Nome"
-                  className="w-full bg-[#f3f4f6] text-gray-800 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -54,7 +63,7 @@ export default function ContattiPage() {
                   id="azienda"
                   name="azienda"
                   placeholder="Azienda"
-                  className="w-full bg-[#f3f4f6] text-gray-800 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -64,7 +73,7 @@ export default function ContattiPage() {
                   id="telefono"
                   name="telefono"
                   placeholder="Telefono"
-                  className="w-full bg-[#f3f4f6] text-gray-800 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -74,7 +83,7 @@ export default function ContattiPage() {
                   id="email"
                   name="email"
                   placeholder="Email"
-                  className="w-full bg-[#f3f4f6] text-gray-800 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -87,7 +96,7 @@ export default function ContattiPage() {
                 id="oggetto"
                 name="oggetto"
                 placeholder="Oggetto"
-                className="w-full bg-[#f3f4f6] text-gray-800 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft"
+                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
               />
             </div>
 
@@ -99,7 +108,7 @@ export default function ContattiPage() {
                 name="messaggio"
                 placeholder="Messaggio"
                 rows={8}
-                className="w-full bg-[#f3f4f6] text-gray-800 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft resize-y"
+                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm resize-y"
               ></textarea>
             </div>
 
