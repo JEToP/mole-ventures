@@ -86,12 +86,12 @@ export default function TeamSection() {
             return (
               <div
                 key={member.id}
-                className={`col-start-1 row-start-1 flex flex-col md:flex-row items-start gap-10 transition-all duration-300 ease-in-out ${
+                className={`col-start-1 row-start-1 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-10 transition-all duration-300 ease-in-out ${
                   isActive ? "opacity-100 z-10 pointer-events-auto translate-y-0" : "opacity-0 z-0 pointer-events-none translate-y-2"
                 }`}
               >
                 {/* Foto grande */}
-                <div className="w-52 h-64 md:w-56 md:h-72 flex-shrink-0 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-xl overflow-hidden relative">
+                <div className="w-40 h-48 md:w-56 md:h-72 flex-shrink-0 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-xl overflow-hidden relative">
                   {/* Se l'elemento non è attivo, potremmo non voler renderizzare l'img se è pesante,
                       ma per transizioni fluide lo teniamo. Dato che usiamo un relative wrapper, l'img è coperta
                       dal fallback se fallisce. */}
@@ -104,12 +104,12 @@ export default function TeamSection() {
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                   {/* Fallback placeholder visibile se l'immagine non c'è */}
-                  <PersonIcon className="w-24 h-24 text-white/30 absolute z-0" />
+                  <PersonIcon className="w-16 h-16 md:w-24 md:h-24 text-white/30 absolute z-0" />
                 </div>
 
                 {/* Nome + descrizione */}
                 <div className="flex flex-col justify-center">
-                  <h3 className="font-heading text-white text-2xl md:text-3xl font-semibold mb-4">
+                  <h3 className="font-heading text-white text-2xl md:text-3xl font-semibold mb-3 md:mb-4">
                     {member.name}
                   </h3>
                   <p className="font-body text-white/80 text-sm md:text-base leading-relaxed max-w-md">

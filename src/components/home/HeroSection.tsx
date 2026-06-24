@@ -1,29 +1,43 @@
 export default function HeroSection() {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-end pb-20 px-6 md:px-12 overflow-hidden">
-      {/* Background image */}
+    <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center md:justify-end pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
+      {/* Background image – brightness leggermente ridotta per più contrasto */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[0.90]"
         style={{ backgroundImage: "url('/images/hero-bg.webp')" }}
       />
 
-      {/* Overlay scuro sfumato */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/65" />
+      {/* Overlay brand: sfumatura navy profondo → blue deep per profondità e identità */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/85 via-[#05155E]/55 to-[#05155E]/0 md:to-black/70" />
 
-      {/* Contenuto – pt-24 compensa la navbar fixed */}
-      <div className="relative z-10 max-w-4xl">
-        <h1 className="font-heading text-white text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-10">
-          Un meccanismo di{' '}
-          <span className="text-blue-kinetic">ETA</span>
-          {' '}(Entrepreneurship Through Acquisition) come motore di cambiamento per una nuova fase di sviluppo
-        </h1>
+      {/* Sfumatura in alto: navy profondo nella safe area che sfuma molto dolcemente verso il basso (visibile solo su mobile) */}
+      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
 
-        <div className="border-l-2 border-white pl-4 max-w-xl">
-          <p className="font-body text-white/90 text-sm md:text-base leading-relaxed">
-            Entriamo in prima persona nell&apos;azienda per innescare le dinamiche di cambiamento
-            e di discontinuità necessarie a sbloccare il potenziale inespresso e generare le
-            successive opportunità di sviluppo
-          </p>
+      {/* Overlay laterale: tocco leggero a sinistra, la foto è già scura lì */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent" />
+
+      {/* Contenuto */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
+        <div className="max-w-4xl">
+          <h1 className="font-heading text-white/85 text-[2.4rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10 [text-shadow:_0_2px_16px_rgba(0,0,0,0.5)]">
+            Un meccanismo{' '}<br className="md:hidden" />
+            di{' '}
+            <span className="bg-[linear-gradient(115deg,_#2E73C4_0%,_#4CACF8_35%,_#9FD2FB_50%,_#4CACF8_65%,_#2E73C4_100%)] bg-clip-text text-transparent [text-shadow:none] font-bold">ETA</span>
+            <span className="hidden md:inline">{' '}(Entrepreneurship Through Acquisition)</span>
+            {' '}come{' '}<br className="md:hidden" />
+            motore di{' '}<br className="md:hidden" />
+            cambiamento per{' '}<br className="md:hidden" />
+            una nuova fase di{' '}<br className="md:hidden" />
+            sviluppo
+          </h1>
+
+          <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
+            <p className="font-body font-light text-white/75 text-[0.95rem] md:text-base leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+              Entriamo in prima persona nell&apos;azienda per innescare le dinamiche di cambiamento
+              e di discontinuità necessarie a sbloccare il potenziale inespresso e generare le
+              successive opportunità di sviluppo
+            </p>
+          </div>
         </div>
       </div>
     </section>

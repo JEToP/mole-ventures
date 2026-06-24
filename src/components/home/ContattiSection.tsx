@@ -6,9 +6,9 @@ export default function ContattiSection() {
     <section className="bg-[radial-gradient(ellipse_at_center,_#1a4fd6_0%,_#05155E_70%)] py-20 px-6 md:px-16 relative">
       <div className="max-w-7xl mx-auto">
         {/* Riga superiore: testo a sinistra, logo a destra */}
-        <div className="flex flex-row items-start justify-between mb-12">
+        <div className="flex flex-col md:flex-row items-start justify-between mb-10 md:mb-12 gap-8 md:gap-0">
           <div className="flex-1">
-            <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 leading-tight max-w-xl">
+            <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 md:mb-5 leading-tight max-w-xl">
               Costruiamo insieme la prossima fase della tua impresa
             </h2>
             <p className="font-body text-white/85 text-sm md:text-base">
@@ -17,7 +17,7 @@ export default function ContattiSection() {
           </div>
 
           {/* Logo in alto a destra, abbassato */}
-          <div className="flex-shrink-0 self-end ml-10">
+          <div className="hidden md:block flex-shrink-0 self-end ml-10">
             <Image
               src="/images/logo.png"
               alt="Mole Venture"
