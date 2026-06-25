@@ -2,44 +2,44 @@
 
 import Image from "next/image";
 import type { CSSProperties, TouchEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const AREAS = [
   {
     number: "01",
-    title: "Intervento Strategico",
+    title: ["Intervento", "Strategico"],
     description:
-      "Costruiamo insieme da un lato il piano di sviluppo strategico e il suo deployment operativo per concentrare le energie sui passaggi decisivi.",
+      "Costruiamo insieme da un lato il piano di sviluppo strategico e il suo deployment operativo per concentrarci su un'esecuzione rapida ed efficace del processo di trasformazione e dall'altro una visione chiara su dove portare l'azienda e sulle azioni necessarie per arrivarci",
   },
   {
     number: "02",
     title: "Organizzazione",
     description:
-      "Dopo aver analizzato struttura, organigramma e responsabilita, facciamo evolvere persone e processi verso una gestione piu efficace.",
+      "Dopo aver analizzato la struttura organizzativa, la facciamo evolvere per rispondere al meglio ai bisogni del processo di trasformazione. Lavoriamo sulla retention delle persone chiave, sullo sviluppo dei talenti interni e sull'inserimento delle competenze necessarie, sui processi di delega e di responsabilizzazione. Un'azienda cresce e si sviluppa se crescono e si sviluppano le persone che la abitano.",
   },
   {
     number: "03",
-    title: "Operations e Finance",
+    title: ["Operations e", "Finance"],
     description:
-      "Ottimizziamo processi operativi, supply chain, delivery, pianificazione finanziaria, kpi e controllo di gestione.",
+      "Ottimizziamo i processi operativi, dalla supply chain alla delivery. Definiamo le dashboard finanziarie, kpi di redditività e gli eventuali miglioramenti,  la mappa dei rischi con i piani di mitigazione. L'efficienza operativa e la continua attenzione all'incremento dei margini come motore della sostenibilità della crescita.",
   },
   {
     number: "04",
-    title: "Innovazione e digitalizzazione",
+    title: ["Innovazione e", "digitalizzazione"],
     description:
-      "Rileggiamo attivita e sistemi alla luce dei nuovi sviluppi tecnologici e dell'automazione.",
+      "La revisione dei processi e della attività aziendali alla luce degli ultimi sviluppi legati all'AI, alle automazioni e alla digitalizzazione come fattori chiave dell'incremento di redditività. Valorizziamo dati, brevetti e know-how aziendale, rafforziamo la R&D interna per rendere l\'azienda competitiva nel medio lungo periodo e per non disperdere la trasmissione del know-how.",
   },
   {
     number: "05",
-    title: "Sales e Sviluppo Business",
+    title: ["Sales e Sviluppo", "Business"],
     description:
-      "Lavoriamo per estendere e diversificare la catena del valore, il pricing e la gestione della marginalita.",
+      "Lavoriamo per estendere e diversificare la catena del valore, il pricing e la gestione della marginalità. Costruiamo strategie di cross-selling e upselling legate ai punti di forza esistenti, sviluppiamo piani di marketing e di alleanze commerciali per estendere e incrementare l'offerta e il portafoglio clienti. Strutturiamo le azioni necessarie e la loro implementazione per favorire l'ingresso in nuovi mercati o geografie.",
   },
   {
     number: "06",
     title: "Next steps",
     description:
-      "Definiamo la traiettoria successiva: operazioni M&A aggregate, espansione su nuovi mercati e ampliamento del portafoglio prodotti.",
+      "Definiamo la traiettoria successiva: operazioni M&A aggregative, espansione su nuovi mercati, ampliamento del portafoglio prodotti, fabbisogno di investimento e di competenze e ci attiviamo in prima persona per il deployment delle azioni necessarie.",
   },
 ];
 
@@ -102,8 +102,47 @@ type SelectorProps = {
 
 function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: SelectorProps) {
   const activeIndex = getAreaIndex(activeStep);
+  const [contentSoftened, setContentSoftened] = useState(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const skipClickRef = useRef(false);
+  const contentTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (contentTimerRef.current !== null) {
+        window.clearTimeout(contentTimerRef.current);
+      }
+    };
+  }, []);
+
+  const softenCardContent = () => {
+    if (contentTimerRef.current !== null) {
+      window.clearTimeout(contentTimerRef.current);
+    }
+
+    setContentSoftened(true);
+    contentTimerRef.current = window.setTimeout(() => {
+      setContentSoftened(false);
+      contentTimerRef.current = null;
+    }, 620);
+  };
+
+  const showSoftPrevious = () => {
+    softenCardContent();
+    onPrevious();
+  };
+
+  const showSoftNext = () => {
+    softenCardContent();
+    onNext();
+  };
+
+  const selectStep = (step: number) => {
+    if (step === activeStep) return;
+
+    softenCardContent();
+    onSelectStep(step);
+  };
 
   const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     const touch = event.touches[0];
@@ -131,9 +170,9 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
     skipClickRef.current = true;
 
     if (deltaX > 0) {
-      onPrevious();
+      showSoftPrevious();
     } else {
-      onNext();
+      showSoftNext();
     }
 
     window.setTimeout(() => {
@@ -147,7 +186,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
       return;
     }
 
-    onSelectStep(getNearestStepForIndex(index, activeStep));
+    selectStep(getNearestStepForIndex(index, activeStep));
   };
 
   return (
@@ -180,7 +219,8 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               active={active}
               compact={!active}
               desktopWheel
-              onClick={() => onSelectStep(step)}
+              contentSoftened={contentSoftened}
+              onClick={() => selectStep(step)}
               className="absolute left-1/2 top-[46%] transition-all duration-500 ease-out"
               style={getDesktopCardStyle(offset)}
             />
@@ -188,8 +228,8 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
         })}
 
         <CarouselArrows
-          onPrevious={onPrevious}
-          onNext={onNext}
+          onPrevious={showSoftPrevious}
+          onNext={showSoftNext}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         />
       </div>
@@ -213,6 +253,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               area={area}
               active={active}
               compact={!active}
+              contentSoftened={contentSoftened}
               onClick={() => handleMobileSelect(index)}
               className="absolute left-1/2 top-[43%] transition-all duration-500 ease-out"
               style={getMobileCardStyle(offset)}
@@ -221,8 +262,8 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
         })}
 
         <CarouselArrows
-          onPrevious={onPrevious}
-          onNext={onNext}
+          onPrevious={showSoftPrevious}
+          onNext={showSoftNext}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         />
       </div>
@@ -322,6 +363,7 @@ type AreaCardButtonProps = {
   area: (typeof AREAS)[number];
   active?: boolean;
   compact?: boolean;
+  contentSoftened?: boolean;
   desktopWheel?: boolean;
   fluid?: boolean;
   className?: string;
@@ -333,6 +375,7 @@ function AreaCardButton({
   area,
   active = false,
   compact = false,
+  contentSoftened = false,
   desktopWheel = false,
   fluid = false,
   className = "",
@@ -351,62 +394,78 @@ function AreaCardButton({
       : "text-[44px]";
   const titleSize = active
     ? desktopWheel
-      ? "text-[26px]"
+      ? "text-[30px]"
       : "text-[clamp(23px,6.2vw,27px)]"
     : compact
       ? desktopWheel
-        ? "text-[16px]"
+        ? "text-[22px]"
         : "text-[17px]"
       : "text-[22px]";
   const descriptionSize = fluid
     ? "max-w-[31ch] text-[14px]"
     : active
       ? desktopWheel
-        ? "text-[15px]"
-        : "text-[17px]"
+        ? "text-[20px]"       //desktop highlited
+        : "text-[20px]"       //mobile highlited
       : compact
         ? desktopWheel
-          ? "line-clamp-[6] text-[11px]"
-          : "line-clamp-[8] text-[12px]"
+          ? "line-clamp-[6] text-[18px]"  //desktop background
+          : "line-clamp-[8] text-[14.875px]"  //mobile background
         : "text-[14px]";
+  const descriptionLeading = compact && !active ? "leading-none" : "leading-tight";
 
   return (
     <button
       type="button"
       onClick={onClick}
       style={style}
-      className={`${className} group min-w-0 overflow-hidden rounded-[8px] border border-white/30 bg-white/[0.08] text-left shadow-[0_18px_42px_rgba(0,0,0,0.28),inset_0_1px_18px_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/80 ${
-        fluid
+      className={`${className} group min-w-0 overflow-hidden rounded-[8px] border border-white/30 bg-white/[0.08] text-left shadow-[0_18px_42px_rgba(0,0,0,0.28),inset_0_1px_18px_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/80 ${fluid
           ? "min-h-[330px] w-full max-w-[342px] px-7 py-8 sm:max-w-[420px]"
           : desktopWheel
             ? active
               ? "h-[clamp(385px,31vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
               : "h-[clamp(265px,21vw,315px)] w-[var(--desktop-small-card-width)] px-5 py-5"
-          : active
-          ? "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
-          : compact
-            ? "h-[clamp(260px,21vw,310px)] w-[clamp(178px,14vw,220px)] px-4 py-5"
-            : "px-7 py-8"
-      }`}
+            : active
+              ? "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
+              : compact
+                ? "h-[clamp(260px,21vw,310px)] w-[clamp(178px,14vw,220px)] px-4 py-5"
+                : "px-7 py-8"
+        }`}
       aria-pressed={active}
     >
-      <span
-        className={`block text-center font-heading font-semibold leading-none tracking-normal text-white ${numberSize}`}
+      <div
+        className={`transition-[opacity,filter] duration-200 ease-out ${contentSoftened ? "opacity-60 blur-[0.25px]" : "opacity-100 blur-0"
+          }`}
       >
-        {area.number}
-      </span>
-      <span
-        className={`mt-2 block text-center font-heading font-semibold leading-[0.95] text-white ${
-          singleWordTitle ? "whitespace-nowrap" : "text-balance"
-        } ${titleSize}`}
-      >
-        {area.title}
-      </span>
-      <span
-        className={`mt-4 block break-words font-body font-semibold leading-tight text-white/90 ${descriptionSize}`}
-      >
-        {area.description}
-      </span>
+        <span
+          className={`block text-center font-heading font-semibold leading-none tracking-normal text-white ${numberSize}`}
+        >
+          {area.number}
+        </span>
+        <span
+          className={`mt-2 block text-center font-heading font-semibold leading-[0.95] text-white ${singleWordTitle ? "whitespace-nowrap" : "text-balance"
+            } ${titleSize}`}
+        >
+          {Array.isArray(area.title)
+            ? area.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))
+            : area.title}
+        </span>
+        <span
+          className={`mt-4 block break-words font-body font-semibold text-white/90 ${descriptionLeading} ${descriptionSize}`}
+        >
+          {Array.isArray(area.description)
+            ? area.description.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))
+            : area.description}
+        </span>
+      </div>
     </button>
   );
 }
