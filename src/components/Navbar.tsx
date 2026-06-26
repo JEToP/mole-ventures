@@ -32,7 +32,7 @@ export default function Navbar() {
   return (
     <>
       <header className="absolute top-0 left-0 w-full z-[60] bg-transparent pt-[env(safe-area-inset-top)]">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-4 md:py-5 flex justify-between items-center text-white">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-4 md:py-6 flex justify-between items-center text-white">
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
             <Image 
               src="/images/logo.png" 
@@ -40,7 +40,7 @@ export default function Navbar() {
               width={400}
               height={400}
               priority
-              className="h-12 md:h-20 w-auto object-contain mix-blend-screen"
+              className="h-16 md:h-24 w-auto object-contain mix-blend-screen"
               onError={(e) => { e.currentTarget.style.display='none'; }}
             />
           </Link>
@@ -52,7 +52,7 @@ export default function Navbar() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -62,7 +62,7 @@ export default function Navbar() {
           </button>
 
           {/* Menu Desktop */}
-          <nav className="hidden md:flex gap-8 font-body text-base font-semibold">
+          <nav className="hidden md:flex gap-9 font-body text-lg font-semibold">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
