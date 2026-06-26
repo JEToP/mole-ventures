@@ -3,7 +3,7 @@ import LeFasiInterventoSection from "./fasi/organisms/LeFasiInterventoSection";
 
 export default function IlNostroMetodoSection() {
   return (
-    <div className="bg-blue-deep text-white">
+    <div className="overflow-x-hidden bg-blue-deep text-white">
       <MetodoHero />
       <LeFasiInterventoSection />
       <MetodoFooterBand />
@@ -13,7 +13,7 @@ export default function IlNostroMetodoSection() {
 
 function MetodoHero() {
   return (
-    <section className="relative aspect-[1440/609] w-full overflow-hidden px-6 pb-12 pt-40 md:px-12">
+    <section className="relative min-h-[620px] w-full overflow-hidden px-6 pb-12 pt-36 md:min-h-[640px] md:px-10 lg:min-h-[609px]">
       <div
         className="absolute inset-0 bg-cover bg-no-repeat"
         style={{
@@ -24,12 +24,12 @@ function MetodoHero() {
       <div className="absolute inset-0 bg-gradient-to-b from-blue-deep/10 via-blue-deep/30 to-blue-deep/90" />
       <div className="absolute inset-0 bg-black/25" />
 
-      <h1 className="absolute left-6 top-[48%] z-10 w-[calc(100%-3rem)] font-heading text-4xl font-semibold leading-none tracking-normal text-white md:left-10 md:top-[295px] md:h-[72px] md:w-[1247px] md:text-[72px]">
+      <h1 className="absolute left-6 right-6 top-[45%] z-10 max-w-[12ch] break-words font-heading text-[clamp(2.5rem,10vw,4.5rem)] font-semibold leading-none tracking-normal text-white md:left-10 md:right-10 md:top-[46%] md:max-w-none">
         Il nostro metodo
       </h1>
 
-      <div className="absolute left-6 top-[70%] z-10 border-l-2 border-white/80 pl-4 md:left-10 md:top-[449px]">
-        <p className="w-[calc(100vw-4rem)] font-body text-sm font-semibold leading-none tracking-normal text-white md:h-[60px] md:w-[1182px] md:text-[20px]">
+      <div className="absolute bottom-12 left-6 right-6 z-10 border-l-2 border-white/80 pl-4 md:bottom-20 md:left-10 md:right-10">
+        <p className="max-w-[34ch] break-words font-body text-sm font-semibold leading-tight tracking-normal text-white md:max-w-[1182px] md:text-[20px]">
           Ogni azienda per continuare a evolvere deve impostare il proprio percorso di crescita, di
           evoluzione e di rafforzamento rimettendo in discussione il proprio status quo. Noi
           lavoriamo sul rinnovare l&apos;ecosistema esterno ed interno all&apos;azienda, nuovi soci,

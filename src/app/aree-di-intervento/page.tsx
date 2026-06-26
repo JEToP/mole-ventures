@@ -29,22 +29,18 @@ const AREAS = [
     title: "Organizzazione",
     description:
       [
-        "Dopo aver analizzato la",
-        "struttura organizzativa, la",
-        "facciamo evolvere per",
-        "rispondere al meglio ai",
-        "bisogni del processo di",
-        "trasformazione. Lavoriamo",
-        "sulla retention delle persone",
-        "chiave, sullo sviluppo dei",
-        "talenti interni e",
-        "sull'inserimento delle",
-        "competenze necessarie, sui",
+        "Dopo aver analizzato la struttura",
+        "organizzativa, la facciamo evolvere",
+        "per rispondere al meglio ai bisogni",
+        "del processo di trasformazione.",
+        "Lavoriamo sulla retention delle",
+        "persone chiave, sullo sviluppo dei",
+        "talenti interni e sull'inserimento",
+        "delle competenze necessarie, sui",
         "processi di delega e di",
-        "responsabilizzazione.",
-        "Un'azienda cresce e si",
-        "sviluppa se crescono e si",
-        "sviluppano le persone che",
+        "responsabilizzazione. Un'azienda",
+        "cresce e si sviluppa se crescono",
+        "e si sviluppano le persone che",
         "la abitano."
       ]
   },
@@ -304,13 +300,13 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
 
 const desktopCarouselStyle = {
   "--desktop-active-card-width": "clamp(280px, 17.75vw, 340px)",
-  "--desktop-small-card-width": "clamp(170px, 12.25vw, 235px)",
+  "--desktop-small-card-width": "clamp(196px, 12.425vw, 238px)",
   "--desktop-card-gap":
     "clamp(28px, calc((100vw - var(--desktop-active-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width)) / 6), 72px)",
 } as CSSProperties;
 
 const carouselCardTransition =
-  "transform 760ms cubic-bezier(0.22, 1, 0.36, 1), opacity 620ms cubic-bezier(0.22, 1, 0.36, 1), width 760ms cubic-bezier(0.22, 1, 0.36, 1), height 760ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 760ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease";
+  "transform 760ms cubic-bezier(0.22, 1, 0.36, 1), opacity 620ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 760ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease";
 
 function getDesktopLoopCards(activeStep: number) {
   return [-3, -2, -1, 0, 1, 2, 3].map((offset) => {
@@ -357,12 +353,12 @@ function getDesktopCardStyle(offset: number): CSSProperties {
       : `calc(-50% ${sign} ${desktopSteps[distance] ?? desktopSteps[3]})`;
 
   return {
-    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.94})`,
+    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.7})`,
     transition: carouselCardTransition,
     zIndex: 30 - distance,
     opacity: distance > 2 ? 0.18 : distance > 1 ? 0.74 : 1,
     pointerEvents: distance > 2 ? "none" : "auto",
-    willChange: "transform, opacity, width, height",
+    willChange: "transform, opacity",
     backfaceVisibility: "hidden",
   };
 }
@@ -381,12 +377,22 @@ function getMobileCardStyle(offset: number): CSSProperties {
       : `calc(-50% ${sign} ${mobileSteps[distance] ?? mobileSteps[3]})`;
 
   return {
-    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.86})`,
+    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.62})`,
     transition: carouselCardTransition,
     zIndex: 30 - distance,
     opacity: distance > 2 ? 0.42 : distance > 1 ? 0.62 : 1,
-    willChange: "transform, opacity, width, height",
+    willChange: "transform, opacity",
     backfaceVisibility: "hidden",
+  };
+}
+
+function getCardTitleStyle(fluid: boolean, desktopWheel: boolean): CSSProperties | undefined {
+  if (fluid) return undefined;
+
+  return {
+    fontSize: desktopWheel
+      ? "max(24px, calc((100cqw - 4rem) / 9))"
+      : "clamp(23px, calc((100cqw - 4rem) / 10.25), 27px)",
   };
 }
 
@@ -413,53 +419,40 @@ function AreaCardButton({
   style,
   onClick,
 }: AreaCardButtonProps) {
-  const singleWordTitle = !area.title.includes(" ");
-  const numberSize = active
-    ? desktopWheel
+  const singleWordTitle = typeof area.title === "string" && !area.title.includes(" ");
+  const numberSize = fluid
+    ? "text-[44px]"
+    : desktopWheel
       ? "text-[52px]"
-      : "text-[56px]"
-    : compact
-      ? desktopWheel
-        ? "text-[31px]"
-        : "text-[34px]"
-      : "text-[44px]";
-  const titleSize = active
-    ? desktopWheel
-      ? "text-[30px]"
-      : "text-[clamp(23px,6.2vw,27px)]"
-    : compact
-      ? desktopWheel
-        ? "text-[22px]"
-        : "text-[17px]"
-      : "text-[22px]";
+      : "text-[56px]";
+  const titleSize = fluid ? "text-[22px]" : "";
+  const titleStyle = getCardTitleStyle(fluid, desktopWheel);
   const descriptionSize = fluid
     ? "max-w-[31ch] text-[14px] leading-[110%]"
-    : active
-      ? desktopWheel
-        ? "text-[16px] leading-[110%]"       //desktop highlited
-        : "text-[20px] leading-[110%]"       //mobile highlited
-      : compact
-        ? desktopWheel
-          ? "line-clamp-[6] text-[14px] leading-none"  //desktop background
-          : "line-clamp-[8] text-[14.875px] leading-none"  //mobile background
-        : "text-[14px] leading-[110%]";
+    : compact
+      ? "line-clamp-[8]"
+      : "";
+  const descriptionFrame = "overflow-hidden";
+  const descriptionStyle = fluid
+    ? undefined
+    : ({
+      fontSize: "max(14px, calc((100cqw - 4rem) / 14))",
+      lineHeight: "110%",
+    } satisfies CSSProperties);
+  const descriptionText = Array.isArray(area.description)
+    ? area.description.join(" ")
+    : area.description;
 
   return (
     <button
       type="button"
       onClick={onClick}
       style={style}
-      className={`${className} group min-w-0 overflow-hidden rounded-[8px] border border-white/30 bg-white/[0.08] text-left shadow-[0_18px_42px_rgba(0,0,0,0.28),inset_0_1px_18px_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/80 ${fluid
+      className={`${className} group min-w-0 overflow-hidden rounded-[8px] border border-white/30 bg-white/[0.08] text-left shadow-[0_18px_42px_rgba(0,0,0,0.28),inset_0_1px_18px_rgba(255,255,255,0.08)] backdrop-blur-md transition [container-type:inline-size] hover:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/80 ${fluid
         ? "min-h-[330px] w-full max-w-[342px] px-7 py-8 sm:max-w-[420px]"
         : desktopWheel
-          ? active
-            ? "h-[clamp(385px,31vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
-            : "h-[clamp(265px,21vw,315px)] w-[var(--desktop-small-card-width)] px-5 py-5"
-          : active
-            ? "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
-            : compact
-              ? "h-[clamp(260px,21vw,310px)] w-[clamp(178px,14vw,220px)] px-4 py-5"
-              : "px-7 py-8"
+          ? "h-[clamp(385px,31vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
+          : "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
         }`}
       aria-pressed={active}
     >
@@ -473,6 +466,7 @@ function AreaCardButton({
           {area.number}
         </span>
         <span
+          style={titleStyle}
           className={`mt-2 block text-center font-heading font-semibold leading-[0.95] text-white ${singleWordTitle ? "whitespace-nowrap" : "text-balance"
             } ${titleSize}`}
         >
@@ -485,15 +479,10 @@ function AreaCardButton({
             : area.title}
         </span>
         <span
-          className={`mt-4 block break-words font-body font-normal text-white/90 ${descriptionSize}`}
+          style={descriptionStyle}
+          className={`mt-4 block break-words font-body font-light text-white/90 ${descriptionFrame} ${descriptionSize}`}
         >
-          {Array.isArray(area.description)
-            ? area.description.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))
-            : area.description}
+          {descriptionText}
         </span>
       </div>
     </button>

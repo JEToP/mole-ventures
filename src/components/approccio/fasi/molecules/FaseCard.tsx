@@ -40,7 +40,7 @@ export default function FaseCard({
     <article
       data-index={index}
       onClick={(e) => e.currentTarget.scrollIntoView({ behavior: "smooth", block: "center" })}
-      className={`group relative cursor-pointer p-4 transition-[transform,opacity] duration-500 ease-out md:p-5 ${focus} ${className}`}
+      className={`group relative min-w-0 max-w-full cursor-pointer p-4 transition-[transform,opacity] duration-500 ease-out md:p-5 ${focus} ${className}`}
     >
       {/* Glow di "illuminazione" quando il blocco è in focus, con bordi sfumati */}
       {active && (
@@ -59,11 +59,11 @@ export default function FaseCard({
       {layout === "stacked" ? (
         <div className="flex flex-col items-start text-left">
           <FaseNumero value={fase.numero} active={active} />
-          <h3 className="mt-3 font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:mt-4 md:text-[34px]">
+          <h3 className="mt-3 break-words font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:mt-4 md:text-[34px]">
             {fase.titolo}
           </h3>
           <p
-            className={`mt-4 font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-500 md:mt-5 md:text-[18px] ${
+            className={`mt-4 break-words font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-500 md:mt-5 md:text-[18px] ${
               active ? "text-white" : "text-white/85"
             }`}
           >
@@ -72,13 +72,13 @@ export default function FaseCard({
         </div>
       ) : (
         <div>
-          <h3 className="font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:pl-[7rem] md:text-[34px]">
+          <h3 className="break-words font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:pl-[7rem] md:text-[34px]">
             {fase.titolo}
           </h3>
-          <div className="mt-3 flex flex-col gap-3 md:mt-4 md:flex-row md:items-start md:gap-6">
+          <div className="mt-3 flex min-w-0 flex-col gap-3 md:mt-4 md:flex-row md:items-start md:gap-6">
             <FaseNumero value={fase.numero} active={active} className="shrink-0 md:w-[5rem]" />
             <p
-              className={`font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-500 md:text-[18px] ${
+              className={`min-w-0 break-words font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-500 md:text-[18px] ${
                 active ? "text-white" : "text-white/85"
               }`}
             >

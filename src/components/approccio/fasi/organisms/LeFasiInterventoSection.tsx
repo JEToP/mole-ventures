@@ -140,7 +140,7 @@ export default function LeFasiInterventoSection() {
     <section
       ref={sectionRef}
       aria-labelledby="fasi-heading"
-      className="relative overflow-hidden bg-blue-kinetic px-6 py-20 md:px-12 md:py-28"
+      className="relative w-full max-w-full overflow-hidden bg-blue-kinetic px-6 py-20 md:px-12 md:py-28"
     >
       {/* Base */}
       <div
@@ -163,15 +163,15 @@ export default function LeFasiInterventoSection() {
         }}
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl">
-        <header className="max-w-3xl">
+      <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
+        <header className="max-w-3xl min-w-0">
           <h2
             id="fasi-heading"
-            className="font-heading text-3xl font-semibold leading-none tracking-normal text-white md:text-[40px]"
+            className="break-words font-heading text-3xl font-semibold leading-none tracking-normal text-white md:text-[40px]"
           >
             Le 5 fasi dell&apos;intervento
           </h2>
-          <p className="mt-5 font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
+          <p className="mt-5 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
             Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
             sviluppo alla realtà esistente — e diventare, insieme a noi, autori di un cambiamento
             imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
@@ -183,7 +183,7 @@ export default function LeFasiInterventoSection() {
             04 sotto a sx · 05 a tutta larghezza. Ordine di lettura verticale 01→05. */}
         <div
           ref={containerRef}
-          className="mt-14 grid grid-cols-1 gap-10 md:mt-20 md:grid-cols-12 md:gap-x-8 md:gap-y-16"
+          className="mt-14 grid w-full min-w-0 grid-cols-1 gap-10 md:mt-20 md:grid-cols-12 md:gap-x-8 md:gap-y-16"
         >
           <FaseCard index={0} fase={FASI[0]} active={activeIndex === 0} dimmed={activeIndex >= 0 && activeIndex !== 0} className="md:col-span-5 md:col-start-1 md:row-start-1" />
           <FaseCard index={1} fase={FASI[1]} active={activeIndex === 1} dimmed={activeIndex >= 0 && activeIndex !== 1} layout="stacked" className="md:col-span-4 md:col-start-6 md:row-start-1 md:mt-10" />
