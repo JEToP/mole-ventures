@@ -1,9 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
-// ── Dati del team ──────────────────────────────────────────────────────────────
-// Quando avrai le foto, inseriscile in public/images/team/<id>.jpg
+// ──────────────────────────────────────────────────────────────────────────────
+// Per aggiungere un nuovo membro del team, aggiungi semplicemente un oggetto
+// a questo array. La sezione si aggiorna automaticamente.
+// Le foto vanno inserite in public/images/team/<id>.jpg
+// ──────────────────────────────────────────────────────────────────────────────
 const teamMembers = [
   {
     id: "matteo-gera",
@@ -19,34 +23,7 @@ const teamMembers = [
     description:
       "Profilo di Francesco Motta – da completare con la biografia ufficiale.",
   },
-  {
-    id: "clara-segrado",
-    name: "Clara Segrado",
-    photo: "/images/team/clara-segrado.jpg",
-    description:
-      "Profilo di Clara Segrado – da completare con la biografia ufficiale.",
-  },
-  {
-    id: "serena-bianchi",
-    name: "Serena Bianchi",
-    photo: "/images/team/serena-bianchi.jpg",
-    description:
-      "Profilo di Serena Bianchi – da completare con la biografia ufficiale.",
-  },
-  {
-    id: "boris-nettuno",
-    name: "Boris Nettuno",
-    photo: "/images/team/boris-nettuno.jpg",
-    description:
-      "Profilo di Boris Nettuno – da completare con la biografia ufficiale.",
-  },
-  {
-    id: "alex-schiffini",
-    name: "Alex Schiffini",
-    photo: "/images/team/alex-schiffini.jpg",
-    description:
-      "Profilo di Alex Schiffini – da completare con la biografia ufficiale.",
-  },
+  // ← Aggiungi qui altri membri del team
 ];
 
 // ── Placeholder SVG persona ───────────────────────────────────────────────────
@@ -72,68 +49,118 @@ function PersonIcon({ className }: { className?: string }) {
 
 // ── Componente principale ─────────────────────────────────────────────────────
 export default function TeamSection() {
-  const [selectedId, setSelectedId] = useState(teamMembers[0].id);
-  const selected = teamMembers.find((m) => m.id === selectedId)!;
+  const [activeId, setActiveId] = useState(teamMembers[0].id);
+
+  const handleSelect = (id: string) => {
+    setActiveId(id);
+  };
 
   return (
-    <section className="bg-[radial-gradient(ellipse_at_center,_#0c2a9e_0%,_#05155E_70%)] py-20 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative w-full overflow-hidden">
+      {/* Background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/team.webp')" }}
+      />
+      {/* Overlay scuro */}
+      <div className="absolute inset-0 bg-black/55" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20">
         {/* Intestazione */}
         <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold mb-4">
           Il nostro team
         </h2>
-        <p className="font-body text-white/75 text-base md:text-lg max-w-5xl mb-16 leading-relaxed">
+        <p className="font-body text-white/80 text-sm md:text-base max-w-3xl mb-16 leading-relaxed">
           Siamo professionisti che hanno deciso di condividere le loro competenze e le precedenti
           esperienze maturate in ruoli apicali e strategici in realtà di rilievo nazionali e
           internazionali così da poter sostenere ogni fase di cambiamento all&apos;interno delle
           realtà acquisite.
         </p>
 
-        {/* Card in evidenza */}
-        <div className="flex flex-col items-center mb-16 transition-all duration-500">
-          <h3 className="font-heading text-white text-2xl md:text-3xl font-semibold mb-8">
-            {selected.name}
-          </h3>
+        {/* Card in evidenza: Grid Layout Sovrapposto */}
+        {/* Questo trucco rende tutte le card sovrapposte in un'unica griglia: il container padre prende
+            automaticamente l'altezza della card più alta (quella con più testo), eliminando i salti. */}
+        <div className="grid mb-16">
+          {teamMembers.map((member) => {
+            const isActive = member.id === activeId;
+            return (
+              <div
+                key={member.id}
+                className={`col-start-1 row-start-1 flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-10 transition-all duration-300 ease-in-out ${
+                  isActive ? "opacity-100 z-10 pointer-events-auto translate-y-0" : "opacity-0 z-0 pointer-events-none translate-y-2"
+                }`}
+              >
+                {/* Foto grande */}
+                <div className="w-40 h-48 md:w-56 md:h-72 flex-shrink-0 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-xl overflow-hidden relative">
+                  {/* Se l'elemento non è attivo, potremmo non voler renderizzare l'img se è pesante,
+                      ma per transizioni fluide lo teniamo. Dato che usiamo un relative wrapper, l'img è coperta
+                      dal fallback se fallisce. */}
+                  <Image
+                    src={member.photo}
+                    alt={member.name}
+                    width={224}
+                    height={288}
+                    className="w-full h-full object-cover relative z-10"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                  {/* Fallback placeholder visibile se l'immagine non c'è */}
+                  <PersonIcon className="w-16 h-16 md:w-24 md:h-24 text-white/30 absolute z-0" />
+                </div>
 
-          {/* Foto / placeholder grande */}
-          <div className="w-56 h-72 md:w-64 md:h-80 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center mb-8">
-            <PersonIcon className="w-28 h-28 text-white/30" />
-          </div>
-
-          <p className="font-body text-white/80 text-base text-center max-w-xl leading-relaxed transition-all duration-300">
-            {selected.description}
-          </p>
+                {/* Nome + descrizione */}
+                <div className="flex flex-col justify-center">
+                  <h3 className="font-heading text-white text-2xl md:text-3xl font-semibold mb-3 md:mb-4">
+                    {member.name}
+                  </h3>
+                  <p className="font-body text-white/80 text-sm md:text-base leading-relaxed max-w-md">
+                    {member.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Fila card piccole – cliccabili */}
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+        {/* Fila card piccole – hover per selezionare */}
+        <div className="flex flex-wrap gap-6 md:gap-8">
           {teamMembers.map((member) => {
-            const isActive = member.id === selectedId;
+            const isActive = member.id === activeId;
             return (
               <button
                 key={member.id}
                 id={`team-card-${member.id}`}
-                onClick={() => setSelectedId(member.id)}
+                onMouseEnter={() => handleSelect(member.id)}
+                onClick={() => handleSelect(member.id)}
                 aria-pressed={isActive}
-                className={`flex flex-col items-center gap-2 focus:outline-none transition-all duration-300 ${isActive
-                  ? "scale-110 opacity-100"
-                  : "scale-100 opacity-55 hover:opacity-90 hover:scale-105"
-                  }`}
+                className={`flex flex-col items-center gap-2 focus:outline-none transition-all duration-300 ${
+                  isActive
+                    ? "opacity-100 scale-105"
+                    : "opacity-55 hover:opacity-85 hover:scale-105"
+                }`}
               >
+
                 <div
-                  className={`rounded-xl border flex items-center justify-center transition-all duration-300 ${isActive
-                    ? "w-28 h-36 bg-white/20 border-white/40"
-                    : "w-24 h-32 bg-white/10 border-white/10"
-                    }`}
+                  className={`w-24 h-32 rounded-xl border flex items-center justify-center overflow-hidden transition-all duration-300 ${
+                    isActive
+                      ? "bg-white/20 border-white/50"
+                      : "bg-white/10 border-white/15"
+                  }`}
                 >
-                  <PersonIcon
-                    className={`text-white/40 transition-all duration-300 ${isActive ? "w-14 h-14" : "w-10 h-10"
-                      }`}
-                  />
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Image
+                      src={member.photo}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                    <PersonIcon className="w-10 h-10 text-white/40" />
+                  </div>
                 </div>
                 <span
-                  className={`font-body text-white text-center transition-all duration-300 ${isActive ? "text-sm font-semibold" : "text-xs"
-                    }`}
+                  className={`font-body text-white text-center transition-all duration-300 ${
+                    isActive ? "text-sm font-semibold" : "text-xs"
+                  }`}
                 >
                   {member.name}
                 </span>
@@ -145,3 +172,4 @@ export default function TeamSection() {
     </section>
   );
 }
+

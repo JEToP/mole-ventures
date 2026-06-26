@@ -2,7 +2,6 @@
 import Image from "next/image";
 
 // ── Dati valori ──────────────────────────────────────────────────────────────
-// Inserire le icone in public/images/icons/<id>.png
 const valori = [
   {
     id: "rispetto",
@@ -65,41 +64,56 @@ export default function ValoriSection() {
 
         <div className="flex flex-col">
           {valori.map((valore, index) => (
-            <div key={valore.id} className="flex items-stretch">
-              {/* Colonna sinistra: icona + nome */}
-              <div className="flex items-center gap-5 w-64 md:w-80 flex-shrink-0 py-6">
-                <div className="w-20 h-20 flex-shrink-0">
-                  {/* Quando l'immagine è assente viene ignorata da next/image senza crash */}
+            <div key={valore.id} className="flex flex-col md:flex-row md:items-stretch">
+              {/* --- HEADER MOBILE (Solo su Mobile) --- */}
+              <div className="flex md:hidden items-center gap-4 mt-8 mb-2">
+                <div className="w-14 h-14 flex-shrink-0">
                   <Image
                     src={valore.icon}
                     alt={valore.name}
-                    width={80}
-                    height={80}
+                    width={56}
+                    height={56}
                     className="w-full h-full object-contain"
                     unoptimized
                   />
                 </div>
-                <span className="font-heading text-white text-xl md:text-2xl font-semibold leading-snug">
+                <span className="font-heading text-white text-2xl font-semibold">
                   {valore.name}
                 </span>
               </div>
 
-              {/* Colonna centrale: timeline con punto e linea verticale */}
-              <div className="flex flex-col items-center w-10 flex-shrink-0">
-                <div
-                  className={`w-0.5 bg-white/20 ${index === 0 ? "h-8" : "flex-1"}`}
-                />
-                <div className="w-3 h-3 rounded-full bg-white flex-shrink-0" />
-                <div
-                  className={`w-0.5 bg-white/20 ${index === valori.length - 1 ? "h-8" : "flex-1"}`}
-                />
-              </div>
+              {/* --- RIGA PER TIMELINE + DESCRIZIONE (su desktop include anche Left Col) --- */}
+              <div className="flex flex-row items-stretch w-full">
+                {/* Colonna Sinistra: Icona + Nome (Solo su Desktop) */}
+                <div className="hidden md:flex items-center gap-5 w-64 md:w-80 flex-shrink-0 py-6">
+                  <div className="w-20 h-20 flex-shrink-0">
+                    <Image
+                      src={valore.icon}
+                      alt={valore.name}
+                      width={80}
+                      height={80}
+                      className="w-full h-full object-contain"
+                      unoptimized
+                    />
+                  </div>
+                  <span className="font-heading text-white text-xl md:text-2xl font-semibold leading-snug">
+                    {valore.name}
+                  </span>
+                </div>
 
-              {/* Colonna destra: descrizione */}
-              <div className="flex-1 pl-6 py-6 flex items-center">
-                <p className="font-body text-white/75 text-xs md:text-sm leading-relaxed">
-                  {valore.description}
-                </p>
+                {/* Colonna Centrale: Timeline */}
+                <div className="flex flex-col items-center w-8 md:w-10 flex-shrink-0">
+                  <div className={`w-0.5 bg-white/20 ${index === 0 ? "h-0 md:h-8" : "flex-1"}`} />
+                  <div className={`w-3 h-3 rounded-full bg-white flex-shrink-0 ${index === 0 ? "mt-2 md:mt-0" : ""}`} />
+                  <div className={`w-0.5 bg-white/20 ${index === valori.length - 1 ? "h-full md:h-8" : "flex-1"}`} />
+                </div>
+
+                {/* Colonna Destra: Descrizione */}
+                <div className="flex-1 pl-4 md:pl-6 py-2 md:py-6 flex items-center">
+                  <p className="font-body text-white/75 text-sm md:text-base leading-relaxed pb-6 md:pb-0">
+                    {valore.description}
+                  </p>
+                </div>
               </div>
             </div>
           ))}

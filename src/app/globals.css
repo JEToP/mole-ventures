@@ -32,3 +32,20 @@
     font-weight: 600;
   }
 }
+
+@layer utilities {
+  @keyframes fadeLeftDelayed {
+    0% {
+      opacity: 0;
+      transform: translateX(-1.5rem);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  .animate-fade-left-delayed {
+    animation: fadeLeftDelayed 1.4s ease-out 0.8s forwards;
+    opacity: 0;
+  }
+}
