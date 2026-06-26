@@ -9,13 +9,44 @@ const AREAS = [
     number: "01",
     title: ["Intervento", "Strategico"],
     description:
-      "Costruiamo insieme da un lato il piano di sviluppo strategico e il suo deployment operativo per concentrarci su un'esecuzione rapida ed efficace del processo di trasformazione e dall'altro una visione chiara su dove portare l'azienda e sulle azioni necessarie per arrivarci",
+      [
+        "Costruiamo insieme da un",
+        "lato il piano di sviluppo",
+        "strategico e il suo",
+        "deployment operativo per",
+        "concentrarci su",
+        "un'esecuzione rapida ed",
+        "efficace del processo di",
+        "trasformazione e dall'altro",
+        "una visione chiara su dove",
+        "portare l'azienda e sulle",
+        "azioni necessarie per",
+        "arrivarci"
+      ],
   },
   {
     number: "02",
     title: "Organizzazione",
     description:
-      "Dopo aver analizzato la struttura organizzativa, la facciamo evolvere per rispondere al meglio ai bisogni del processo di trasformazione. Lavoriamo sulla retention delle persone chiave, sullo sviluppo dei talenti interni e sull'inserimento delle competenze necessarie, sui processi di delega e di responsabilizzazione. Un'azienda cresce e si sviluppa se crescono e si sviluppano le persone che la abitano.",
+      [
+        "Dopo aver analizzato la",
+        "struttura organizzativa, la",
+        "facciamo evolvere per",
+        "rispondere al meglio ai",
+        "bisogni del processo di",
+        "trasformazione. Lavoriamo",
+        "sulla retention delle persone",
+        "chiave, sullo sviluppo dei",
+        "talenti interni e",
+        "sull'inserimento delle",
+        "competenze necessarie, sui",
+        "processi di delega e di",
+        "responsabilizzazione.",
+        "Un'azienda cresce e si",
+        "sviluppa se crescono e si",
+        "sviluppano le persone che",
+        "la abitano."
+      ]
   },
   {
     number: "03",
@@ -402,17 +433,16 @@ function AreaCardButton({
         : "text-[17px]"
       : "text-[22px]";
   const descriptionSize = fluid
-    ? "max-w-[31ch] text-[14px]"
+    ? "max-w-[31ch] text-[14px] leading-[110%]"
     : active
       ? desktopWheel
-        ? "text-[20px]"       //desktop highlited
-        : "text-[20px]"       //mobile highlited
+        ? "text-[16px] leading-[110%]"       //desktop highlited
+        : "text-[20px] leading-[110%]"       //mobile highlited
       : compact
         ? desktopWheel
-          ? "line-clamp-[6] text-[18px]"  //desktop background
-          : "line-clamp-[8] text-[14.875px]"  //mobile background
-        : "text-[14px]";
-  const descriptionLeading = compact && !active ? "leading-none" : "leading-tight";
+          ? "line-clamp-[6] text-[14px] leading-none"  //desktop background
+          : "line-clamp-[8] text-[14.875px] leading-none"  //mobile background
+        : "text-[14px] leading-[110%]";
 
   return (
     <button
@@ -420,16 +450,16 @@ function AreaCardButton({
       onClick={onClick}
       style={style}
       className={`${className} group min-w-0 overflow-hidden rounded-[8px] border border-white/30 bg-white/[0.08] text-left shadow-[0_18px_42px_rgba(0,0,0,0.28),inset_0_1px_18px_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/80 ${fluid
-          ? "min-h-[330px] w-full max-w-[342px] px-7 py-8 sm:max-w-[420px]"
-          : desktopWheel
-            ? active
-              ? "h-[clamp(385px,31vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
-              : "h-[clamp(265px,21vw,315px)] w-[var(--desktop-small-card-width)] px-5 py-5"
-            : active
-              ? "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
-              : compact
-                ? "h-[clamp(260px,21vw,310px)] w-[clamp(178px,14vw,220px)] px-4 py-5"
-                : "px-7 py-8"
+        ? "min-h-[330px] w-full max-w-[342px] px-7 py-8 sm:max-w-[420px]"
+        : desktopWheel
+          ? active
+            ? "h-[clamp(385px,31vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
+            : "h-[clamp(265px,21vw,315px)] w-[var(--desktop-small-card-width)] px-5 py-5"
+          : active
+            ? "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
+            : compact
+              ? "h-[clamp(260px,21vw,310px)] w-[clamp(178px,14vw,220px)] px-4 py-5"
+              : "px-7 py-8"
         }`}
       aria-pressed={active}
     >
@@ -455,7 +485,7 @@ function AreaCardButton({
             : area.title}
         </span>
         <span
-          className={`mt-4 block break-words font-body font-semibold text-white/90 ${descriptionLeading} ${descriptionSize}`}
+          className={`mt-4 block break-words font-body font-normal text-white/90 ${descriptionSize}`}
         >
           {Array.isArray(area.description)
             ? area.description.map((line) => (
