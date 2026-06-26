@@ -9,7 +9,7 @@ export default function ContattiPage() {
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center md:justify-end pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
+      <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[0.90]"
@@ -32,7 +32,7 @@ export default function ContattiPage() {
             </h1>
 
             <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-              <p className="font-body font-light text-white/75 text-[0.95rem] md:text-base leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+              <p className="font-body font-light text-white/80 text-base md:text-lg leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
                 Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
               </p>
             </div>
@@ -41,18 +41,33 @@ export default function ContattiPage() {
       </section>
 
       {/* Form Section */}
-      <section className="relative w-full bg-[radial-gradient(ellipse_at_left,_#3b82f6_0%,_#05155E_50%)] flex-1 px-6 md:px-16 py-20">
-        <div className="max-w-7xl mx-auto w-full">
-          <form className="flex flex-col gap-8">
-            {/* Prima riga: Nome, Azienda, Telefono, Email */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="relative w-full bg-[#05155E] flex-1">
+        {/* Background image, stessa della sezione in home */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/background_contatti.webp"
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            aria-hidden="true"
+          />
+        </div>
+        {/* Overlay brand, stesso della sezione in home */}
+        <div className="absolute inset-0 bg-[#05155E]/60 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#05155E]/80 to-transparent" />
+
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-12 py-20 md:py-24">
+          <form className="flex flex-col gap-8 w-full">
+            {/* Prima riga: Nome, Azienda */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
                 <label htmlFor="nome" className="font-body text-white font-semibold text-sm md:text-base">Nome</label>
                 <input
                   type="text"
                   id="nome"
                   name="nome"
-                  placeholder="Nome"
+                  placeholder="Il tuo nome"
                   className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
@@ -62,17 +77,21 @@ export default function ContattiPage() {
                   type="text"
                   id="azienda"
                   name="azienda"
-                  placeholder="Azienda"
+                  placeholder="La tua azienda"
                   className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
+            </div>
+
+            {/* Seconda riga: Telefono, Email */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
                 <label htmlFor="telefono" className="font-body text-white font-semibold text-sm md:text-base">Telefono</label>
                 <input
                   type="tel"
                   id="telefono"
                   name="telefono"
-                  placeholder="Telefono"
+                  placeholder="Il tuo numero"
                   className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
@@ -82,43 +101,46 @@ export default function ContattiPage() {
                   type="email"
                   id="email"
                   name="email"
-                  placeholder="Email"
+                  placeholder="La tua email"
                   className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
 
-            {/* Seconda riga: Oggetto */}
+            {/* Terza riga: Oggetto */}
             <div className="flex flex-col gap-2">
               <label htmlFor="oggetto" className="font-body text-white font-semibold text-sm md:text-base">Oggetto</label>
               <input
                 type="text"
                 id="oggetto"
                 name="oggetto"
-                placeholder="Oggetto"
+                placeholder="Di cosa vorresti parlarci?"
                 className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
               />
             </div>
 
-            {/* Terza riga: Messaggio */}
+            {/* Quarta riga: Messaggio */}
             <div className="flex flex-col gap-2">
               <label htmlFor="messaggio" className="font-body text-white font-semibold text-sm md:text-base">Messaggio</label>
               <textarea
                 id="messaggio"
                 name="messaggio"
-                placeholder="Messaggio"
-                rows={8}
+                placeholder="Raccontaci la tua realtà..."
+                rows={6}
                 className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm resize-y"
               ></textarea>
             </div>
 
             {/* Bottone di invio */}
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-start mt-4">
               <button
                 type="submit"
-                className="bg-white text-[#05155E] font-body font-semibold text-base md:text-lg px-12 py-3 rounded-full hover:bg-white/90 transition-all duration-300 shadow-lg"
+                className="group inline-flex items-center gap-3 bg-white text-[#05155E] font-body font-semibold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-full transition-all duration-300 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_8px_24px_rgba(76,172,248,0.35)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E]"
               >
                 Invia messaggio
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
               </button>
             </div>
           </form>

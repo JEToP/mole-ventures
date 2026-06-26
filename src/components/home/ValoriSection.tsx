@@ -115,7 +115,7 @@ function Valore({
   const scale = useTransform(progress, [start, mid, end], [0.94, 1, 0.98]);
   // Watermark in parallax: si muove più lentamente del contenuto e scala.
   const wmY = useTransform(progress, [start, end], [120, -120]);
-  const wmScale = useTransform(progress, [start, mid, end], [1.05, 1.25, 1.4]);
+  const wmScale = useTransform(progress, [start, mid, end], [0.85, 1, 1.1]);
 
   return (
     <motion.div
@@ -126,49 +126,26 @@ function Valore({
         style={{ y, scale, willChange: "transform" }}
         className="relative w-full max-w-4xl"
       >
-        {/* Watermark icon amplificato, in parallax dietro al contenuto */}
+        {/* Watermark icon in parallax dietro al contenuto */}
         <motion.div
           aria-hidden="true"
           style={{ y: wmY, scale: wmScale, willChange: "transform" }}
-          className="pointer-events-none absolute -top-10 -right-4 md:-top-24 md:right-0 z-0 opacity-[0.07]"
+          className="pointer-events-none absolute -top-8 -right-2 md:-top-16 md:right-0 z-0 opacity-[0.07]"
         >
           <Image
             src={valore.icon}
             alt=""
-            width={420}
-            height={420}
-            className="w-56 h-56 md:w-[26rem] md:h-[26rem] object-contain"
+            width={360}
+            height={360}
+            className="w-40 h-40 md:w-72 md:h-72 object-contain"
             unoptimized
           />
         </motion.div>
 
         {/* Contenuto */}
         <div className="relative z-10">
-          {/* Eyebrow: orientamento, non sequenza obbligata */}
-          <div className="flex items-center gap-3 mb-5">
-            <span className="font-body text-blue-soft text-sm tracking-[0.2em] uppercase">
-              Valore
-            </span>
-            <span className="h-px w-10 bg-blue-soft/50" />
-            <span className="font-body text-white/40 text-sm tabular-nums">
-              {String(index + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
-            </span>
-          </div>
-
-          {/* Icona in evidenza */}
-          <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-blue-soft/40 bg-blue-soft/10 flex items-center justify-center mb-6">
-            <Image
-              src={valore.icon}
-              alt={valore.name}
-              width={80}
-              height={80}
-              className="w-9 h-9 md:w-11 md:h-11 object-contain"
-              unoptimized
-            />
-          </div>
-
-          {/* Titolo */}
-          <h3 className="font-heading text-white text-4xl md:text-6xl font-semibold leading-[1.05] mb-5">
+          {/* Titolo con gradiente brand */}
+          <h3 className="font-heading text-4xl md:text-6xl font-semibold leading-[1.05] mb-5 w-fit bg-gradient-to-br from-white via-blue-soft to-blue-kinetic bg-clip-text text-transparent">
             {valore.name}
           </h3>
 
@@ -247,17 +224,7 @@ export default function ValoriSection() {
           <div className="flex flex-col gap-16">
             {valori.map((valore) => (
               <div key={valore.id} className="flex flex-col gap-4">
-                <div className="w-16 h-16 rounded-2xl border border-blue-soft/40 bg-blue-soft/10 flex items-center justify-center">
-                  <Image
-                    src={valore.icon}
-                    alt={valore.name}
-                    width={80}
-                    height={80}
-                    className="w-9 h-9 object-contain"
-                    unoptimized
-                  />
-                </div>
-                <h3 className="font-heading text-white text-3xl md:text-4xl font-semibold leading-tight">
+                <h3 className="font-heading text-3xl md:text-4xl font-semibold leading-tight w-fit bg-gradient-to-br from-white via-blue-soft to-blue-kinetic bg-clip-text text-transparent">
                   {valore.name}
                 </h3>
                 <p className="font-body font-light text-white/80 text-lg leading-relaxed max-w-2xl">

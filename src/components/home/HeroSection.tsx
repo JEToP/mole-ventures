@@ -1,6 +1,6 @@
 export default function HeroSection() {
   return (
-    <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center md:justify-end pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
+    <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
       {/* Background image – brightness leggermente ridotta per più contrasto */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[0.90]"
