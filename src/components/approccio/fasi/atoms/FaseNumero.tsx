@@ -1,20 +1,24 @@
+import type { CSSProperties } from "react";
+
 type FaseNumeroProps = {
   value: string;
-  active?: boolean;
+  focus?: number;
   className?: string;
 };
 
-/**
- * Atom: il grande numero progressivo della fase (Syne SemiBold 72px da Figma).
- * In focus diventa pienamente luminoso; altrimenti resta più tenue.
- */
-export default function FaseNumero({ value, active = false, className = "" }: FaseNumeroProps) {
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+export default function FaseNumero({ value, focus = 0, className = "" }: FaseNumeroProps) {
+  const opacity = 0.62 + clamp(focus, 0, 1) * 0.38;
+  const style = { opacity } satisfies CSSProperties;
+
   return (
     <span
       aria-hidden="true"
-      className={`block font-heading text-5xl font-semibold leading-none tracking-normal text-white transition-opacity duration-700 md:text-[72px] ${
-        active ? "opacity-100" : "opacity-60"
-      } ${className}`}
+      style={style}
+      className={`block font-heading text-5xl font-semibold leading-none tracking-normal text-white transition-opacity duration-700 ease-out md:text-[72px] ${className}`}
     >
       {value}
     </span>

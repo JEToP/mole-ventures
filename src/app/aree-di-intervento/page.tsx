@@ -270,8 +270,8 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
 }
 
 const desktopCarouselStyle = {
-  "--desktop-active-card-width": "clamp(280px, 17.75vw, 340px)",
-  "--desktop-small-card-width": "clamp(196px, 12.425vw, 238px)",
+  "--desktop-active-card-width": "clamp(300px, 40vw, 340px)",
+  "--desktop-small-card-width": "clamp(196px, 28vw, 238px)",
   "--desktop-card-gap":
     "clamp(28px, calc((100vw - var(--desktop-active-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width)) / 6), 72px)",
 } as CSSProperties;
@@ -324,7 +324,7 @@ function getDesktopCardStyle(offset: number): CSSProperties {
       : `calc(-50% ${sign} ${desktopSteps[distance] ?? desktopSteps[3]})`;
 
   return {
-    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.7})`,
+    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.82})`,
     transition: carouselCardTransition,
     zIndex: 30 - distance,
     opacity: distance > 2 ? 0.18 : distance > 1 ? 0.74 : 1,
@@ -357,14 +357,39 @@ function getMobileCardStyle(offset: number): CSSProperties {
   };
 }
 
-function getCardTitleStyle(fluid: boolean, desktopWheel: boolean): CSSProperties | undefined {
-  if (fluid) return undefined;
+type CardTextStyles = {
+  title?: CSSProperties;
+  description?: CSSProperties;
+};
 
+function getDesktopCardTextStyles(): CardTextStyles {
   return {
-    fontSize: desktopWheel
-      ? "max(24px, calc((100cqw - 4rem) / 9))"
-      : "clamp(23px, calc((100cqw - 4rem) / 10.25), 27px)",
+    title: {
+      fontSize: "max(24px, calc((100cqw - 4rem) / 7))",
+    },
+    description: {
+      fontSize: "max(12px, calc((100cqw - 4rem) / 12.5))",
+      lineHeight: "110%",
+    },
   };
+}
+
+function getMobileCardTextStyles(): CardTextStyles {
+  return {
+    title: {
+      fontSize: "clamp(20px, calc((100cqw - 4rem) / 5.5), 32px)",
+    },
+    description: {
+      fontSize: "clamp(11px, calc((100cqw - 4rem) / 11.5), 22px)",
+      lineHeight: "110%",
+    },
+  };
+}
+
+function getCardTextStyles(fluid: boolean, desktopWheel: boolean): CardTextStyles {
+  if (fluid) return {};
+
+  return desktopWheel ? getDesktopCardTextStyles() : getMobileCardTextStyles();
 }
 
 type AreaCardButtonProps = {
@@ -397,19 +422,13 @@ function AreaCardButton({
       ? "text-[52px]"
       : "text-[56px]";
   const titleSize = fluid ? "text-[22px]" : "";
-  const titleStyle = getCardTitleStyle(fluid, desktopWheel);
+  const cardTextStyles = getCardTextStyles(fluid, desktopWheel);
   const descriptionSize = fluid
     ? "max-w-[31ch] text-[14px] leading-[110%]"
     : compact
       ? "line-clamp-[8]"
       : "";
   const descriptionFrame = "overflow-hidden";
-  const descriptionStyle = fluid
-    ? undefined
-    : ({
-      fontSize: "max(14px, calc((100cqw - 4rem) / 14))",
-      lineHeight: "110%",
-    } satisfies CSSProperties);
   const descriptionText = Array.isArray(area.description)
     ? area.description.join(" ")
     : area.description;
@@ -422,8 +441,8 @@ function AreaCardButton({
       className={`${className} group min-w-0 overflow-hidden rounded-[8px] border border-white/30 bg-white/[0.08] text-left shadow-[0_18px_42px_rgba(0,0,0,0.28),inset_0_1px_18px_rgba(255,255,255,0.08)] backdrop-blur-md transition [container-type:inline-size] hover:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/80 ${fluid
         ? "min-h-[330px] w-full max-w-[342px] px-7 py-8 sm:max-w-[420px]"
         : desktopWheel
-          ? "h-[clamp(385px,31vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
-          : "h-[clamp(390px,32vw,430px)] w-[clamp(280px,23vw,340px)] px-8 py-9"
+          ? "h-[clamp(385px,40vw,430px)] w-[var(--desktop-active-card-width)] px-8 py-9"
+          : "h-[clamp(390px,32vw,430px)] w-[clamp(280px,26vw,340px)] px-8 py-9"
         }`}
       aria-pressed={active}
     >
@@ -437,7 +456,7 @@ function AreaCardButton({
           {area.number}
         </span>
         <span
-          style={titleStyle}
+          style={cardTextStyles.title}
           className={`mt-2 block text-center font-heading font-semibold leading-[0.95] text-white ${singleWordTitle ? "whitespace-nowrap" : "text-balance"
             } ${titleSize}`}
         >
@@ -450,7 +469,7 @@ function AreaCardButton({
             : area.title}
         </span>
         <span
-          style={descriptionStyle}
+          style={cardTextStyles.description}
           className={`mt-4 block break-words font-body font-light text-white/90 ${descriptionFrame} ${descriptionSize}`}
         >
           {descriptionText}

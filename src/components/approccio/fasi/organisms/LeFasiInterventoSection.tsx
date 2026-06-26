@@ -2,22 +2,27 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import FaseCard from "../molecules/FaseCard";
 import { FASI } from "../fasiData";
+import FaseCard from "../molecules/FaseCard";
 
-/**
- * Organism: la sezione "Le 5 fasi dell'intervento".
- */
+const emptyFocusLevels = () => FASI.map(() => 0);
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function smoothstep(value: number) {
+  return value * value * (3 - 2 * value);
+}
+
 export default function LeFasiInterventoSection() {
-  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeRef = useRef(-1);
-  const [activeIndex, setActiveIndex] = useState(-1);
+  const focusRef = useRef(emptyFocusLevels());
+  const [focusLevels, setFocusLevels] = useState(emptyFocusLevels);
 
   useEffect(() => {
     const container = containerRef.current;
-    const section = sectionRef.current;
-    if (!container || !section) return;
+    if (!container) return;
 
     const cards = Array.from(container.querySelectorAll<HTMLElement>("[data-index]"));
     let raf = 0;
@@ -25,44 +30,19 @@ export default function LeFasiInterventoSection() {
     const update = () => {
       raf = 0;
       const vh = window.innerHeight;
-      const viewportCenter = vh / 2;
-
-      let bestIndex = -1;
-      let bestDist = Infinity;
-      let currentDist = Infinity;
-
-      cards.forEach((el) => {
+      const viewportCenter = vh * 0.52;
+      const radius = Math.max(280, vh * 0.5);
+      const next = cards.map((el) => {
         const rect = el.getBoundingClientRect();
         const center = rect.top + rect.height / 2;
         const dist = Math.abs(center - viewportCenter);
-        const idx = Number(el.dataset.index);
-        if (idx === activeRef.current) currentDist = dist;
-        if (dist < bestDist) {
-          bestDist = dist;
-          bestIndex = idx;
-        }
+        return smoothstep(clamp(1 - dist / radius, 0, 1));
       });
 
-      // Soglia: si attiva solo quando il blocco è davvero al centro del viewport.
-      // Isteresi: si cambia blocco solo se il candidato è SENSIBILMENTE più vicino del
-      // blocco attualmente attivo — così 01 e 02 (centri vicini) non sfarfallano.
-      const threshold = vh * 0.35;
-      const margin = vh * 0.04;
-      let next = activeRef.current;
-      if (bestIndex >= 0 && bestDist <= threshold) {
-        if (
-          activeRef.current < 0 ||
-          bestIndex === activeRef.current ||
-          bestDist + margin < currentDist
-        ) {
-          next = bestIndex;
-        }
-      } else {
-        next = -1;
-      }
-      if (next !== activeRef.current) {
-        activeRef.current = next;
-        setActiveIndex(next);
+      const changed = next.some((value, index) => Math.abs(value - focusRef.current[index]) > 0.015);
+      if (changed) {
+        focusRef.current = next;
+        setFocusLevels(next);
       }
     };
 
@@ -80,75 +60,18 @@ export default function LeFasiInterventoSection() {
     };
   }, []);
 
-  // Scorrimento semplicemente RALLENTATO (smorzato) mentre si attraversano i blocchi
-  // numerati: nessun salto automatico, tutto guidato dall'utente. Riduco il delta della
-  // rotella e inseguo morbidamente la posizione target con un lerp in rAF.
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Quanto rallentare (0.45 = ~45% della velocità normale) e quanto è morbido l'inseguimento.
-    const SPEED = 0.45;
-    const LERP = 0.12;
-
-    let target = window.scrollY;
-    let raf = 0;
-    let running = false;
-
-    // Attivo solo quando i blocchi numerati attraversano il centro del viewport,
-    // così l'intestazione (sopra) e il pulsante (sotto) restano a velocità normale.
-    const engaged = () => {
-      const r = container.getBoundingClientRect();
-      const center = window.innerHeight / 2;
-      return r.top < center && r.bottom > center;
-    };
-
-    const tick = () => {
-      const current = window.scrollY;
-      const diff = target - current;
-      if (Math.abs(diff) < 0.5 || !engaged()) {
-        running = false;
-        raf = 0;
-        return;
-      }
-      window.scrollTo(0, current + diff * LERP);
-      raf = requestAnimationFrame(tick);
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (!engaged()) {
-        target = window.scrollY; // resta sincronizzato per quando si rientra
-        return;
-      }
-      e.preventDefault();
-      const lineHeight = e.deltaMode === 1 ? 16 : 1;
-      target = Math.max(0, target + e.deltaY * lineHeight * SPEED);
-      if (!running) {
-        running = true;
-        raf = requestAnimationFrame(tick);
-      }
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
+  const spotlightActive = focusLevels.some((level) => level > 0.08);
 
   return (
     <section
-      ref={sectionRef}
       aria-labelledby="fasi-heading"
       className="relative w-full max-w-full overflow-hidden bg-blue-kinetic px-6 py-20 md:px-12 md:py-28"
     >
-      {/* Base */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{ background: "linear-gradient(155deg, #0a2f9e 0%, #0c40c4 50%, #082b96 100%)" }}
       />
-      {/* Riquadri: un campo cromatico per sezione, sfocati quel tanto che basta per fondersi */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 scale-110 blur-[26px]"
@@ -173,23 +96,53 @@ export default function LeFasiInterventoSection() {
           </h2>
           <p className="mt-5 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
             Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
-            sviluppo alla realtà esistente — e diventare, insieme a noi, autori di un cambiamento
+            sviluppo alla realt&agrave; esistente &mdash; e diventare, insieme a noi, autori di un cambiamento
             imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
             divisa in 5 fasi.
           </p>
         </header>
 
-        {/* Layout scomposto: 01 in alto a sx · 02 al centro (numero in alto) · 03 a dx più in basso ·
-            04 sotto a sx · 05 a tutta larghezza. Ordine di lettura verticale 01→05. */}
         <div
           ref={containerRef}
           className="mt-14 grid w-full min-w-0 grid-cols-1 gap-10 md:mt-20 md:grid-cols-12 md:gap-x-8 md:gap-y-16"
         >
-          <FaseCard index={0} fase={FASI[0]} active={activeIndex === 0} dimmed={activeIndex >= 0 && activeIndex !== 0} className="md:col-span-5 md:col-start-1 md:row-start-1" />
-          <FaseCard index={1} fase={FASI[1]} active={activeIndex === 1} dimmed={activeIndex >= 0 && activeIndex !== 1} layout="stacked" className="md:col-span-4 md:col-start-6 md:row-start-1 md:mt-10" />
-          <FaseCard index={2} fase={FASI[2]} active={activeIndex === 2} dimmed={activeIndex >= 0 && activeIndex !== 2} layout="stacked" className="md:col-span-3 md:col-start-10 md:row-span-2 md:row-start-1 md:mt-28" />
-          <FaseCard index={3} fase={FASI[3]} active={activeIndex === 3} dimmed={activeIndex >= 0 && activeIndex !== 3} className="md:col-span-7 md:col-start-1 md:row-start-2 md:mt-4" />
-          <FaseCard index={4} fase={FASI[4]} active={activeIndex === 4} dimmed={activeIndex >= 0 && activeIndex !== 4} className="md:col-span-12 md:col-start-1 md:row-start-3" />
+          <FaseCard
+            index={0}
+            fase={FASI[0]}
+            focus={focusLevels[0]}
+            spotlightActive={spotlightActive}
+            className="md:col-span-5 md:col-start-1 md:row-start-1"
+          />
+          <FaseCard
+            index={1}
+            fase={FASI[1]}
+            focus={focusLevels[1]}
+            spotlightActive={spotlightActive}
+            layout="stacked"
+            className="md:col-span-4 md:col-start-6 md:row-start-1 md:mt-10"
+          />
+          <FaseCard
+            index={2}
+            fase={FASI[2]}
+            focus={focusLevels[2]}
+            spotlightActive={spotlightActive}
+            layout="stacked"
+            className="md:col-span-3 md:col-start-10 md:row-span-2 md:row-start-1 md:mt-28"
+          />
+          <FaseCard
+            index={3}
+            fase={FASI[3]}
+            focus={focusLevels[3]}
+            spotlightActive={spotlightActive}
+            className="md:col-span-7 md:col-start-1 md:row-start-2 md:mt-4"
+          />
+          <FaseCard
+            index={4}
+            fase={FASI[4]}
+            focus={focusLevels[4]}
+            spotlightActive={spotlightActive}
+            className="md:col-span-12 md:col-start-1 md:row-start-3"
+          />
         </div>
 
         <div className="mt-16 flex justify-center md:mt-24">
