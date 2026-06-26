@@ -8,41 +8,12 @@ const AREAS = [
   {
     number: "01",
     title: ["Intervento", "Strategico"],
-    description:
-      [
-        "Costruiamo insieme da un",
-        "lato il piano di sviluppo",
-        "strategico e il suo",
-        "deployment operativo per",
-        "concentrarci su",
-        "un'esecuzione rapida ed",
-        "efficace del processo di",
-        "trasformazione e dall'altro",
-        "una visione chiara su dove",
-        "portare l'azienda e sulle",
-        "azioni necessarie per",
-        "arrivarci"
-      ],
+    description:"Costruiamo insieme da un lato il piano di sviluppo strategico e il suo deployment operativo per concentrarci su un\'esecuzione rapida ed efficace del processo di trasformazione e dall\'altro una visione chiara su dove portare l\'azienda e sulle azioni necessarie per arrivarci"
   },
   {
     number: "02",
     title: "Organizzazione",
-    description:
-      [
-        "Dopo aver analizzato la struttura",
-        "organizzativa, la facciamo evolvere",
-        "per rispondere al meglio ai bisogni",
-        "del processo di trasformazione.",
-        "Lavoriamo sulla retention delle",
-        "persone chiave, sullo sviluppo dei",
-        "talenti interni e sull'inserimento",
-        "delle competenze necessarie, sui",
-        "processi di delega e di",
-        "responsabilizzazione. Un'azienda",
-        "cresce e si sviluppa se crescono",
-        "e si sviluppano le persone che",
-        "la abitano."
-      ]
+    description:"Dopo aver analizzato la struttura organizzativa, la facciamo evolvere per rispondere al meglio ai bisogni del processo di trasformazione. Lavoriamo sulla retention delle persone chiave, sullo sviluppo dei talenti interni e sull'inserimento delle competenze necessarie, sui processi di delega e di responsabilizzazione. Un'azienda cresce e si sviluppa se crescono e si sviluppano le persone che la abitano."
   },
   {
     number: "03",
