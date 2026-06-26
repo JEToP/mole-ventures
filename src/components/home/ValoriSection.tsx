@@ -1,39 +1,38 @@
 "use client";
 
 /**
- * ValoriSection — Sticky storytelling con aggancio "slider"
+ * ValoriSection — Sticky storytelling (scrubbing classico, niente snap)
  * ------------------------------------------------------------------
  * Pattern: la sezione è "pinnata" (sticky) e i valori si succedono come
- * slide a tutto schermo mentre si scrolla. Ogni valore occupa un segmento
- * uguale dello scroll, con un PLATEAU centrale in cui è l'unico pienamente
- * visibile e centrato (così le scritte/icone NON si sovrappongono), e una
- * breve dissolvenza+scivolata ai bordi per passare al successivo.
+ * slide a tutto schermo mentre si scrolla. Lo scrubbing segue la rotella
+ * 1:1 (nessuno snap, nessun aggancio automatico): si scorre liberamente e i
+ * valori entrano/escono piano piano. Dietro a ogni valore un watermark icon
+ * in parallax su orbita più ampia (sale e cresce mentre scrolli).
  *
- * Cosa risolve:
- *  1. Niente blu vuoto: il PRIMO valore è pieno e centrato già a progress 0
- *     (nessuna dissolvenza in ingresso); l'ULTIMO resta pieno fino in fondo.
- *  2. Niente sovrapposizione: ogni valore ha un plateau in cui è solo; la
- *     transizione è breve e i due valori coinvolti sono separati in verticale
- *     (uno esce verso l'alto, l'altro entra dal basso).
- *  3. Aggancio automatico ACCESSIBILE: lo snap NON è CSS (che bloccava le
- *     frecce della tastiera ricacciando indietro i piccoli scroll), ma JS a
- *     "fine scroll": le frecce/rotella scorrono liberamente e, quando ci si
- *     ferma, la pagina si aggancia dolcemente al valore più vicino. Tenendo
- *     premuta la freccia si passa al valore successivo, come uno slider.
+ * Dettagli:
+ *  1. Niente blu vuoto: il PRIMO valore è pieno e centrato già a progress 0;
+ *     l'ULTIMO resta pieno fino in fondo, poi si esce verso la sezione dopo.
+ *  2. Niente sovrapposizione: ogni valore ha un plateau in cui è l'unico
+ *     pienamente visibile; i due valori in transizione sono separati in
+ *     verticale (uno esce in alto, l'altro entra dal basso). Le animazioni
+ *     sono JS-driven (MotionValue tracciato a mano, non ScrollTimeline nativa)
+ *     così l'opacità si azzera fuori finestra e non resta nulla "appiccicato".
+ *  3. Pallini cliccabili: portano dolcemente al valore (smooth scroll nativo).
  *
  * Libreria: Framer Motion (già nel progetto). useScroll/useTransform per lo
  * scrubbing dichiarativo.
  *
  * Accessibilità: con prefers-reduced-motion la sezione collassa in una lista
- * verticale statica (nessun pin, nessuno snap, nessun movimento).
+ * verticale statica (nessun pin, nessun movimento).
  */
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   motion,
   useScroll,
-  useSpring,
+  useMotionValue,
+  useMotionValueEvent,
   useTransform,
   useReducedMotion,
   type MotionValue,
@@ -44,49 +43,49 @@ const valori = [
   {
     id: "rispetto",
     name: "Rispetto",
-    icon: "/images/icons/rispetto.webp",
+    icon: "/images/icons/rispetto.svg",
     description:
       "Ogni azienda ha una sua storia che va capita e rispettata. Un cambiamento, una discontinuità va sempre affrontata con il rispetto del percorso fatto, delle persone che lo hanno realizzato e dei valori intrinseci dell'azienda.",
   },
   {
     id: "ascolto",
     name: "Ascolto",
-    icon: "/images/icons/ascolto.webp",
+    icon: "/images/icons/ascolto.svg",
     description:
       "Le persone aderiscono e attuano il cambiamento se contribuiscono alla sua definizione e impostazione. Per noi questa contribuzione è un elemento chiave del processo e quindi l'ascolto attivo è il denominatore alla base del progetto di trasformazione.",
   },
   {
     id: "cambiamento",
     name: "Cambiamento",
-    icon: "/images/icons/cambiamento.webp",
+    icon: "/images/icons/cambiamento.svg",
     description:
       "Un sistema evolve con successo se continua a rinnovarsi e ad anticipare le nuove esigenze. L'immobilismo impedisce ad un'azienda di vedere i passi necessari ad affrontare le nuove sfide dimensionanti. Noi agiamo per rimettere in discussione abitudini e modalità operative che minano la trasformazione e quindi le opportunità di nuova crescita.",
   },
   {
     id: "coerenza",
     name: "Coerenza",
-    icon: "/images/icons/coerenza.webp",
+    icon: "/images/icons/coerenza.svg",
     description:
       "Dopo una fase di condivisione, l'attuazione del cambiamento passa per una importante capacità di coerenza, costanza, e rispetto di quanto definito sia a livello di direzione che di valori attuativi del piano.",
   },
   {
     id: "dinamicita",
     name: "Dinamicità",
-    icon: "/images/icons/dinamicita.webp",
+    icon: "/images/icons/dinamicita.svg",
     description:
       "La capacità di evolvere e di evolvere velocemente seguendo il percorso tracciato è sale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
   },
   {
     id: "trasparenza",
     name: "Trasparenza",
-    icon: "/images/icons/trasparenza.webp",
+    icon: "/images/icons/trasparenza.svg",
     description:
       "La trasparenza verso tutti gli stakeholders coinvolti è fondamentale per permettere sempre la lettura dei vari segnali e costruire relazioni di fiducia con dipendenti, Clienti, partners e azionisti, che favoriscono il percorso condiviso di crescita e di successo dell'azienda.",
   },
   {
     id: "valorizzazione",
     name: "Valorizzazione",
-    icon: "/images/icons/valorizzazione.webp",
+    icon: "/images/icons/valorizzazione.svg",
     description:
       "Un sistema cresce se lo si valorizza: Nel valore delle persone, nelle relazioni con i Clienti, nel valore riconosciuto ai prodotti e servizi e nei KPI. Valorizzare in modo che questo percorso sia misurabile, riconosciuto e non autoreferenziale.",
   },
@@ -158,41 +157,36 @@ function Valore({
   }
   const opacity = useTransform(progress, sanitize(opStops), opValues);
 
-  // ── Profondità: ferma (y=0) nel plateau, entra dal basso / esce in alto ────
+  // ── Testo: fermo (y=0) nel plateau, entra dal basso / esce in alto ─────────
   let slideStops: number[];
   let yValues: number[];
   let scaleValues: number[];
-  let wmYValues: number[];
-  let wmScaleValues: number[];
   if (isFirst) {
     slideStops = [segEnd - CROSSFADE, segEnd];
     yValues = [0, -Y_TRAVEL];
     scaleValues = [1, 0.96];
-    wmYValues = [0, -90];
-    wmScaleValues = [1, 1.12];
   } else if (isLast) {
     slideStops = [segStart, segStart + CROSSFADE];
     yValues = [Y_TRAVEL, 0];
     scaleValues = [0.94, 1];
-    wmYValues = [90, 0];
-    wmScaleValues = [0.85, 1];
   } else {
-    slideStops = [
-      segStart,
-      segStart + CROSSFADE,
-      segEnd - CROSSFADE,
-      segEnd,
-    ];
+    slideStops = [segStart, segStart + CROSSFADE, segEnd - CROSSFADE, segEnd];
     yValues = [Y_TRAVEL, 0, 0, -Y_TRAVEL];
     scaleValues = [0.94, 1, 1, 0.96];
-    wmYValues = [90, 0, 0, -90];
-    wmScaleValues = [0.85, 1, 1, 1.12];
   }
   const slideRange = sanitize(slideStops);
   const y = useTransform(progress, slideRange, yValues);
   const scale = useTransform(progress, slideRange, scaleValues);
-  const wmY = useTransform(progress, slideRange, wmYValues);
-  const wmScale = useTransform(progress, slideRange, wmScaleValues);
+
+  // ── Watermark: parallax CONTINUO su tutto il segmento (raggio più ampio del
+  // testo). Mentre scrolli sale e cresce: l'icona "da sotto" è più grande e
+  // si muove su un'orbita diversa dal contenuto.
+  const wmRange = sanitize([segStart, center(index), segEnd]);
+  const wmY = useTransform(progress, wmRange, [130, 0, -130]);
+  // Scala simmetrica e SENZA crescere oltre il normale (niente "rimbalzo"):
+  // al centro resta alla dimensione a riposo (1.0), ai due estremi solo un po'
+  // più piccola in entrata dal basso e in uscita verso l'alto.
+  const wmScale = useTransform(progress, wmRange, [0.92, 1.0, 0.92]);
 
   return (
     <motion.div
@@ -203,18 +197,21 @@ function Valore({
         style={{ y, scale, willChange: "transform" }}
         className="relative w-full max-w-4xl [transform-style:preserve-3d]"
       >
-        {/* Watermark icon in parallax dietro al contenuto */}
+        {/* Watermark icon in parallax: line-art SVG (tratto bianco) reso
+            direttamente — visibile e affidabile. Niente CSS-mask: con SVG a
+            solo tratto la maschera rendeva linee sottilissime, di fatto
+            invisibili. Qui glow brand + opacità leggibile. */}
         <motion.div
           aria-hidden="true"
           style={{ y: wmY, scale: wmScale, willChange: "transform" }}
-          className="pointer-events-none absolute -top-8 -right-2 md:-top-16 md:right-0 z-0 opacity-[0.07]"
+          className="pointer-events-none absolute -top-10 -right-4 md:-top-24 md:-right-8 z-0 opacity-[0.22] [filter:drop-shadow(0_0_22px_rgba(127,176,224,0.55))]"
         >
           <Image
             src={valore.icon}
             alt=""
-            width={360}
-            height={360}
-            className="w-40 h-40 md:w-72 md:h-72 object-contain"
+            width={420}
+            height={420}
+            className="w-52 h-52 md:w-[26rem] md:h-[26rem] object-contain"
             unoptimized
           />
         </motion.div>
@@ -246,19 +243,29 @@ function Valore({
 function ProgressDot({
   index,
   progress,
+  onSelect,
 }: {
   index: number;
   progress: MotionValue<number>;
+  onSelect: (i: number) => void;
 }) {
   const c = center(index);
   const range = sanitize([c - SEG / 2, c, c + SEG / 2]);
   const opacity = useTransform(progress, range, [0.3, 1, 0.3]);
   const scale = useTransform(progress, range, [1, 1.5, 1]);
   return (
-    <motion.span
-      style={{ opacity, scale, willChange: "transform, opacity" }}
-      className="h-1.5 w-1.5 rounded-full bg-blue-soft"
-    />
+    <button
+      type="button"
+      onClick={() => onSelect(index)}
+      aria-label={`Vai al valore ${index + 1}: ${valori[index].name}`}
+      // padding negativo: area cliccabile generosa senza alterare il layout
+      className="grid place-items-center p-2 -m-2 cursor-pointer"
+    >
+      <motion.span
+        style={{ opacity, scale, willChange: "transform, opacity" }}
+        className="block h-1.5 w-1.5 rounded-full bg-blue-soft transition-colors hover:bg-white"
+      />
+    </button>
   );
 }
 
@@ -271,68 +278,35 @@ export default function ValoriSection() {
     offset: ["start start", "end end"],
   });
 
-  // Molla che ammorbidisce lo scrubbing (transizioni fluide, non a scatti) E,
-  // soprattutto, sposta tutte le animazioni sul percorso JS-driven: collegando
-  // le useTransform direttamente a scrollYProgress, framer-motion usa una
-  // ScrollTimeline nativa (WAAPI) che NON azzera l'opacità fuori finestra
-  // (ecco perché "Rispetto" restava sempre visibile e si accumulava). Con la
-  // molla in mezzo, useTransform clampa correttamente: un solo valore alla volta.
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 22, // meno smorzata di prima ⇒ risponde subito allo scroll (niente "ritardo"), senza rimbalzi
-    mass: 0.4,
-    restDelta: 0.0005,
-  });
+  // Progresso JS-driven: tracciamo scrollYProgress a mano in un MotionValue
+  // normale (NON la molla). Due motivi:
+  //  • Niente ScrollTimeline nativa (WAAPI): collegando le useTransform a un
+  //    valore "manuale" framer resta sul percorso JS, che azzera l'opacità
+  //    fuori finestra → un solo valore alla volta (niente "Rispetto" residuo).
+  //  • Niente overshoot: segue lo scroll 1:1, senza il rimbalzo della molla
+  //    (saliva e tornava giù). La morbidezza la dà l'ease dell'aggancio sotto.
+  const progress = useMotionValue(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => progress.set(v));
+  useEffect(() => {
+    progress.set(scrollYProgress.get()); // sincronizza al primo render
+  }, [progress, scrollYProgress]);
 
   const barWidth = useTransform(progress, [0, 1], ["0%", "100%"]);
 
-  // ── Aggancio automatico JS, compatibile con la tastiera ─────────────────────
-  // Niente scroll-snap CSS (ricaccia indietro i piccoli scroll da freccia e
-  // sembra "bloccato"). Qui lasciamo scorrere libero e, quando lo scroll si
-  // FERMA, agganciamo dolcemente il valore più vicino con uno smooth scroll.
-  // Tenendo premuta la freccia si supera la metà e si passa al valore dopo.
-  useEffect(() => {
-    if (reduce) return;
+  // ── Niente snap né aggancio: lo scrubbing segue la rotella 1:1 (scorrimento
+  // classico). L'unico scroll programmato è il click esplicito su un pallino,
+  // che porta dolcemente al valore corrispondente con lo smooth scroll nativo.
+  const scrollToValue = useCallback((i: number) => {
     const el = sectionRef.current;
     if (!el) return;
-    // Solo dove esiste un puntatore fine (mouse/trackpad): su touch lo scroll
-    // nativo è già fluido e uno snap programmato risulterebbe invadente.
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    let programmatic = false; // ignora gli eventi generati dal nostro smooth scroll
-
-    const snapToNearest = () => {
-      const range = el.offsetHeight - window.innerHeight; // px scrollabili nel pin
-      if (range <= 0) return;
-      const top = el.offsetTop;
-      const p = (window.scrollY - top) / range;
-      // Aggancia solo mentre si è "dentro" la sezione pinnata.
-      if (p < -0.02 || p > 1.02) return;
-      const i = Math.min(N - 1, Math.max(0, Math.round(p * N - 0.5)));
-      const targetP = (i + 0.5) / N;
-      const targetY = Math.round(top + targetP * range);
-      if (Math.abs(targetY - window.scrollY) < 2) return;
-      programmatic = true;
-      window.scrollTo({ top: targetY, behavior: "smooth" });
-      // sblocca dopo che lo smooth scroll è ragionevolmente concluso
-      window.setTimeout(() => {
-        programmatic = false;
-      }, 600);
-    };
-
-    const onScroll = () => {
-      if (programmatic) return;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(snapToNearest, 140); // attende che lo scroll si fermi
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (timer) clearTimeout(timer);
-    };
-  }, [reduce]);
+    const range = el.offsetHeight - window.innerHeight;
+    if (range <= 0) return;
+    const targetP = (i + 0.5) / N;
+    window.scrollTo({
+      top: Math.round(el.offsetTop + targetP * range),
+      behavior: "smooth",
+    });
+  }, []);
 
   // ── Sfondo (condiviso) ──────────────────────────────────────────────────────
   const Background = (
@@ -414,7 +388,12 @@ export default function ValoriSection() {
             </div>
             <div className="hidden md:flex items-center gap-2">
               {valori.map((v, i) => (
-                <ProgressDot key={v.id} index={i} progress={progress} />
+                <ProgressDot
+                  key={v.id}
+                  index={i}
+                  progress={progress}
+                  onSelect={scrollToValue}
+                />
               ))}
             </div>
           </div>

@@ -1,11 +1,19 @@
+import Image from 'next/image';
+
 export default function HeroSection() {
   return (
-    <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
+    <section className="relative w-full min-h-screen flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden">
       {/* Background image – brightness leggermente ridotta per più contrasto */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[0.90]"
-        style={{ backgroundImage: "url('/images/hero-bg.webp')" }}
-      />
+      <div className="absolute inset-0">
+        <Image
+          src="/images/hero-bg.webp"
+          alt="Hero background"
+          fill
+          priority
+          className="object-cover object-center brightness-[0.90]"
+          sizes="100vw"
+        />
+      </div>
 
       {/* Overlay brand: sfumatura navy profondo → blue deep per profondità e identità */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/85 via-[#05155E]/55 to-[#05155E]/0 md:to-black/70" />

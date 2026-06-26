@@ -39,6 +39,7 @@ export default function Navbar() {
               alt="Mole Venture Logo" 
               width={400}
               height={400}
+              priority
               className="h-12 md:h-20 w-auto object-contain mix-blend-screen"
               onError={(e) => { e.currentTarget.style.display='none'; }}
             />
