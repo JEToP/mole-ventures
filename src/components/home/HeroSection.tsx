@@ -32,7 +32,7 @@ export default function HeroSection() {
           </h1>
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-            <p className="font-body font-light text-white/75 text-[0.95rem] md:text-base leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+            <p className="font-body font-light text-white/80 text-base md:text-lg leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
               Entriamo in prima persona nell&apos;azienda per innescare le dinamiche di cambiamento
               e di discontinuità necessarie a sbloccare il potenziale inespresso e generare le
               successive opportunità di sviluppo

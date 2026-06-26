@@ -1,5 +1,7 @@
-// Server Component – nessun event handler, compatibile con Next.js App Router
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 // ── Dati valori ──────────────────────────────────────────────────────────────
 const valori = [
@@ -55,68 +57,162 @@ const valori = [
 ];
 
 export default function ValoriSection() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [fillHeight, setFillHeight] = useState(0);
+  const [active, setActive] = useState<boolean[]>(() => valori.map(() => false));
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      setActive(valori.map(() => true));
+      setFillHeight(99999);
+      return;
+    }
+
+    // 1. Observer nativo per tracciare la visibilità degli elementi (Bulletproof su iOS)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = rowRefs.current.indexOf(entry.target as HTMLDivElement);
+          if (index !== -1) {
+            setActive((prev) => {
+              const next = [...prev];
+              // Si attiva quando l'elemento entra nella viewport e rimane attivo finché non scorre molto in alto
+              next[index] = entry.isIntersecting;
+              return next;
+            });
+          }
+        });
+      },
+      {
+        root: null,
+        // Innesca quando l'elemento è circa al 15% dal basso dello schermo. 
+        // 2000px in alto assicura che non sparisca quando scorriamo molto giù.
+        rootMargin: "2000px 0px -15% 0px", 
+        threshold: 0
+      }
+    );
+
+    rowRefs.current.forEach((row) => {
+      if (row) observer.observe(row);
+    });
+
+    // 2. Fallback / Linea centrale animata (legata allo scroll)
+    let raf = 0;
+    const updateScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const track = trackRef.current;
+        if (!track) return;
+        const rect = track.getBoundingClientRect();
+        
+        const isMobile = window.innerWidth < 768;
+        const trigger = window.innerHeight * (isMobile ? 0.85 : 0.65);
+        
+        const fill = Math.max(0, Math.min(rect.height, trigger - rect.top));
+        setFillHeight(fill);
+      });
+    };
+
+    updateScroll();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", updateScroll);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("resize", updateScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
-    <section className="bg-blue-deep py-20 px-6 md:px-12">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold mb-16">
+    <section className="relative w-full overflow-hidden bg-[#030d3d]">
+      {/* Mesh Gradient Animato - Palette Corporate */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Elementi più grandi e copertura maggiore per evitare vuoti */}
+        <div className="absolute -top-[10%] -left-[10%] w-[70%] h-[70%] rounded-full bg-blue-kinetic opacity-60 blur-[120px] md:blur-[160px] animate-float" />
+        <div className="absolute top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-blue-soft opacity-30 blur-[120px] md:blur-[160px] animate-float-reverse" />
+        <div className="absolute -bottom-[10%] left-[0%] w-[70%] h-[70%] rounded-full bg-[#2E73C4] opacity-40 blur-[120px] md:blur-[160px] animate-float-slow" />
+        <div className="absolute bottom-[0%] right-[10%] w-[60%] h-[60%] rounded-full bg-blue-deep opacity-80 blur-[120px] md:blur-[160px] animate-float" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-24">
+        {/* Intestazione – stile coerente con le altre sezioni */}
+        <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold mb-4">
           I nostri valori
         </h2>
+        <span className="block h-1 w-12 bg-blue-soft rounded-full mb-16" />
 
-        <div className="flex flex-col">
-          {valori.map((valore, index) => (
-            <div key={valore.id} className="flex flex-col md:flex-row md:items-stretch">
-              {/* --- HEADER MOBILE (Solo su Mobile) --- */}
-              <div className="flex md:hidden items-center gap-4 mt-8 mb-2">
-                <div className="w-14 h-14 flex-shrink-0">
-                  <Image
-                    src={valore.icon}
-                    alt={valore.name}
-                    width={56}
-                    height={56}
-                    className="w-full h-full object-contain"
-                    unoptimized
-                  />
-                </div>
-                <span className="font-heading text-white text-2xl font-semibold">
-                  {valore.name}
-                </span>
-              </div>
+        {/* Timeline */}
+        <div ref={trackRef} className="relative">
+          {/* Binario di sfondo */}
+          <div className="absolute top-0 bottom-0 left-6 md:left-1/2 w-0.5 -translate-x-1/2 bg-white/15" />
+          {/* Linea che si disegna allo scroll */}
+          <div
+            className="absolute top-0 left-6 md:left-1/2 w-0.5 -translate-x-1/2 bg-gradient-to-b from-blue-soft to-blue-kinetic"
+            style={{ height: `${fillHeight}px` }}
+          />
 
-              {/* --- RIGA PER TIMELINE + DESCRIZIONE (su desktop include anche Left Col) --- */}
-              <div className="flex flex-row items-stretch w-full">
-                {/* Colonna Sinistra: Icona + Nome (Solo su Desktop) */}
-                <div className="hidden md:flex items-center gap-5 w-64 md:w-80 flex-shrink-0 py-6">
-                  <div className="w-20 h-20 flex-shrink-0">
+          {valori.map((valore, index) => {
+            const isActive = active[index];
+            const isLeft = index % 2 === 0; // pari a sinistra, dispari a destra (desktop)
+            return (
+              <div
+                key={valore.id}
+                ref={(el) => { rowRefs.current[index] = el; }}
+                className="relative py-8 md:py-10 md:grid md:grid-cols-2 md:gap-x-16"
+              >
+                {/* Nodo (pallino) sul percorso */}
+                <span
+                  className={`absolute left-6 md:left-1/2 top-12 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 z-10 h-4 w-4 rounded-full border-2 transition-all duration-500 ${
+                    isActive
+                      ? "bg-blue-soft border-blue-soft scale-110 shadow-[0_0_16px_rgba(76,172,248,0.7)]"
+                      : "bg-blue-deep border-white/30 scale-100"
+                  }`}
+                />
+
+                {/* Contenuto del valore */}
+                <div
+                  className={`relative pl-14 md:pl-0 flex flex-col gap-3 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]
+                    ${isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}
+                    ${isLeft
+                      ? "md:col-start-1 md:pr-16 md:items-end md:text-right"
+                      : "md:col-start-2 md:pl-16 md:items-start md:text-left"}
+                  `}
+                >
+                  {/* Icona in background (Watermark) */}
+                  <div className={`absolute top-1/2 -translate-y-1/2 pointer-events-none z-0 transition-opacity duration-700 ${
+                    isActive ? "opacity-10" : "opacity-0"
+                  } ${
+                    isLeft ? "right-10 md:right-8" : "left-14 md:left-8"
+                  }`}>
                     <Image
                       src={valore.icon}
-                      alt={valore.name}
-                      width={80}
-                      height={80}
-                      className="w-full h-full object-contain"
+                      alt=""
+                      width={240}
+                      height={240}
+                      className="w-32 h-32 md:w-48 md:h-48 object-contain"
                       unoptimized
                     />
                   </div>
-                  <span className="font-heading text-white text-xl md:text-2xl font-semibold leading-snug">
-                    {valore.name}
-                  </span>
-                </div>
 
-                {/* Colonna Centrale: Timeline */}
-                <div className="flex flex-col items-center w-8 md:w-10 flex-shrink-0">
-                  <div className={`w-0.5 bg-white/20 ${index === 0 ? "h-0 md:h-8" : "flex-1"}`} />
-                  <div className={`w-3 h-3 rounded-full bg-white flex-shrink-0 ${index === 0 ? "mt-2 md:mt-0" : ""}`} />
-                  <div className={`w-0.5 bg-white/20 ${index === valori.length - 1 ? "h-full md:h-8" : "flex-1"}`} />
-                </div>
+                  {/* Nome */}
+                  <div className={`relative z-10 flex items-center gap-4 ${isLeft ? "md:flex-row-reverse" : "md:flex-row"}`}>
+                    <h3 className="font-heading text-white text-2xl md:text-3xl font-semibold leading-tight">
+                      {valore.name}
+                    </h3>
+                  </div>
 
-                {/* Colonna Destra: Descrizione */}
-                <div className="flex-1 pl-4 md:pl-6 py-2 md:py-6 flex items-center">
-                  <p className="font-body text-white/75 text-sm md:text-base leading-relaxed pb-6 md:pb-0">
+                  {/* Descrizione */}
+                  <p className="relative z-10 font-body font-light text-white/75 text-base md:text-lg leading-relaxed max-w-md">
                     {valore.description}
                   </p>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
