@@ -21,7 +21,6 @@
  * lista verticale statica e leggibile (nessun pin, nessun movimento).
  */
 
-import Image from "next/image";
 import { useRef } from "react";
 import {
   motion,
@@ -36,49 +35,49 @@ const valori = [
   {
     id: "rispetto",
     name: "Rispetto",
-    icon: "/images/icons/rispetto.webp",
+    icon: "/images/icons/rispetto.svg",
     description:
       "Ogni azienda ha una sua storia che va capita e rispettata. Un cambiamento, una discontinuità va sempre affrontata con il rispetto del percorso fatto, delle persone che lo hanno realizzato e dei valori intrinseci dell'azienda.",
   },
   {
     id: "ascolto",
     name: "Ascolto",
-    icon: "/images/icons/ascolto.webp",
+    icon: "/images/icons/ascolto.svg",
     description:
       "Le persone aderiscono e attuano il cambiamento se contribuiscono alla sua definizione e impostazione. Per noi questa contribuzione è un elemento chiave del processo e quindi l'ascolto attivo è il denominatore alla base del progetto di trasformazione.",
   },
   {
     id: "cambiamento",
     name: "Cambiamento",
-    icon: "/images/icons/cambiamento.webp",
+    icon: "/images/icons/cambiamento.svg",
     description:
       "Un sistema evolve con successo se continua a rinnovarsi e ad anticipare le nuove esigenze. L'immobilismo impedisce ad un'azienda di vedere i passi necessari ad affrontare le nuove sfide dimensionanti. Noi agiamo per rimettere in discussione abitudini e modalità operative che minano la trasformazione e quindi le opportunità di nuova crescita.",
   },
   {
     id: "coerenza",
     name: "Coerenza",
-    icon: "/images/icons/coerenza.webp",
+    icon: "/images/icons/coerenza.svg",
     description:
       "Dopo una fase di condivisione, l'attuazione del cambiamento passa per una importante capacità di coerenza, costanza, e rispetto di quanto definito sia a livello di direzione che di valori attuativi del piano.",
   },
   {
     id: "dinamicita",
     name: "Dinamicità",
-    icon: "/images/icons/dinamicita.webp",
+    icon: "/images/icons/dinamicita.svg",
     description:
       "La capacità di evolvere e di evolvere velocemente seguendo il percorso tracciato è sale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
   },
   {
     id: "trasparenza",
     name: "Trasparenza",
-    icon: "/images/icons/trasparenza.webp",
+    icon: "/images/icons/trasparenza.svg",
     description:
       "La trasparenza verso tutti gli stakeholders coinvolti è fondamentale per permettere sempre la lettura dei vari segnali e costruire relazioni di fiducia con dipendenti, Clienti, partners e azionisti, che favoriscono il percorso condiviso di crescita e di successo dell'azienda.",
   },
   {
     id: "valorizzazione",
     name: "Valorizzazione",
-    icon: "/images/icons/valorizzazione.webp",
+    icon: "/images/icons/valorizzazione.svg",
     description:
       "Un sistema cresce se lo si valorizza: Nel valore delle persone, nelle relazioni con i Clienti, nel valore riconosciuto ai prodotti e servizi e nei KPI. Valorizzare in modo che questo percorso sia misurabile, riconosciuto e non autoreferenziale.",
   },
@@ -126,21 +125,33 @@ function Valore({
         style={{ y, scale, willChange: "transform" }}
         className="relative w-full max-w-4xl"
       >
-        {/* Watermark icon in parallax dietro al contenuto */}
+        {/* Watermark icon in parallax: l'SVG fa da maschera, dietro un
+            gradiente brand animato che scorre ("shimmer"). */}
         <motion.div
           aria-hidden="true"
-          style={{ y: wmY, scale: wmScale, willChange: "transform" }}
-          className="pointer-events-none absolute -top-8 -right-2 md:-top-16 md:right-0 z-0 opacity-[0.07]"
-        >
-          <Image
-            src={valore.icon}
-            alt=""
-            width={360}
-            height={360}
-            className="w-40 h-40 md:w-72 md:h-72 object-contain"
-            unoptimized
-          />
-        </motion.div>
+          style={{
+            y: wmY,
+            scale: wmScale,
+            willChange: "transform",
+            WebkitMaskImage: `url(${valore.icon})`,
+            maskImage: `url(${valore.icon})`,
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskSize: "contain",
+            maskSize: "contain",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+          }}
+          className="pointer-events-none absolute -top-8 -right-2 md:-top-16 md:right-0 z-0 w-40 h-40 md:w-72 md:h-72 opacity-40 bg-[linear-gradient(145deg,_#FFFFFF_0%,_#CFE6FB_30%,_#7FB0E0_55%,_#3E6699_80%,_#A8C8E8_100%)] bg-[length:300%_300%] animate-[valori-shimmer_8s_ease-in-out_infinite] [filter:drop-shadow(0_1px_0_rgba(255,255,255,0.4))_drop-shadow(0_-1px_1px_rgba(0,0,0,0.5))]"
+        />
+
+        {/* keyframes per lo scorrimento del gradiente sull'icona */}
+        <style>{`
+          @keyframes valori-shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+        `}</style>
 
         {/* Contenuto */}
         <div className="relative z-10">

@@ -32,6 +32,7 @@ export default function Footer() {
               alt="Mole Venture"
               width={180}
               height={180}
+              priority
               className="h-20 w-auto object-contain mix-blend-screen mb-5"
               unoptimized
             />
