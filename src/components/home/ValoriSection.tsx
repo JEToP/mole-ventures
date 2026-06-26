@@ -97,9 +97,10 @@ const N = valori.length;
 // ── Geometria scroll/slide ────────────────────────────────────────────────────
 // Ogni valore occupa STEP_VH di scroll (meno di 100vh ⇒ avanzamento rapido).
 // La sezione è alta N*STEP_VH; pinnata, scorre per (N*STEP_VH − 100)vh.
-const STEP_VH = 60;
+const STEP_VH = 66;
 const SEG = 1 / N; // ampiezza (in progress 0..1) del segmento di ogni valore
-const CROSSFADE = 0.035; // mezza ampiezza della transizione ai confini di segmento
+const CROSSFADE = 0.046; // mezza ampiezza della transizione ai confini di segmento
+//   ↑ più ampia ⇒ il cambio valore si distende su più scroll = più graduale
 const Y_TRAVEL = 64; // px di scivolata in ingresso/uscita (separazione verticale)
 
 // Centro del segmento del valore `i`, in progress [0..1]: è anche il punto di
@@ -277,9 +278,9 @@ export default function ValoriSection() {
   // (ecco perché "Rispetto" restava sempre visibile e si accumulava). Con la
   // molla in mezzo, useTransform clampa correttamente: un solo valore alla volta.
   const progress = useSpring(scrollYProgress, {
-    stiffness: 110,
-    damping: 30,
-    mass: 0.5,
+    stiffness: 120,
+    damping: 22, // meno smorzata di prima ⇒ risponde subito allo scroll (niente "ritardo"), senza rimbalzi
+    mass: 0.4,
     restDelta: 0.0005,
   });
 
