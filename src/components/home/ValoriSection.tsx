@@ -1,31 +1,39 @@
 "use client";
 
 /**
- * ValoriSection — Full-screen sticky storytelling
+ * ValoriSection — Sticky storytelling con aggancio "slider"
  * ------------------------------------------------------------------
- * Pattern: la sezione viene "pinnata" (sticky) e i valori si succedono
- * come tappe a tutto schermo mentre si scrolla. Ogni valore ottiene il
- * suo momento, con un watermark icon in parallax e un ingresso sfalsato.
+ * Pattern: la sezione è "pinnata" (sticky) e i valori si succedono come
+ * slide a tutto schermo mentre si scrolla. Ogni valore occupa un segmento
+ * uguale dello scroll, con un PLATEAU centrale in cui è l'unico pienamente
+ * visibile e centrato (così le scritte/icone NON si sovrappongono), e una
+ * breve dissolvenza+scivolata ai bordi per passare al successivo.
  *
- * Perché questo pattern e non l'horizontal scroll:
- * - I valori sono un "sistema" di principi vissuti come tappe di un
- *   percorso di trasformazione → lo storytelling verticale lo rende.
- * - Lo scroll resta verticale (atteso, ottimo su mobile e iOS Safari),
- *   niente scroll orizzontale forzato da degradare.
+ * Cosa risolve:
+ *  1. Niente blu vuoto: il PRIMO valore è pieno e centrato già a progress 0
+ *     (nessuna dissolvenza in ingresso); l'ULTIMO resta pieno fino in fondo.
+ *  2. Niente sovrapposizione: ogni valore ha un plateau in cui è solo; la
+ *     transizione è breve e i due valori coinvolti sono separati in verticale
+ *     (uno esce verso l'alto, l'altro entra dal basso).
+ *  3. Aggancio automatico ACCESSIBILE: lo snap NON è CSS (che bloccava le
+ *     frecce della tastiera ricacciando indietro i piccoli scroll), ma JS a
+ *     "fine scroll": le frecce/rotella scorrono liberamente e, quando ci si
+ *     ferma, la pagina si aggancia dolcemente al valore più vicino. Tenendo
+ *     premuta la freccia si passa al valore successivo, come uno slider.
  *
- * Libreria: Framer Motion. Vive nativamente in React/Next; useScroll/
- * useTransform coprono lo scrubbing senza un motore imperativo esterno.
- *   npm i framer-motion
+ * Libreria: Framer Motion (già nel progetto). useScroll/useTransform per lo
+ * scrubbing dichiarativo.
  *
- * Accessibilità: con prefers-reduced-motion la sezione collassa in una
- * lista verticale statica e leggibile (nessun pin, nessun movimento).
+ * Accessibilità: con prefers-reduced-motion la sezione collassa in una lista
+ * verticale statica (nessun pin, nessuno snap, nessun movimento).
  */
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   motion,
   useScroll,
+  useSpring,
   useTransform,
   useReducedMotion,
   type MotionValue,
@@ -86,36 +94,104 @@ const valori = [
 
 const N = valori.length;
 
+// ── Geometria scroll/slide ────────────────────────────────────────────────────
+// Ogni valore occupa STEP_VH di scroll (meno di 100vh ⇒ avanzamento rapido).
+// La sezione è alta N*STEP_VH; pinnata, scorre per (N*STEP_VH − 100)vh.
+const STEP_VH = 60;
+const SEG = 1 / N; // ampiezza (in progress 0..1) del segmento di ogni valore
+const CROSSFADE = 0.035; // mezza ampiezza della transizione ai confini di segmento
+const Y_TRAVEL = 64; // px di scivolata in ingresso/uscita (separazione verticale)
+
+// Centro del segmento del valore `i`, in progress [0..1]: è anche il punto di
+// aggancio (snap). Sempre in (0,1), quindi nessun offset fuori range.
+const center = (i: number) => (i + 0.5) * SEG;
+
+// framer-motion accelera lo scrubbing via ScrollTimeline nativa (Element.animate),
+// che vuole offset di keyframe in [0,1] e strettamente crescenti: `sanitize`
+// clampa e forza l'incremento minimo (evita il TypeError dell'animate nativo).
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+const sanitize = (stops: number[]): number[] => {
+  let prev = -Infinity;
+  return stops.map((s) => {
+    let v = clamp01(s);
+    if (v <= prev) v = Math.min(1, prev + 1e-4);
+    prev = v;
+    return v;
+  });
+};
+
 // ──────────────────────────────────────────────────────────────────────────────
-// Singola "tappa" a tutto schermo. Riceve il progresso globale [0..1] e
-// calcola la propria finestra di visibilità: opacità, scala, slittamento,
-// più il watermark in parallax.
+// Singola "slide". Plateau centrale (visibile da sola) + transizioni ai bordi.
 // ──────────────────────────────────────────────────────────────────────────────
 function Valore({
-  valore,
   index,
   progress,
 }: {
-  valore: (typeof valori)[number];
   index: number;
   progress: MotionValue<number>;
 }) {
-  const start = index / N;
-  const end = (index + 1) / N;
-  const mid = (start + end) / 2;
+  const valore = valori[index];
+  const segStart = index * SEG;
+  const segEnd = (index + 1) * SEG;
+  const isFirst = index === 0;
+  const isLast = index === N - 1;
 
-  // Opacità: entra, resta piena, esce.
-  const opacity = useTransform(
-    progress,
-    [start, start + 0.04, end - 0.04, end],
-    [0, 1, 1, 0]
-  );
-  // Profondità: leggero slittamento e scala su ingresso/uscita.
-  const y = useTransform(progress, [start, mid, end], [60, 0, -60]);
-  const scale = useTransform(progress, [start, mid, end], [0.94, 1, 0.98]);
-  // Watermark in parallax: si muove più lentamente del contenuto e scala.
-  const wmY = useTransform(progress, [start, end], [120, -120]);
-  const wmScale = useTransform(progress, [start, mid, end], [0.85, 1, 1.1]);
+  // ── Opacità: plateau pieno, dissolvenza breve ai confini ───────────────────
+  // Primo: pieno da progress 0 (nessun fade-in). Ultimo: pieno fino a 1.
+  let opStops: number[];
+  let opValues: number[];
+  if (isFirst) {
+    opStops = [segEnd - CROSSFADE, segEnd + CROSSFADE];
+    opValues = [1, 0];
+  } else if (isLast) {
+    opStops = [segStart - CROSSFADE, segStart + CROSSFADE];
+    opValues = [0, 1];
+  } else {
+    opStops = [
+      segStart - CROSSFADE,
+      segStart + CROSSFADE,
+      segEnd - CROSSFADE,
+      segEnd + CROSSFADE,
+    ];
+    opValues = [0, 1, 1, 0];
+  }
+  const opacity = useTransform(progress, sanitize(opStops), opValues);
+
+  // ── Profondità: ferma (y=0) nel plateau, entra dal basso / esce in alto ────
+  let slideStops: number[];
+  let yValues: number[];
+  let scaleValues: number[];
+  let wmYValues: number[];
+  let wmScaleValues: number[];
+  if (isFirst) {
+    slideStops = [segEnd - CROSSFADE, segEnd];
+    yValues = [0, -Y_TRAVEL];
+    scaleValues = [1, 0.96];
+    wmYValues = [0, -90];
+    wmScaleValues = [1, 1.12];
+  } else if (isLast) {
+    slideStops = [segStart, segStart + CROSSFADE];
+    yValues = [Y_TRAVEL, 0];
+    scaleValues = [0.94, 1];
+    wmYValues = [90, 0];
+    wmScaleValues = [0.85, 1];
+  } else {
+    slideStops = [
+      segStart,
+      segStart + CROSSFADE,
+      segEnd - CROSSFADE,
+      segEnd,
+    ];
+    yValues = [Y_TRAVEL, 0, 0, -Y_TRAVEL];
+    scaleValues = [0.94, 1, 1, 0.96];
+    wmYValues = [90, 0, 0, -90];
+    wmScaleValues = [0.85, 1, 1, 1.12];
+  }
+  const slideRange = sanitize(slideStops);
+  const y = useTransform(progress, slideRange, yValues);
+  const scale = useTransform(progress, slideRange, scaleValues);
+  const wmY = useTransform(progress, slideRange, wmYValues);
+  const wmScale = useTransform(progress, slideRange, wmScaleValues);
 
   return (
     <motion.div
@@ -124,7 +200,7 @@ function Valore({
     >
       <motion.div
         style={{ y, scale, willChange: "transform" }}
-        className="relative w-full max-w-4xl"
+        className="relative w-full max-w-4xl [transform-style:preserve-3d]"
       >
         {/* Watermark icon in parallax dietro al contenuto */}
         <motion.div
@@ -144,6 +220,11 @@ function Valore({
 
         {/* Contenuto */}
         <div className="relative z-10">
+          {/* Eyebrow: numero progressivo del valore */}
+          <span className="block font-body text-sm md:text-base font-light tracking-[0.25em] text-blue-soft/70 mb-4">
+            {String(index + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
+          </span>
+
           {/* Titolo con gradiente brand */}
           <h3 className="font-heading text-4xl md:text-6xl font-semibold leading-[1.05] mb-5 w-fit bg-gradient-to-br from-white via-blue-soft to-blue-kinetic bg-clip-text text-transparent">
             {valore.name}
@@ -159,7 +240,8 @@ function Valore({
   );
 }
 
-// Pallino dell'indicatore: si illumina quando la sua tappa è attiva.
+// Pallino dell'indicatore: si illumina e si ingrandisce quando la sua slide è
+// al centro del proprio segmento.
 function ProgressDot({
   index,
   progress,
@@ -167,18 +249,13 @@ function ProgressDot({
   index: number;
   progress: MotionValue<number>;
 }) {
-  const start = index / N;
-  const end = (index + 1) / N;
-  // Punti di input strettamente crescenti e clampati in [0, 1].
-  const a = Math.max(0, start - 0.0001);
-  const b = start;
-  const c = Math.max(b + 0.0001, end - 0.0001);
-  const d = Math.min(1, c + 0.0001);
-  const opacity = useTransform(progress, [a, b, c, d], [0.3, 1, 1, 0.3]);
-  const scale = useTransform(progress, [a, b, c, d], [1, 1.4, 1.4, 1]);
+  const c = center(index);
+  const range = sanitize([c - SEG / 2, c, c + SEG / 2]);
+  const opacity = useTransform(progress, range, [0.3, 1, 0.3]);
+  const scale = useTransform(progress, range, [1, 1.5, 1]);
   return (
     <motion.span
-      style={{ opacity, scale }}
+      style={{ opacity, scale, willChange: "transform, opacity" }}
       className="h-1.5 w-1.5 rounded-full bg-blue-soft"
     />
   );
@@ -193,7 +270,68 @@ export default function ValoriSection() {
     offset: ["start start", "end end"],
   });
 
-  const barWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // Molla che ammorbidisce lo scrubbing (transizioni fluide, non a scatti) E,
+  // soprattutto, sposta tutte le animazioni sul percorso JS-driven: collegando
+  // le useTransform direttamente a scrollYProgress, framer-motion usa una
+  // ScrollTimeline nativa (WAAPI) che NON azzera l'opacità fuori finestra
+  // (ecco perché "Rispetto" restava sempre visibile e si accumulava). Con la
+  // molla in mezzo, useTransform clampa correttamente: un solo valore alla volta.
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 110,
+    damping: 30,
+    mass: 0.5,
+    restDelta: 0.0005,
+  });
+
+  const barWidth = useTransform(progress, [0, 1], ["0%", "100%"]);
+
+  // ── Aggancio automatico JS, compatibile con la tastiera ─────────────────────
+  // Niente scroll-snap CSS (ricaccia indietro i piccoli scroll da freccia e
+  // sembra "bloccato"). Qui lasciamo scorrere libero e, quando lo scroll si
+  // FERMA, agganciamo dolcemente il valore più vicino con uno smooth scroll.
+  // Tenendo premuta la freccia si supera la metà e si passa al valore dopo.
+  useEffect(() => {
+    if (reduce) return;
+    const el = sectionRef.current;
+    if (!el) return;
+    // Solo dove esiste un puntatore fine (mouse/trackpad): su touch lo scroll
+    // nativo è già fluido e uno snap programmato risulterebbe invadente.
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let programmatic = false; // ignora gli eventi generati dal nostro smooth scroll
+
+    const snapToNearest = () => {
+      const range = el.offsetHeight - window.innerHeight; // px scrollabili nel pin
+      if (range <= 0) return;
+      const top = el.offsetTop;
+      const p = (window.scrollY - top) / range;
+      // Aggancia solo mentre si è "dentro" la sezione pinnata.
+      if (p < -0.02 || p > 1.02) return;
+      const i = Math.min(N - 1, Math.max(0, Math.round(p * N - 0.5)));
+      const targetP = (i + 0.5) / N;
+      const targetY = Math.round(top + targetP * range);
+      if (Math.abs(targetY - window.scrollY) < 2) return;
+      programmatic = true;
+      window.scrollTo({ top: targetY, behavior: "smooth" });
+      // sblocca dopo che lo smooth scroll è ragionevolmente concluso
+      window.setTimeout(() => {
+        programmatic = false;
+      }, 600);
+    };
+
+    const onScroll = () => {
+      if (programmatic) return;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(snapToNearest, 140); // attende che lo scroll si fermi
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (timer) clearTimeout(timer);
+    };
+  }, [reduce]);
 
   // ── Sfondo (condiviso) ──────────────────────────────────────────────────────
   const Background = (
@@ -222,8 +360,11 @@ export default function ValoriSection() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="mb-16">{Header}</div>
           <div className="flex flex-col gap-16">
-            {valori.map((valore) => (
+            {valori.map((valore, i) => (
               <div key={valore.id} className="flex flex-col gap-4">
+                <span className="font-body text-sm font-light tracking-[0.25em] text-blue-soft/70">
+                  {String(i + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
+                </span>
                 <h3 className="font-heading text-3xl md:text-4xl font-semibold leading-tight w-fit bg-gradient-to-br from-white via-blue-soft to-blue-kinetic bg-clip-text text-transparent">
                   {valore.name}
                 </h3>
@@ -238,15 +379,15 @@ export default function ValoriSection() {
     );
   }
 
-  // ── Versione animata: sezione alta N×100vh, contenuto pinnato ───────────────
+  // ── Versione animata: sezione alta N×STEP_VH, contenuto pinnato ─────────────
   return (
     <section
       ref={sectionRef}
       className="relative w-full bg-[#030d3d]"
-      style={{ height: `${N * 100}vh` }}
+      style={{ height: `${N * STEP_VH}vh` }}
     >
       {/* Schermata pinnata */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-screen w-full overflow-hidden [perspective:1200px]">
         {Background}
 
         {/* Intestazione fissa in alto */}
@@ -254,15 +395,10 @@ export default function ValoriSection() {
           {Header}
         </div>
 
-        {/* Tappe sovrapposte, ciascuna controlla la propria visibilità */}
+        {/* Slide sovrapposte, ciascuna controlla la propria visibilità */}
         <div className="relative h-full w-full">
           {valori.map((valore, index) => (
-            <Valore
-              key={valore.id}
-              valore={valore}
-              index={index}
-              progress={scrollYProgress}
-            />
+            <Valore key={valore.id} index={index} progress={progress} />
           ))}
         </div>
 
@@ -277,7 +413,7 @@ export default function ValoriSection() {
             </div>
             <div className="hidden md:flex items-center gap-2">
               {valori.map((v, i) => (
-                <ProgressDot key={v.id} index={i} progress={scrollYProgress} />
+                <ProgressDot key={v.id} index={i} progress={progress} />
               ))}
             </div>
           </div>
