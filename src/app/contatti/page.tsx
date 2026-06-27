@@ -1,4 +1,5 @@
 import Image from "next/image";
+import FadeInOnScroll from '@/components/FadeInOnScroll';
 
 export const metadata = {
   title: 'Contatti - Mole Venture',
@@ -9,14 +10,14 @@ export default function ContattiPage() {
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[110vh] md:min-h-screen flex flex-col justify-center md:justify-end pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
+      <FadeInOnScroll className="relative w-full min-h-screen md:min-h-screen flex flex-col justify-center md:justify-end pt-28 pb-32 md:pt-24 md:pb-20 overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[0.90]"
           style={{ backgroundImage: "url('/images/contatti-bg.webp')" }}
         />
         {/* Overlay brand: sfumatura navy profondo → blue deep per profondità e identità */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/85 via-[#05155E]/55 to-[#05155E]/0 md:to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/85 via-[#05155E]/55 to-[#05155E]/95 md:to-black/70" />
 
         {/* Sfumatura in alto: navy profondo nella safe area che sfuma molto dolcemente verso il basso (visibile solo su mobile) */}
         <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
@@ -38,10 +39,10 @@ export default function ContattiPage() {
             </div>
           </div>
         </div>
-      </section>
+      </FadeInOnScroll>
 
       {/* Form Section */}
-      <section className="relative w-full bg-[radial-gradient(ellipse_at_left,_#3b82f6_0%,_#05155E_50%)] flex-1 px-6 md:px-16 py-20">
+      <FadeInOnScroll className="relative w-full bg-[#05155E] bg-[radial-gradient(ellipse_at_left,_rgba(59,130,246,0.22)_0%,_rgba(5,21,94,0.95)_35%,_rgba(5,21,94,1)_100%)] flex-1 px-6 md:px-16 py-20">
         <div className="max-w-7xl mx-auto w-full">
           <form className="flex flex-col gap-8">
             {/* Prima riga: Nome, Azienda, Telefono, Email */}
@@ -123,7 +124,7 @@ export default function ContattiPage() {
             </div>
           </form>
         </div>
-      </section>
+      </FadeInOnScroll>
     </div>
   );
 }

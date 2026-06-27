@@ -38,7 +38,7 @@ export default function RootLayout({
       lang="it"
       className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-body font-light tracking-tight leading-snug text-[1.25rem] bg-[#01061A] text-white">
+      <body className="min-h-full flex flex-col font-body font-light tracking-tight leading-snug text-[1.25rem] bg-[#05155E] text-white">
         <Navbar />
         <main className="flex-1 w-full flex flex-col">{children}</main>
         <Footer />
