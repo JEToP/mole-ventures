@@ -78,7 +78,7 @@ export default function ContattiPage() {
                   id="nome"
                   name="nome"
                   placeholder="Il tuo nome"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -88,7 +88,7 @@ export default function ContattiPage() {
                   id="azienda"
                   name="azienda"
                   placeholder="La tua azienda"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -102,7 +102,7 @@ export default function ContattiPage() {
                   id="telefono"
                   name="telefono"
                   placeholder="Il tuo numero"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -112,7 +112,7 @@ export default function ContattiPage() {
                   id="email"
                   name="email"
                   placeholder="La tua email"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function ContattiPage() {
                 id="oggetto"
                 name="oggetto"
                 placeholder="Di cosa vorresti parlarci?"
-                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
+                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
               />
             </div>
 
@@ -137,7 +137,7 @@ export default function ContattiPage() {
                 name="messaggio"
                 placeholder="Raccontaci la tua realtà..."
                 rows={6}
-                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm resize-y"
+                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm resize-y"
               ></textarea>
             </div>
 
