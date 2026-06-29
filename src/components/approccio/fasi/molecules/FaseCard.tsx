@@ -7,7 +7,6 @@ type FaseCardProps = {
   index: number;
   focus?: number;
   spotlightActive?: boolean;
-  layout?: "side" | "stacked";
   className?: string;
 };
 
@@ -20,14 +19,13 @@ export default function FaseCard({
   index,
   focus = 0,
   spotlightActive = false,
-  layout = "side",
   className = "",
 }: FaseCardProps) {
   const focusLevel = clamp(focus, 0, 1);
-  const opacity = spotlightActive ? 0.66 + focusLevel * 0.34 : 1;
-  const lift = focusLevel * -6;
-  const scale = 1 + focusLevel * 0.025;
-  const textAlpha = 0.84 + focusLevel * 0.16;
+  const opacity = spotlightActive ? 0.46 + focusLevel * 0.54 : 1;
+  const lift = focusLevel * -10;
+  const scale = 1 + focusLevel * 0.035;
+  const textAlpha = 0.78 + focusLevel * 0.22;
   const glowMask = "radial-gradient(ellipse 75% 75% at 50% 45%, #000 40%, transparent 80%)";
   const cardStyle = {
     opacity,
@@ -55,35 +53,19 @@ export default function FaseCard({
         }}
       />
 
-      {layout === "stacked" ? (
-        <div className="flex flex-col items-start text-left">
-          <FaseNumero value={fase.numero} focus={focusLevel} />
-          <h3 className="mt-3 break-words font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:mt-4 md:text-[34px]">
-            {fase.titolo}
-          </h3>
-          <p
-            style={descriptionStyle}
-            className="mt-4 break-words font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-700 md:mt-5 md:text-[18px]"
-          >
-            {fase.descrizione}
-          </p>
-        </div>
-      ) : (
-        <div>
-          <h3 className="break-words font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:pl-[7rem] md:text-[34px]">
-            {fase.titolo}
-          </h3>
-          <div className="mt-3 flex min-w-0 flex-col gap-3 md:mt-4 md:flex-row md:items-start md:gap-6">
-            <FaseNumero value={fase.numero} focus={focusLevel} className="shrink-0 md:w-[5rem]" />
-            <p
-              style={descriptionStyle}
-              className="min-w-0 break-words font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-700 md:text-[18px]"
-            >
-              {fase.descrizione}
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Numero sempre in alto, titolo e descrizione sotto (coerente per tutte) */}
+      <div className="flex flex-col items-start text-left">
+        <FaseNumero value={fase.numero} focus={spotlightActive ? focusLevel : 1} />
+        <h3 className="mt-3 break-words font-heading text-[28px] font-semibold leading-[1.05] tracking-normal text-white md:mt-4 md:text-[34px]">
+          {fase.titolo}
+        </h3>
+        <p
+          style={descriptionStyle}
+          className="mt-4 break-words font-body text-[16px] font-normal leading-[1.6] tracking-normal transition-colors duration-700 md:mt-5 md:text-[18px]"
+        >
+          {fase.descrizione}
+        </p>
+      </div>
     </article>
   );
 }

@@ -1,159 +1,286 @@
 "use client";
 
+/**
+ * LeFasiInterventoSection — focus "pinnato" guidato dallo scroll.
+ *
+ * Desktop: la sezione del pin è alta e il contenuto è pinnato (sticky). Le prime
+ * 4 fasi sono visibili nella loro disposizione sparsa; scorrendo, il focus passa
+ * in ordine 1→2→3→4 (attivo pieno e leggermente più grande, gli altri opachi).
+ * Lo scrubbing segue la rotella 1:1 (framer-motion), morbido, niente scatti.
+ * Alla fine del pin la pagina riprende a scorrere: la 5ª fase e la call to action
+ * scorrono in continuità sullo stesso sfondo.
+ *
+ * Mobile: punti impilati uno sotto l'altro (nessun pin); il focus scorre con la
+ * pagina. Reduced motion: lista statica, tutto a piena opacità.
+ */
+
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { useEffect, useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+  useReducedMotion,
+  type MotionValue,
+  type MotionStyle,
+} from "framer-motion";
 import { FASI } from "../fasiData";
-import FaseCard from "../molecules/FaseCard";
 
-const emptyFocusLevels = () => FASI.map(() => 0);
+// Solo le prime 4 fasi sono pinnate; la 5ª è la continuazione dopo il pin.
+const PINNED = FASI.slice(0, 4);
+const PN = PINNED.length;
+const SEG = 1 / PN;
+const CROSSFADE = SEG * 0.34;
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+const sanitize = (stops: number[]): number[] => {
+  let prev = -Infinity;
+  return stops.map((s) => {
+    let v = clamp01(s);
+    if (v <= prev) v = Math.min(1, prev + 1e-4);
+    prev = v;
+    return v;
+  });
+};
+
+// Disposizione sparsa su desktop (lg+) per le 4 fasi pinnate. Sotto lg: impilate.
+const POSITIONS = [
+  "lg:absolute lg:left-[2%] lg:top-[17%] lg:w-[27%]",
+  "lg:absolute lg:left-[39%] lg:top-[13%] lg:w-[23%]",
+  "lg:absolute lg:left-[71%] lg:top-[21%] lg:w-[27%]",
+  "lg:absolute lg:left-[3%] lg:top-[61%] lg:w-[60%]",
+];
+
+function FaseContent({
+  index,
+  numberClass = "",
+  numberStyle,
+  titleClass = "",
+  descClass = "",
+}: {
+  index: number;
+  numberClass?: string;
+  numberStyle?: MotionStyle;
+  titleClass?: string;
+  descClass?: string;
+}) {
+  const fase = FASI[index];
+  return (
+    <>
+      <motion.span
+        aria-hidden="true"
+        style={numberStyle}
+        className={`block font-heading text-5xl font-semibold leading-none tracking-normal text-white md:text-[64px] ${numberClass}`}
+      >
+        {fase.numero}
+      </motion.span>
+      <h3
+        className={`mt-3 break-words font-heading text-[26px] font-semibold leading-[1.1] tracking-normal text-white md:mt-4 md:text-[32px] ${titleClass}`}
+      >
+        {fase.titolo}
+      </h3>
+      <p
+        className={`mt-3 break-words font-body text-[15px] font-normal leading-[1.55] tracking-normal text-white/90 md:mt-4 md:text-[17px] ${descClass}`}
+      >
+        {fase.descrizione}
+      </p>
+    </>
+  );
 }
 
-function smoothstep(value: number) {
-  return value * value * (3 - 2 * value);
+function FaseFocusItem({
+  index,
+  progress,
+  positionClass,
+}: {
+  index: number;
+  progress: MotionValue<number>;
+  positionClass: string;
+}) {
+  const segStart = index * SEG;
+  const segEnd = (index + 1) * SEG;
+
+  let stops: number[];
+  let values: number[];
+  if (index === 0) {
+    stops = [segEnd - CROSSFADE, segEnd + CROSSFADE];
+    values = [1, 0];
+  } else if (index === PN - 1) {
+    stops = [segStart - CROSSFADE, segStart + CROSSFADE];
+    values = [0, 1];
+  } else {
+    stops = [segStart - CROSSFADE, segStart + CROSSFADE, segEnd - CROSSFADE, segEnd + CROSSFADE];
+    values = [0, 1, 1, 0];
+  }
+  const focus = useTransform(progress, sanitize(stops), values);
+  const opacity = useTransform(focus, [0, 1], [0.4, 1]);
+  const scale = useTransform(focus, [0, 1], [0.97, 1.05]);
+  const numberOpacity = useTransform(focus, [0, 1], [0.45, 1]);
+  const numberScale = useTransform(focus, [0, 1], [1, 1.14]);
+
+  return (
+    <motion.article
+      style={{ opacity, scale, transformOrigin: "left center", willChange: "transform, opacity" }}
+      className={`relative w-full max-w-full min-w-0 ${positionClass}`}
+    >
+      <FaseContent
+        index={index}
+        numberStyle={{ opacity: numberOpacity, scale: numberScale, transformOrigin: "left center" }}
+        titleClass="lg:text-[28px]"
+        descClass="lg:mt-3 lg:text-[14.5px] lg:leading-[1.5]"
+      />
+    </motion.article>
+  );
+}
+
+function Background() {
+  return (
+    <>
+      <div className="absolute inset-0">
+        <Image
+          src="/images/background_contatti.webp"
+          alt=""
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+          aria-hidden="true"
+        />
+      </div>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-blue-deep/35" />
+    </>
+  );
+}
+
+function Header() {
+  return (
+    <header className="max-w-3xl min-w-0">
+      <h2
+        id="fasi-heading"
+        className="break-words font-heading text-3xl font-semibold leading-none tracking-normal text-white md:text-[40px]"
+      >
+        Le 5 fasi dell&apos;intervento
+      </h2>
+      <p className="mt-5 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px] lg:hidden">
+        Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
+        sviluppo alla realt&agrave; esistente &mdash; e diventare, insieme a noi, autori di un cambiamento
+        imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
+        divisa in 5 fasi.
+      </p>
+    </header>
+  );
+}
+
+function Cta() {
+  return (
+    <div className="flex justify-center">
+      <Link
+        href="/aree-di-intervento"
+        className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
+      >
+        Scopri le aree di intervento
+        <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
+      </Link>
+    </div>
+  );
 }
 
 export default function LeFasiInterventoSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const focusRef = useRef(emptyFocusLevels());
-  const [focusLevels, setFocusLevels] = useState(emptyFocusLevels);
+  const reduce = useReducedMotion();
+  const sectionRef = useRef<HTMLDivElement>(null);
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const progress = useMotionValue(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => progress.set(v));
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    progress.set(scrollYProgress.get());
+  }, [progress, scrollYProgress]);
 
-    const cards = Array.from(container.querySelectorAll<HTMLElement>("[data-index]"));
-    let raf = 0;
-
-    const update = () => {
-      raf = 0;
-      const vh = window.innerHeight;
-      const viewportCenter = vh * 0.52;
-      const radius = Math.max(280, vh * 0.5);
-      const next = cards.map((el) => {
-        const rect = el.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const dist = Math.abs(center - viewportCenter);
-        return smoothstep(clamp(1 - dist / radius, 0, 1));
-      });
-
-      const changed = next.some((value, index) => Math.abs(value - focusRef.current[index]) > 0.015);
-      if (changed) {
-        focusRef.current = next;
-        setFocusLevels(next);
-      }
-    };
-
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  const spotlightActive = focusLevels.some((level) => level > 0.08);
+  // ── Reduced motion: lista statica, tutto pieno ──────────────────────────────
+  if (reduce) {
+    return (
+      <section
+        aria-labelledby="fasi-heading"
+        className="relative w-full overflow-hidden bg-blue-deep px-6 py-20 md:px-12 md:py-28"
+      >
+        <Background />
+        <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
+          <Header />
+          <div className="mt-14 flex flex-col gap-14">
+            {FASI.map((fase, i) => (
+              <article key={fase.numero} className="min-w-0">
+                <FaseContent index={i} />
+              </article>
+            ))}
+          </div>
+          <div className="mt-16">
+            <Cta />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section
-      aria-labelledby="fasi-heading"
-      className="relative w-full max-w-full overflow-hidden bg-blue-kinetic px-6 py-20 md:px-12 md:py-28"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "linear-gradient(155deg, #0a2f9e 0%, #0c40c4 50%, #082b96 100%)" }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 scale-110 blur-[26px]"
-        style={{
-          background: `
-            linear-gradient(0deg, rgba(46,116,236,0.42), rgba(46,116,236,0.42)) 0% 0% / 54% 46% no-repeat,
-            linear-gradient(0deg, rgba(9,38,140,0.48), rgba(9,38,140,0.48)) 100% 0% / 46% 60% no-repeat,
-            linear-gradient(0deg, rgba(24,84,210,0.40), rgba(24,84,210,0.40)) 0% 100% / 54% 56% no-repeat,
-            linear-gradient(0deg, rgba(13,52,166,0.44), rgba(13,52,166,0.44)) 100% 100% / 46% 42% no-repeat,
-            linear-gradient(0deg, rgba(6,26,96,0.55), rgba(6,26,96,0.55)) 0% 100% / 100% 22% no-repeat
-          `,
-        }}
-      />
-
-      <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
-        <header className="max-w-3xl min-w-0">
-          <h2
-            id="fasi-heading"
-            className="break-words font-heading text-3xl font-semibold leading-none tracking-normal text-white md:text-[40px]"
-          >
-            Le 5 fasi dell&apos;intervento
-          </h2>
-          <p className="mt-5 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
-            Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
-            sviluppo alla realt&agrave; esistente &mdash; e diventare, insieme a noi, autori di un cambiamento
-            imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
-            divisa in 5 fasi.
-          </p>
-        </header>
-
-        <div
-          ref={containerRef}
-          className="mt-14 grid w-full min-w-0 grid-cols-1 gap-10 md:mt-20 md:grid-cols-12 md:gap-x-8 md:gap-y-16"
-        >
-          <FaseCard
-            index={0}
-            fase={FASI[0]}
-            focus={focusLevels[0]}
-            spotlightActive={spotlightActive}
-            className="md:col-span-5 md:col-start-1 md:row-start-1"
-          />
-          <FaseCard
-            index={1}
-            fase={FASI[1]}
-            focus={focusLevels[1]}
-            spotlightActive={spotlightActive}
-            layout="stacked"
-            className="md:col-span-4 md:col-start-6 md:row-start-1 md:mt-10"
-          />
-          <FaseCard
-            index={2}
-            fase={FASI[2]}
-            focus={focusLevels[2]}
-            spotlightActive={spotlightActive}
-            layout="stacked"
-            className="md:col-span-3 md:col-start-10 md:row-span-2 md:row-start-1 md:mt-28"
-          />
-          <FaseCard
-            index={3}
-            fase={FASI[3]}
-            focus={focusLevels[3]}
-            spotlightActive={spotlightActive}
-            className="md:col-span-7 md:col-start-1 md:row-start-2 md:mt-4"
-          />
-          <FaseCard
-            index={4}
-            fase={FASI[4]}
-            focus={focusLevels[4]}
-            spotlightActive={spotlightActive}
-            className="md:col-span-12 md:col-start-1 md:row-start-3"
-          />
-        </div>
-
-        <div className="mt-16 flex justify-center md:mt-24">
-          <Link
-            href="/aree-di-intervento"
-            className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-8 py-3 font-heading text-base font-semibold text-blue-deep shadow-[2px_2px_4px_0px_rgba(234,234,234,0.25)] transition hover:bg-blue-soft hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-deep md:text-[18px]"
-          >
-            Scopri le aree di intervento
-          </Link>
+    <div className="relative w-full bg-blue-deep">
+      {/* Sfondo unico e continuo dietro tutta l'esperienza (pin + continuazione):
+          su desktop è pinnato (sticky) così resta fermo e non si vede nessuno
+          stacco tra le sezioni. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="h-full lg:sticky lg:top-0 lg:h-screen">
+          <Background />
         </div>
       </div>
-    </section>
+
+      {/* Binario di scroll del PIN: fasi 1–4. Desktop alto per il pin; mobile auto */}
+      <section
+        ref={sectionRef}
+        aria-labelledby="fasi-heading"
+        className="relative w-full lg:h-[340vh]"
+      >
+        <div className="relative w-full overflow-hidden px-6 pt-20 pb-12 md:px-12 md:pt-24 lg:sticky lg:top-0 lg:h-screen lg:py-0">
+          <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col min-w-0 lg:block">
+            <div className="lg:hidden">
+              <Header />
+            </div>
+            <div className="mt-12 flex flex-col gap-12 lg:mt-0 lg:block lg:h-full">
+              {PINNED.map((fase, index) => (
+                <FaseFocusItem
+                  key={fase.numero}
+                  index={index}
+                  progress={progress}
+                  positionClass={POSITIONS[index]}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Continuazione: 5ª fase + CTA. Sfondo trasparente → mostra lo sfondo unico */}
+      <section className="relative w-full px-6 pb-20 pt-10 md:px-12 md:pb-28 md:pt-12">
+        <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
+          <motion.article
+            initial={{ opacity: 0.45, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.5 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto max-w-4xl min-w-0"
+          >
+            <FaseContent index={4} descClass="md:text-[18px]" />
+          </motion.article>
+
+          <div className="mt-14 md:mt-20">
+            <Cta />
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

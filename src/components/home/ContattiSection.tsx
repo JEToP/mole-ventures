@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export default function ContattiSection() {
   return (
@@ -20,10 +21,9 @@ export default function ContattiSection() {
         {/* Riga superiore: testo a sinistra */}
         <div className="mb-12 md:mb-16">
           <div className="max-w-2xl">
-            <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 [text-shadow:_0_2px_16px_rgba(0,0,0,0.5)] leading-tight">
+            <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 [text-shadow:_0_2px_16px_rgba(0,0,0,0.5)] leading-tight">
               Costruiamo insieme la prossima fase della tua impresa
             </h2>
-            <span className="block h-1 w-12 bg-blue-soft rounded-full mb-6" />
             <p className="font-body font-light text-white/80 text-base md:text-lg leading-relaxed max-w-xl [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
               Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
             </p>
@@ -34,12 +34,10 @@ export default function ContattiSection() {
         <div className="flex justify-center md:justify-start">
           <Link
             href="/contatti"
-            className="group inline-flex items-center gap-3 bg-white text-[#05155E] font-body font-semibold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-full transition-all duration-300 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_8px_24px_rgba(76,172,248,0.35)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E]"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
           >
             Contattaci
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
+            <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
           </Link>
         </div>
       </div>

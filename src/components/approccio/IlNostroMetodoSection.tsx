@@ -1,4 +1,3 @@
-import Link from "next/link";
 import LeFasiInterventoSection from "./fasi/organisms/LeFasiInterventoSection";
 import Image from 'next/image';
 import ContattiSection from "@/components/home/ContattiSection";
@@ -6,7 +5,7 @@ import ScrollCue from "@/components/ScrollCue";
 
 export default function IlNostroMetodoSection() {
   return (
-    <div className="overflow-x-hidden bg-blue-deep text-white">
+    <div className="overflow-x-clip bg-blue-deep text-white">
       <MetodoHero />
       <LeFasiInterventoSection />
       {/* Utilizza direttamente il blocco della home importato */}
@@ -17,7 +16,7 @@ export default function IlNostroMetodoSection() {
 
 function MetodoHero() {
   return (
-    <section className="relative w-full min-h-[100lvh] flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
+    <section className="relative w-full min-h-[100lvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-black">
       {/* Background image: adesso occupa tutto lo schermo ed è gestita come la Home */}
       <div className="absolute inset-0">
         <Image
@@ -25,14 +24,17 @@ function MetodoHero() {
           alt="Metodo background"
           fill
           priority
-          className="object-cover object-center opacity-90"
+          className="object-cover object-center opacity-80"
           sizes="100vw"
         />
       </div>
 
-      {/* Sfumature e Overlay ereditati dallo stile della pagina */}
-      <div className="absolute inset-0 bg-[#000110]/[0.37]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-deep/10 via-blue-deep/30 to-blue-deep/90" />
+      {/* Overlay scuro (meno blu, più nero) per dare profondità e leggibilità */}
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/45 to-black/85" />
+
+      {/* Sfumatura in alto: nera nella safe area che sfuma dolcemente (mobile) */}
+      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-black from-[15%] via-black/50 via-[50%] to-transparent md:hidden z-0" />
 
       {/* Contenuto: perfettamente allineato e speculare alla Home */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
