@@ -3,18 +3,16 @@
 /**
  * LeFasiInterventoSection — focus "pinnato" guidato dallo scroll.
  *
- * Desktop: la sezione del pin è alta e il contenuto è pinnato (sticky). Le prime
- * 4 fasi sono visibili nella loro disposizione sparsa; scorrendo, il focus passa
- * in ordine 1→2→3→4 (attivo pieno e leggermente più grande, gli altri opachi).
- * Lo scrubbing segue la rotella 1:1 (framer-motion), morbido, niente scatti.
- * Alla fine del pin la pagina riprende a scorrere: la 5ª fase e la call to action
- * scorrono in continuità sullo stesso sfondo.
+ * Desktop: UNA sola sezione pinnata con UN solo sfondo continuo (il gradiente
+ * del Figma). Header (titolo + sottotitolo) in alto; le fasi 1–4 nella
+ * disposizione sparsa e il focus passa 1→2→3→4 mentre la 5ª si intravede in
+ * basso. Superata la 4, il contenuto scorre verso l'alto (lo sfondo resta fermo)
+ * rivelando la 5ª e la call to action.
  *
- * Mobile: punti impilati uno sotto l'altro (nessun pin); il focus scorre con la
- * pagina. Reduced motion: lista statica, tutto a piena opacità.
+ * Mobile: punti impilati con focus dinamico (whileInView). Reduced motion: lista
+ * statica.
  */
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -30,11 +28,14 @@ import {
 } from "framer-motion";
 import { FASI } from "../fasiData";
 
-// Solo le prime 4 fasi sono pinnate; la 5ª è la continuazione dopo il pin.
-const PINNED = FASI.slice(0, 4);
-const PN = PINNED.length;
-const SEG = 1 / PN;
-const CROSSFADE = SEG * 0.34;
+// Fasi del progress:
+//  [0, HEAD_END]   → l'header (titolo+sottotitolo) esce scorrendo verso l'alto
+//  [HEAD_END, REVEAL] → focus 1→2→3→4 (4 segmenti)
+//  [REVEAL, 1]     → la 5ª fase + CTA si rivelano
+const HEAD_END = 0.13;
+const REVEAL = 0.8;
+const BOUNDS = [HEAD_END, 0.3, 0.47, 0.635, REVEAL, 1.0];
+const CF = 0.05;
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const sanitize = (stops: number[]): number[] => {
@@ -47,23 +48,24 @@ const sanitize = (stops: number[]): number[] => {
   });
 };
 
-// Disposizione sparsa su desktop (lg+) per le 4 fasi pinnate. Sotto lg: impilate.
+// Posizioni INIZIALI (desktop): le fasi partono ~26vh più in basso del loro
+// target pinnato; nei primi scroll il contenuto sale di 26vh (header fuori) e le
+// fasi raggiungono la posizione finale. Scala discendente 1→2→3, 1 e 4 larghe.
 const POSITIONS = [
-  "lg:absolute lg:left-[2%] lg:top-[17%] lg:w-[27%]",
-  "lg:absolute lg:left-[39%] lg:top-[13%] lg:w-[23%]",
-  "lg:absolute lg:left-[71%] lg:top-[21%] lg:w-[27%]",
-  "lg:absolute lg:left-[3%] lg:top-[61%] lg:w-[60%]",
+  "absolute left-[2%] top-[34%] w-[34%]",
+  "absolute left-[41%] top-[41%] w-[24%]",
+  "absolute left-[71%] top-[48%] w-[27%]",
+  "absolute left-[3%] top-[78%] w-[64%]",
+  "absolute left-[3%] top-[104%] w-[66%]",
 ];
 
 function FaseContent({
   index,
-  numberClass = "",
   numberStyle,
   titleClass = "",
   descClass = "",
 }: {
   index: number;
-  numberClass?: string;
   numberStyle?: MotionStyle;
   titleClass?: string;
   descClass?: string;
@@ -74,7 +76,7 @@ function FaseContent({
       <motion.span
         aria-hidden="true"
         style={numberStyle}
-        className={`block font-heading text-5xl font-semibold leading-none tracking-normal text-white md:text-[64px] ${numberClass}`}
+        className="block font-heading text-5xl font-semibold leading-none tracking-normal text-white md:text-[64px]"
       >
         {fase.numero}
       </motion.span>
@@ -101,19 +103,21 @@ function FaseFocusItem({
   progress: MotionValue<number>;
   positionClass: string;
 }) {
-  const segStart = index * SEG;
-  const segEnd = (index + 1) * SEG;
+  const segStart = BOUNDS[index];
+  const segEnd = BOUNDS[index + 1];
+  const isFirst = index === 0;
+  const isLast = index === FASI.length - 1;
 
   let stops: number[];
   let values: number[];
-  if (index === 0) {
-    stops = [segEnd - CROSSFADE, segEnd + CROSSFADE];
+  if (isFirst) {
+    stops = [segEnd - CF, segEnd + CF];
     values = [1, 0];
-  } else if (index === PN - 1) {
-    stops = [segStart - CROSSFADE, segStart + CROSSFADE];
+  } else if (isLast) {
+    stops = [segStart - CF, segStart + CF];
     values = [0, 1];
   } else {
-    stops = [segStart - CROSSFADE, segStart + CROSSFADE, segEnd - CROSSFADE, segEnd + CROSSFADE];
+    stops = [segStart - CF, segStart + CF, segEnd - CF, segEnd + CF];
     values = [0, 1, 1, 0];
   }
   const focus = useTransform(progress, sanitize(stops), values);
@@ -125,7 +129,7 @@ function FaseFocusItem({
   return (
     <motion.article
       style={{ opacity, scale, transformOrigin: "left center", willChange: "transform, opacity" }}
-      className={`relative w-full max-w-full min-w-0 ${positionClass}`}
+      className={`max-w-full min-w-0 ${positionClass}`}
     >
       <FaseContent
         index={index}
@@ -137,34 +141,54 @@ function FaseFocusItem({
   );
 }
 
+// Sfondo dinamico (CSS, responsive) — ricostruito campionando i colori reali del
+// Figma: luce brillante in alto-centro, buio in alto-sinistra, pavimento più
+// illuminato in basso-sinistra, scuro in basso-destra, con un taglio diagonale.
+// Tutto in percentuali ⇒ si adatta a qualsiasi proporzione senza crop.
 function Background() {
   return (
-    <>
-      <div className="absolute inset-0">
-        <Image
-          src="/images/background_contatti.webp"
-          alt=""
-          fill
-          className="object-cover object-center"
-          sizes="100vw"
-          aria-hidden="true"
-        />
-      </div>
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-blue-deep/35" />
-    </>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden bg-[#1c4fb8]">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(78% 62% at 62% 2%, #4f8ce6 0%, rgba(79,140,230,0) 50%),
+            radial-gradient(72% 82% at -4% -4%, #0b2c88 0%, rgba(11,44,136,0) 48%),
+            radial-gradient(90% 80% at 4% 82%, #2f74d6 0%, rgba(47,116,214,0) 56%),
+            radial-gradient(78% 82% at 104% 104%, #102f86 0%, rgba(16,47,134,0) 52%),
+            linear-gradient(180deg, #173fa2 0%, #2157c6 46%, #1a4cb8 100%)
+          `,
+        }}
+      />
+      {/* Taglio diagonale netto-morbido (richiamo "facet") */}
+      <div
+        className="absolute inset-0 mix-blend-screen"
+        style={{ background: "linear-gradient(116deg, transparent 50%, rgba(120,175,255,0.14) 57%, transparent 63%)" }}
+      />
+      {/* Secondo taglio diagonale più tenue */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(116deg, rgba(8,30,100,0.16) 0%, transparent 24%, transparent 78%, rgba(8,30,100,0.22) 100%)" }}
+      />
+      {/* Vignettatura morbida per contrasto */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "radial-gradient(135% 120% at 52% 36%, transparent 56%, rgba(7,26,92,0.42) 100%)" }}
+      />
+    </div>
   );
 }
 
-function Header() {
+function Header({ className = "" }: { className?: string }) {
   return (
-    <header className="max-w-3xl min-w-0">
+    <header className={`max-w-3xl min-w-0 ${className}`}>
       <h2
         id="fasi-heading"
         className="break-words font-heading text-3xl font-semibold leading-none tracking-normal text-white md:text-[40px]"
       >
         Le 5 fasi dell&apos;intervento
       </h2>
-      <p className="mt-5 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px] lg:hidden">
+      <p className="mt-4 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
         Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
         sviluppo alla realt&agrave; esistente &mdash; e diventare, insieme a noi, autori di un cambiamento
         imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
@@ -176,15 +200,13 @@ function Header() {
 
 function Cta() {
   return (
-    <div className="flex justify-center">
-      <Link
-        href="/aree-di-intervento"
-        className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
-      >
-        Scopri le aree di intervento
-        <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
-      </Link>
-    </div>
+    <Link
+      href="/aree-di-intervento"
+      className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
+    >
+      Scopri le aree di intervento
+      <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
+    </Link>
   );
 }
 
@@ -202,12 +224,23 @@ export default function LeFasiInterventoSection() {
     progress.set(scrollYProgress.get());
   }, [progress, scrollYProgress]);
 
-  // ── Reduced motion: lista statica, tutto pieno ──────────────────────────────
+  // Il contenuto scorre verso l'alto (sfondo fermo): prima per far uscire
+  // l'header (−26vh), poi resta fermo durante il focus, infine sale ancora per
+  // rivelare la 5ª fase e la CTA.
+  // Spostamento in px fissi (non vh): così su schermi molto grandi il layout
+  // resta compatto come su uno schermo standard, invece di "spalmarsi".
+  const contentY = useTransform(
+    progress,
+    [0, HEAD_END, REVEAL, 1],
+    ["0px", "-185px", "-185px", "-540px"],
+  );
+
+  // ── Reduced motion: lista statica ───────────────────────────────────────────
   if (reduce) {
     return (
       <section
         aria-labelledby="fasi-heading"
-        className="relative w-full overflow-hidden bg-blue-deep px-6 py-20 md:px-12 md:py-28"
+        className="relative w-full overflow-hidden bg-blue-deep px-6 py-20 md:px-12 md:py-24"
       >
         <Background />
         <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
@@ -219,7 +252,7 @@ export default function LeFasiInterventoSection() {
               </article>
             ))}
           </div>
-          <div className="mt-16">
+          <div className="mt-16 flex justify-center">
             <Cta />
           </div>
         </div>
@@ -228,29 +261,51 @@ export default function LeFasiInterventoSection() {
   }
 
   return (
-    <div className="relative w-full bg-blue-deep">
-      {/* Sfondo unico e continuo dietro tutta l'esperienza (pin + continuazione):
-          su desktop è pinnato (sticky) così resta fermo e non si vede nessuno
-          stacco tra le sezioni. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="h-full lg:sticky lg:top-0 lg:h-screen">
-          <Background />
+    <>
+      {/* Mobile / tablet: impilato con focus dinamico (whileInView) */}
+      <section
+        aria-labelledby="fasi-heading"
+        className="relative w-full overflow-hidden bg-blue-deep px-6 py-20 md:px-12 md:py-24 lg:hidden"
+      >
+        <Background />
+        <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
+          <Header />
+          <div className="mt-14 flex flex-col gap-14">
+            {FASI.map((fase, i) => (
+              <motion.article
+                key={fase.numero}
+                initial={{ opacity: 0.35, y: 34 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.6 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="min-w-0"
+              >
+                <FaseContent index={i} />
+              </motion.article>
+            ))}
+          </div>
+          <div className="mt-16 flex justify-center">
+            <Cta />
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Binario di scroll del PIN: fasi 1–4. Desktop alto per il pin; mobile auto */}
+      {/* Desktop: una sola sezione pinnata. All'inizio header + fasi insieme;
+          scrollando l'header esce, poi parte il focus, infine il reveal. */}
       <section
         ref={sectionRef}
         aria-labelledby="fasi-heading"
-        className="relative w-full lg:h-[340vh]"
+        className="relative hidden w-full bg-blue-deep lg:block lg:h-[420vh]"
       >
-        <div className="relative w-full overflow-hidden px-6 pt-20 pb-12 md:px-12 md:pt-24 lg:sticky lg:top-0 lg:h-screen lg:py-0">
-          <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col min-w-0 lg:block">
-            <div className="lg:hidden">
-              <Header />
-            </div>
-            <div className="mt-12 flex flex-col gap-12 lg:mt-0 lg:block lg:h-full">
-              {PINNED.map((fase, index) => (
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <Background />
+          <motion.div style={{ y: contentY }} className="absolute inset-0 z-10">
+            <div className="relative mx-auto h-full w-full max-w-7xl px-12">
+              {/* Header: in alto, esce scorrendo nei primi scroll */}
+              <div className="absolute left-12 right-12 top-[13%]">
+                <Header className="max-w-3xl" />
+              </div>
+              {FASI.map((fase, index) => (
                 <FaseFocusItem
                   key={fase.numero}
                   index={index}
@@ -258,29 +313,14 @@ export default function LeFasiInterventoSection() {
                   positionClass={POSITIONS[index]}
                 />
               ))}
+              {/* CTA sotto la 5ª fase, rivelata dallo scorrimento */}
+              <div className="absolute left-[3%] top-[146%]">
+                <Cta />
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
-
-      {/* Continuazione: 5ª fase + CTA. Sfondo trasparente → mostra lo sfondo unico */}
-      <section className="relative w-full px-6 pb-20 pt-10 md:px-12 md:pb-28 md:pt-12">
-        <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0">
-          <motion.article
-            initial={{ opacity: 0.45, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.5 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto max-w-4xl min-w-0"
-          >
-            <FaseContent index={4} descClass="md:text-[18px]" />
-          </motion.article>
-
-          <div className="mt-14 md:mt-20">
-            <Cta />
-          </div>
-        </div>
-      </section>
-    </div>
+    </>
   );
 }
