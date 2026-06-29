@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 export default function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Previene lo scroll del body quando il menu mobile è aperto
   useEffect(() => {
@@ -21,6 +22,14 @@ export default function Navbar() {
     };
   }, [isMobileMenuOpen]);
 
+  // Sfondo della navbar quando si scorre (resta sempre sticky in alto)
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/approccio', label: 'Metodo e strategia' },
@@ -31,7 +40,13 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="absolute top-0 left-0 w-full z-[60] bg-transparent pt-[env(safe-area-inset-top)]">
+      <header
+        className={`fixed top-0 left-0 w-full z-[60] isolate pt-[env(safe-area-inset-top)] transition-colors duration-300 ${
+          isScrolled || isMobileMenuOpen
+            ? 'bg-[#01061A]/85 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.06)]'
+            : 'bg-transparent'
+        }`}
+      >
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-4 md:py-6 flex justify-between items-center text-white">
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
             <Image 
@@ -46,11 +61,12 @@ export default function Navbar() {
           </Link>
 
           {/* Hamburger / X Icon per Mobile */}
-          <button 
+          <button
             type="button"
-            className="md:hidden text-white focus:outline-none relative z-[70] p-3 -mr-3"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-white focus:outline-none relative z-[70] p-3 -mr-3 cursor-pointer touch-manipulation"
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
             aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
           >
             <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMobileMenuOpen ? (
@@ -89,10 +105,11 @@ export default function Navbar() {
       />
 
       {/* Pannello laterale (Right Drawer) Menu Mobile */}
-      <div 
+      <div
         className={`fixed top-0 right-0 h-full w-72 bg-gradient-to-br from-[#05155E] to-black z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
-          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          isMobileMenuOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
         }`}
+        aria-hidden={!isMobileMenuOpen}
       >
         <nav className="flex flex-col gap-1 font-body text-lg font-light">
           {navLinks.map((link) => {
@@ -101,12 +118,12 @@ export default function Navbar() {
               <Link 
                 key={link.href} 
                 href={link.href} 
-                className={`relative transition-colors border-b border-white/10 py-4 ${isActive ? 'text-blue-soft' : 'text-white/90 hover:text-blue-soft'}`}
+                className={`relative transition-colors border-b border-white/10 py-4 ${isActive ? 'text-white' : 'text-white/70 hover:text-white'}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.label}
                 {isActive && (
-                  <span className="absolute left-0 bottom-[-1px] h-0.5 w-8 bg-blue-soft" />
+                  <span className="absolute left-0 bottom-[-1px] h-0.5 w-8 bg-white" />
                 )}
               </Link>
             );

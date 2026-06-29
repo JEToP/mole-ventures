@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import type { CSSProperties, TouchEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Dati aree di intervento.
@@ -70,7 +71,7 @@ export default function AreeDiIntervento() {
 // ── HERO ──────────────────────────────────────────────────────────────────────
 function HeroAree() {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden bg-[#05155E]">
+    <section className="relative w-full min-h-[100dvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-[#05155E]">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -89,6 +90,10 @@ function HeroAree() {
       {/* Sfumatura in alto: navy nella safe area che sfuma dolcemente (mobile) */}
       <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
 
+      {/* Sfumatura in basso: l'immagine sfuma nel navy della sezione successiva,
+          così non si vede lo stacco quando si scorre */}
+      <div className="absolute bottom-0 left-0 w-full h-[35vh] bg-gradient-to-t from-[#05155E] via-[#05155E]/60 to-transparent z-0" />
+
       {/* Contenuto */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <div className="max-w-4xl">
@@ -105,6 +110,14 @@ function HeroAree() {
           </div>
         </div>
       </div>
+
+      {/* Indicatore di scroll (mobile): invita a scendere verso le card */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 text-white/70 animate-bounce md:hidden"
+      >
+        <ChevronDown className="h-7 w-7" strokeWidth={1.75} />
+      </div>
     </section>
   );
 }
@@ -118,43 +131,19 @@ type SelectorProps = {
 };
 
 function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: SelectorProps) {
-  const [contentSoftened, setContentSoftened] = useState(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const skipClickRef = useRef(false);
-  const contentTimerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (contentTimerRef.current !== null) {
-        window.clearTimeout(contentTimerRef.current);
-      }
-    };
-  }, []);
-
-  const softenCardContent = () => {
-    if (contentTimerRef.current !== null) {
-      window.clearTimeout(contentTimerRef.current);
-    }
-    setContentSoftened(true);
-    contentTimerRef.current = window.setTimeout(() => {
-      setContentSoftened(false);
-      contentTimerRef.current = null;
-    }, 620);
-  };
 
   const showSoftPrevious = () => {
-    softenCardContent();
     onPrevious();
   };
 
   const showSoftNext = () => {
-    softenCardContent();
     onNext();
   };
 
   const selectStep = (step: number) => {
     if (step === activeStep) return;
-    softenCardContent();
     onSelectStep(step);
   };
 
@@ -200,13 +189,16 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
   };
 
   return (
-    <section className="relative isolate w-full overflow-hidden bg-[#05155E] py-16 md:py-20 lg:py-24">
+    <section className="relative isolate flex h-screen min-h-[640px] w-full flex-col items-center justify-center overflow-hidden bg-[#05155E]">
       {/* Onde di luce espansive e morbide (effetto glow simile alla contact band) */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-[100px] -left-[150px] w-[1000px] h-[300px] rotate-[12deg] rounded-[100%] bg-gradient-to-r from-blue-soft/90 from-30% to-blue-kinetic/80 blur-[140px]" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-[100px] -right-[150px] w-[1200px] h-[300px] rotate-[8deg] rounded-[100%] bg-gradient-to-l from-blue-soft/90 from-30% to-blue-kinetic/80 blur-[140px]" />
+      <div aria-hidden="true" className="pointer-events-none absolute -top-[120px] -left-[180px] w-[1000px] h-[280px] rotate-[12deg] rounded-[100%] bg-gradient-to-r from-blue-soft/40 from-30% to-blue-kinetic/30 blur-[170px]" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-[120px] -right-[180px] w-[1200px] h-[280px] rotate-[8deg] rounded-[100%] bg-gradient-to-l from-blue-soft/40 from-30% to-blue-kinetic/30 blur-[170px]" />
 
       {/* Carousel desktop */}
-      <div className="relative z-10 hidden h-[720px] w-full lg:block" style={desktopCarouselStyle}>
+      <div
+        className="relative z-10 hidden w-full lg:block"
+        style={{ ...desktopCarouselStyle, height: "var(--card-h)" }}
+      >
         {getLoopCards(activeStep).map(({ area, step, offset }) => {
           const active = offset === 0;
           return (
@@ -216,25 +208,18 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               active={active}
               compact={!active}
               desktopWheel
-              contentSoftened={contentSoftened}
               onClick={() => handleCardClick(step)}
-              className="absolute left-1/2 top-[46%]"
+              className="absolute left-1/2 top-1/2"
               style={getDesktopCardStyle(offset)}
             />
           );
         })}
-
-        <CarouselArrows
-          onPrevious={showSoftPrevious}
-          onNext={showSoftNext}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        />
       </div>
 
       {/* Carousel mobile/tablet */}
       <div
-        className="relative z-10 h-[680px] w-full lg:hidden"
-        style={{ touchAction: "pan-y" }}
+        className="relative z-10 w-full lg:hidden"
+        style={{ ...mobileCarouselStyle, height: "var(--card-h)", touchAction: "pan-y" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={() => {
@@ -249,31 +234,47 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               area={area}
               active={active}
               compact={!active}
-              contentSoftened={contentSoftened}
               onClick={() => handleCardClick(step)}
-              className="absolute left-1/2 top-[43%]"
+              className="absolute left-1/2 top-1/2"
               style={getMobileCardStyle(offset)}
             />
           );
         })}
-
-        <CarouselArrows
-          onPrevious={showSoftPrevious}
-          onNext={showSoftNext}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        />
       </div>
+
+      <CarouselArrows
+        onPrevious={showSoftPrevious}
+        onNext={showSoftNext}
+        className="relative z-20 mt-8"
+      />
     </section>
   );
 }
 
 // ── Geometria del carousel ────────────────────────────────────────────────────
+// Le card laterali sono rese a scala ridotta: lo spostamento orizzontale tiene
+// conto della loro larghezza reale (larghezza attiva × scala) così non si
+// sovrappongono mai tra di loro.
+const DESKTOP_SIDE_SCALE = 0.82;
+const MOBILE_SIDE_SCALE = 0.66;
+
 const desktopCarouselStyle = {
-  "--desktop-active-card-width": "clamp(300px, 40vw, 340px)",
-  "--desktop-small-card-width": "clamp(196px, 28vw, 238px)",
-  "--desktop-card-gap":
-    "clamp(80px, calc((100vw - var(--desktop-active-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width) - var(--desktop-small-card-width)) / 6), 170px)",
+  "--desktop-active-card-width": "clamp(360px, 42vw, 440px)",
+  "--desktop-card-gap": "clamp(28px, 3vw, 56px)",
+  "--card-h": "clamp(460px, 56vh, 520px)",
 } as CSSProperties;
+
+const mobileCarouselStyle = {
+  "--mobile-card-width": "clamp(280px, 82vw, 360px)",
+  "--mobile-card-gap": "clamp(16px, 4vw, 28px)",
+  "--card-h": "clamp(480px, 64vh, 540px)",
+} as CSSProperties;
+
+// Distanza del centro della card #n dal centro della card attiva:
+//   activeW/2 + n·gap + (n − 0.5)·(activeW·scala)
+function wheelOffset(distance: number, widthVar: string, gapVar: string, scale: number) {
+  return `calc(${widthVar} / 2 + ${distance} * ${gapVar} + ${distance - 0.5} * ${widthVar} * ${scale})`;
+}
 
 const carouselCardTransition =
   "transform 760ms cubic-bezier(0.22, 1, 0.36, 1), opacity 620ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 760ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease";
@@ -296,21 +297,19 @@ function getAreaIndex(step: number) {
 function getDesktopCardStyle(offset: number): CSSProperties {
   const distance = Math.abs(offset);
   const sign = offset >= 0 ? "+" : "-";
-  const desktopSteps: Record<number, string> = {
-    1: "calc((var(--desktop-active-card-width) / 2) + var(--desktop-card-gap) + (var(--desktop-small-card-width) / 2))",
-    2: "calc((var(--desktop-active-card-width) / 2) + var(--desktop-card-gap) + var(--desktop-small-card-width) + var(--desktop-card-gap) + (var(--desktop-small-card-width) / 2))",
-    3: "60vw",
-  };
-  const x =
-    offset === 0
-      ? "-50%"
-      : `calc(-50% ${sign} ${desktopSteps[distance] ?? desktopSteps[3]})`;
+  const step = wheelOffset(
+    distance,
+    "var(--desktop-active-card-width)",
+    "var(--desktop-card-gap)",
+    DESKTOP_SIDE_SCALE,
+  );
+  const x = offset === 0 ? "-50%" : `calc(-50% ${sign} ${step})`;
 
   return {
-    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.82})`,
+    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : DESKTOP_SIDE_SCALE})`,
     transition: carouselCardTransition,
     zIndex: 30 - distance,
-    opacity: distance > 2 ? 0 : distance > 1 ? 0.74 : 1,
+    opacity: distance > 2 ? 0 : distance > 1 ? 0.5 : 1,
     pointerEvents: distance > 2 ? "none" : "auto",
     willChange: "transform, opacity",
     backfaceVisibility: "hidden",
@@ -320,21 +319,19 @@ function getDesktopCardStyle(offset: number): CSSProperties {
 function getMobileCardStyle(offset: number): CSSProperties {
   const distance = Math.abs(offset);
   const sign = offset >= 0 ? "+" : "-";
-  const mobileSteps: Record<number, string> = {
-    1: "clamp(220px, 64vw, 264px)",
-    2: "clamp(404px, 112vw, 460px)",
-    3: "clamp(560px, 150vw, 640px)",
-  };
-  const x =
-    offset === 0
-      ? "-50%"
-      : `calc(-50% ${sign} ${mobileSteps[distance] ?? mobileSteps[3]})`;
+  const step = wheelOffset(
+    distance,
+    "var(--mobile-card-width)",
+    "var(--mobile-card-gap)",
+    MOBILE_SIDE_SCALE,
+  );
+  const x = offset === 0 ? "-50%" : `calc(-50% ${sign} ${step})`;
 
   return {
-    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : 0.62})`,
+    transform: `translate3d(${x}, -50%, 0) scale(${distance === 0 ? 1 : MOBILE_SIDE_SCALE})`,
     transition: carouselCardTransition,
     zIndex: 30 - distance,
-    opacity: distance > 2 ? 0 : distance > 1 ? 0.55 : 1,
+    opacity: distance > 2 ? 0 : distance > 1 ? 0.4 : 1,
     pointerEvents: distance > 2 ? "none" : "auto",
     willChange: "transform, opacity",
     backfaceVisibility: "hidden",
@@ -349,22 +346,20 @@ type CardTextStyles = {
 
 function getDesktopCardTextStyles(): CardTextStyles {
   return {
-    title: { fontSize: "max(32px, calc((100cqw - 4rem) / 5.5))" },
+    title: { fontSize: "clamp(30px, calc((100cqw - 4.5rem) / 9), 36px)" },
     description: {
-      fontSize: "max(14px, calc((100cqw - 4rem) / 10.5))",
-      lineHeight: "1.5",
-      letterSpacing: "0.005em",
+      fontSize: "clamp(16px, calc((100cqw - 4.5rem) / 20), 18px)",
+      lineHeight: "1.7",
     },
   };
 }
 
 function getMobileCardTextStyles(): CardTextStyles {
   return {
-    title: { fontSize: "clamp(26px, calc((100cqw - 4rem) / 4.5), 40px)" },
+    title: { fontSize: "clamp(28px, calc((100cqw - 3.5rem) / 8), 34px)" },
     description: {
-      fontSize: "clamp(13px, calc((100cqw - 4rem) / 10), 24px)",
-      lineHeight: "1.5",
-      letterSpacing: "0.02em",
+      fontSize: "clamp(15px, calc((100cqw - 3.5rem) / 17), 17px)",
+      lineHeight: "1.7",
     },
   };
 }
@@ -378,7 +373,6 @@ type AreaCardButtonProps = {
   area: (typeof AREAS)[number];
   active?: boolean;
   compact?: boolean;
-  contentSoftened?: boolean;
   desktopWheel?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -389,16 +383,15 @@ function AreaCardButton({
   area,
   active = false,
   compact = false,
-  contentSoftened = false,
   desktopWheel = false,
   className = "",
   style,
   onClick,
 }: AreaCardButtonProps) {
-  const singleWordTitle = typeof area.title === "string" && !area.title.includes(" ");
-  const numberSize = desktopWheel ? "text-[76px]" : "text-[80px]";
+  const numberSize = desktopWheel ? "text-[56px]" : "text-[60px]";
   const cardTextStyles = getCardTextStyles(desktopWheel);
-  const descriptionSize = compact ? "line-clamp-[8]" : "";
+  const descriptionSize = compact ? "line-clamp-[7]" : "";
+  const titleText = Array.isArray(area.title) ? area.title.join(" ") : area.title;
   const descriptionText = Array.isArray(area.description)
     ? area.description.join(" ")
     : area.description;
@@ -409,45 +402,35 @@ function AreaCardButton({
       onClick={onClick}
       style={style}
       aria-pressed={active}
-      aria-label={`Area ${area.number}: ${Array.isArray(area.title) ? area.title.join(" ") : area.title}`}
-      className={`${className} group min-w-0 overflow-hidden rounded-2xl border text-center backdrop-blur-md [container-type:inline-size] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E] ${active
-        ? "border-white/40 bg-[#05155E]/60 shadow-[0_0_40px_rgba(255,255,255,0.2),0_24px_60px_rgba(255,255,255,0.1),inset_0_1px_24px_rgba(255,255,255,0.15)]"
-        : "border-white/10 bg-[#05155E]/30 shadow-[0_14px_36px_rgba(255,255,255,0.07)] hover:border-white/30"
-        } ${desktopWheel
-          ? "h-[clamp(480px,48vw,560px)] w-[var(--desktop-active-card-width)] px-8 py-9"
-          : "h-[clamp(490px,42vw,560px)] w-[clamp(280px,26vw,340px)] px-8 py-9"
+      aria-label={`Area ${area.number}: ${titleText}`}
+      className={`${className} group min-w-0 overflow-hidden rounded-2xl border text-left [container-type:inline-size] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E] ${active
+        ? "border-white/25 bg-white/[0.05]"
+        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+        } h-[var(--card-h)] ${desktopWheel
+          ? "w-[var(--desktop-active-card-width)] px-9 py-9"
+          : "w-[var(--mobile-card-width)] px-7 py-8"
         }`}
     >
-      <div
-        className={`flex h-full flex-col items-center transition-[opacity,filter] duration-200 ease-out ${contentSoftened ? "opacity-60 blur-[0.25px]" : "opacity-100 blur-0"
-          }`}
-      >
-        {/* Numero – bianco, centrato */}
+      <div className="flex h-full flex-col">
+        {/* Numero – allineato a sinistra */}
         <span
-          className={`block font-heading font-semibold leading-none tracking-tight text-white ${numberSize}`}
+          className={`block font-heading font-semibold leading-none tracking-tight text-white/85 ${numberSize}`}
         >
           {area.number}
         </span>
 
-        {/* Titolo – bianco, centrato */}
+        {/* Titolo */}
         <span
           style={cardTextStyles.title}
-          className={`mt-4 block font-heading font-semibold leading-[1.05] text-white ${singleWordTitle ? "whitespace-nowrap" : "text-balance"
-            }`}
+          className="mt-6 block font-heading font-semibold leading-[1.1] text-white"
         >
-          {Array.isArray(area.title)
-            ? area.title.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))
-            : area.title}
+          {titleText}
         </span>
 
-        {/* Descrizione – allineata a sinistra */}
+        {/* Descrizione */}
         <span
           style={cardTextStyles.description}
-          className={`mt-4 block w-full text-left overflow-hidden break-words font-body font-light text-white ${descriptionSize}`}
+          className={`mt-4 block min-h-0 w-full flex-1 overflow-hidden break-words font-body font-light text-white/85 ${descriptionSize}`}
         >
           {descriptionText}
         </span>
@@ -465,26 +448,26 @@ type CarouselArrowsProps = {
 
 function CarouselArrows({ onPrevious, onNext, className = "" }: CarouselArrowsProps) {
   return (
-    <div className={`flex items-center justify-center gap-12 ${className}`}>
+    <div className={`flex items-center justify-center gap-5 ${className}`}>
       <button
         type="button"
         onClick={onPrevious}
-        className="flex items-center justify-center text-white transition hover:text-white/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 text-white transition-colors duration-300 hover:border-white/60 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
         aria-label="Area precedente"
       >
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6" />
         </svg>
       </button>
 
       <button
         type="button"
         onClick={onNext}
-        className="flex items-center justify-center text-white transition hover:text-white/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 text-white transition-colors duration-300 hover:border-white/60 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
         aria-label="Area successiva"
       >
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 18l6-6-6-6" />
         </svg>
       </button>
     </div>
@@ -524,12 +507,10 @@ function AreeContactBand() {
         <div className="flex justify-center md:justify-start">
           <Link
             href="/contatti"
-            className="group inline-flex items-center gap-3 bg-white text-[#05155E] font-body font-semibold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-full transition-all duration-300 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_8px_24px_rgba(76,172,248,0.35)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E]"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-[#05155E] transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E]"
           >
             Contattaci
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
+            <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
           </Link>
         </div>
       </div>
