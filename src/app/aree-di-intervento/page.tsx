@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import type { CSSProperties, TouchEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Dati aree di intervento.
@@ -68,10 +68,11 @@ export default function AreeDiIntervento() {
   );
 }
 
+
 // ── HERO ──────────────────────────────────────────────────────────────────────
 function HeroAree() {
   return (
-    <section className="relative w-full min-h-[100dvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-[#05155E]">
+    <section className="relative w-full min-h-[100dvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -89,10 +90,6 @@ function HeroAree() {
 
       {/* Sfumatura in alto: navy nella safe area che sfuma dolcemente (mobile) */}
       <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
-
-      {/* Sfumatura in basso: l'immagine sfuma nel navy della sezione successiva,
-          così non si vede lo stacco quando si scorre */}
-      <div className="absolute bottom-0 left-0 w-full h-[35vh] bg-gradient-to-t from-[#05155E] via-[#05155E]/60 to-transparent z-0" />
 
       {/* Contenuto */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
@@ -133,6 +130,13 @@ type SelectorProps = {
 function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: SelectorProps) {
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const skipClickRef = useRef(false);
+
+  // Tutte le card hanno la STESSA altezza: quella della card con il testo più
+  // lungo. Un misuratore nascosto rende tutte le aree a testo pieno e riporta
+  // l'altezza massima, che applichiamo al contenitore e a ogni card. Così
+  // l'altezza non cambia mai al variare della card mostrata.
+  const [desktopHeight, setDesktopHeight] = useState<number>();
+  const [mobileHeight, setMobileHeight] = useState<number>();
 
   const showSoftPrevious = () => {
     onPrevious();
@@ -189,15 +193,27 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
   };
 
   return (
-    <section className="relative isolate flex h-screen min-h-[640px] w-full flex-col items-center justify-center overflow-hidden bg-[#05155E]">
-      {/* Onde di luce espansive e morbide (effetto glow simile alla contact band) */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-[120px] -left-[180px] w-[1000px] h-[280px] rotate-[12deg] rounded-[100%] bg-gradient-to-r from-blue-soft/40 from-30% to-blue-kinetic/30 blur-[170px]" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-[120px] -right-[180px] w-[1200px] h-[280px] rotate-[8deg] rounded-[100%] bg-gradient-to-l from-blue-soft/40 from-30% to-blue-kinetic/30 blur-[170px]" />
+    <section className="relative isolate flex w-full flex-col items-center overflow-hidden bg-blue-deep py-16 md:py-24">
+      {/* Stesso sfondo della contact band "Costruiamo insieme": continuità */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/background_contatti.webp"
+          alt=""
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* Misuratori nascosti (uno per breakpoint) per l'altezza uniforme */}
+      <CardHeightMeasurer desktopWheel onResize={setDesktopHeight} />
+      <CardHeightMeasurer desktopWheel={false} onResize={setMobileHeight} />
 
       {/* Carousel desktop */}
       <div
         className="relative z-10 hidden w-full lg:block"
-        style={{ ...desktopCarouselStyle, height: "var(--card-h)" }}
+        style={{ ...desktopCarouselStyle, height: desktopHeight ? `${desktopHeight}px` : undefined }}
       >
         {getLoopCards(activeStep).map(({ area, step, offset }) => {
           const active = offset === 0;
@@ -210,7 +226,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               desktopWheel
               onClick={() => handleCardClick(step)}
               className="absolute left-1/2 top-1/2"
-              style={getDesktopCardStyle(offset)}
+              style={{ ...getDesktopCardStyle(offset), height: desktopHeight }}
             />
           );
         })}
@@ -219,7 +235,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
       {/* Carousel mobile/tablet */}
       <div
         className="relative z-10 w-full lg:hidden"
-        style={{ ...mobileCarouselStyle, height: "var(--card-h)", touchAction: "pan-y" }}
+        style={{ ...mobileCarouselStyle, height: mobileHeight ? `${mobileHeight}px` : undefined, touchAction: "pan-y" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={() => {
@@ -236,7 +252,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               compact={!active}
               onClick={() => handleCardClick(step)}
               className="absolute left-1/2 top-1/2"
-              style={getMobileCardStyle(offset)}
+              style={{ ...getMobileCardStyle(offset), height: mobileHeight }}
             />
           );
         })}
@@ -261,13 +277,11 @@ const MOBILE_SIDE_SCALE = 0.66;
 const desktopCarouselStyle = {
   "--desktop-active-card-width": "clamp(360px, 42vw, 440px)",
   "--desktop-card-gap": "clamp(28px, 3vw, 56px)",
-  "--card-h": "clamp(460px, 56vh, 520px)",
 } as CSSProperties;
 
 const mobileCarouselStyle = {
-  "--mobile-card-width": "clamp(280px, 82vw, 360px)",
+  "--mobile-card-width": "clamp(290px, 88vw, 380px)",
   "--mobile-card-gap": "clamp(16px, 4vw, 28px)",
-  "--card-h": "clamp(480px, 64vh, 540px)",
 } as CSSProperties;
 
 // Distanza del centro della card #n dal centro della card attiva:
@@ -356,10 +370,10 @@ function getDesktopCardTextStyles(): CardTextStyles {
 
 function getMobileCardTextStyles(): CardTextStyles {
   return {
-    title: { fontSize: "clamp(28px, calc((100cqw - 3.5rem) / 8), 34px)" },
+    title: { fontSize: "clamp(26px, calc((100cqw - 3rem) / 9), 32px)" },
     description: {
-      fontSize: "clamp(15px, calc((100cqw - 3.5rem) / 17), 17px)",
-      lineHeight: "1.7",
+      fontSize: "clamp(14px, calc((100cqw - 3rem) / 19), 16px)",
+      lineHeight: "1.55",
     },
   };
 }
@@ -369,6 +383,57 @@ function getCardTextStyles(desktopWheel: boolean): CardTextStyles {
 }
 
 // ── Card area ─────────────────────────────────────────────────────────────────
+// Classi del "box" card, condivise tra card reale e misuratore nascosto, così
+// l'altezza misurata corrisponde esattamente a quella renderizzata.
+const CARD_BOX_DESKTOP = "w-[var(--desktop-active-card-width)] px-9 py-8";
+const CARD_BOX_MOBILE = "w-[var(--mobile-card-width)] px-6 py-7";
+
+function AreaCardContent({
+  area,
+  desktopWheel,
+  clamp = false,
+}: {
+  area: (typeof AREAS)[number];
+  desktopWheel: boolean;
+  clamp?: boolean;
+}) {
+  const numberSize = desktopWheel ? "text-[52px]" : "text-[46px]";
+  const cardTextStyles = getCardTextStyles(desktopWheel);
+  const titleText = Array.isArray(area.title) ? area.title.join(" ") : area.title;
+  const descriptionText = Array.isArray(area.description)
+    ? area.description.join(" ")
+    : area.description;
+
+  return (
+    <div className="flex h-full flex-col">
+      {/* Numero – allineato a sinistra, in alto */}
+      <span
+        className={`block font-heading font-semibold leading-none tracking-tight text-white/85 ${numberSize}`}
+      >
+        {area.number}
+      </span>
+
+      {/* Titolo – in alto */}
+      <span
+        style={cardTextStyles.title}
+        className="mt-4 block font-heading font-semibold leading-[1.1] text-white md:mt-5"
+      >
+        {titleText}
+      </span>
+
+      {/* Descrizione – centrata verticalmente nello spazio residuo */}
+      <div className="mt-3 flex flex-1 items-center md:mt-4">
+        <span
+          style={cardTextStyles.description}
+          className={`block w-full break-words font-body font-light text-white/85 ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
+        >
+          {descriptionText}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 type AreaCardButtonProps = {
   area: (typeof AREAS)[number];
   active?: boolean;
@@ -388,13 +453,7 @@ function AreaCardButton({
   style,
   onClick,
 }: AreaCardButtonProps) {
-  const numberSize = desktopWheel ? "text-[56px]" : "text-[60px]";
-  const cardTextStyles = getCardTextStyles(desktopWheel);
-  const descriptionSize = compact ? "line-clamp-[7]" : "";
   const titleText = Array.isArray(area.title) ? area.title.join(" ") : area.title;
-  const descriptionText = Array.isArray(area.description)
-    ? area.description.join(" ")
-    : area.description;
 
   return (
     <button
@@ -403,39 +462,61 @@ function AreaCardButton({
       style={style}
       aria-pressed={active}
       aria-label={`Area ${area.number}: ${titleText}`}
-      className={`${className} group min-w-0 overflow-hidden rounded-2xl border text-left [container-type:inline-size] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E] ${active
+      className={`${className} group min-w-0 overflow-hidden rounded-2xl border text-left [container-type:inline-size] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep ${active
         ? "border-white/25 bg-white/[0.05]"
         : "border-white/10 bg-white/[0.02] hover:border-white/20"
-        } h-[var(--card-h)] ${desktopWheel
-          ? "w-[var(--desktop-active-card-width)] px-9 py-9"
-          : "w-[var(--mobile-card-width)] px-7 py-8"
-        }`}
+        } ${desktopWheel ? CARD_BOX_DESKTOP : CARD_BOX_MOBILE}`}
     >
-      <div className="flex h-full flex-col">
-        {/* Numero – allineato a sinistra */}
-        <span
-          className={`block font-heading font-semibold leading-none tracking-tight text-white/85 ${numberSize}`}
-        >
-          {area.number}
-        </span>
-
-        {/* Titolo */}
-        <span
-          style={cardTextStyles.title}
-          className="mt-6 block font-heading font-semibold leading-[1.1] text-white"
-        >
-          {titleText}
-        </span>
-
-        {/* Descrizione */}
-        <span
-          style={cardTextStyles.description}
-          className={`mt-4 block min-h-0 w-full flex-1 overflow-hidden break-words font-body font-light text-white/85 ${descriptionSize}`}
-        >
-          {descriptionText}
-        </span>
-      </div>
+      <AreaCardContent area={area} desktopWheel={desktopWheel} clamp={compact} />
     </button>
+  );
+}
+
+// Misuratore nascosto: rende tutte le aree a testo pieno e riporta l'altezza
+// della più alta, così tutte le card usano quella (altezza uniforme = la più
+// lunga, senza tagli e senza che la pagina cambi altezza al variare della card).
+function CardHeightMeasurer({
+  desktopWheel,
+  onResize,
+}: {
+  desktopWheel: boolean;
+  onResize: (height: number) => void;
+}) {
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!el) return;
+    const measure = () => {
+      let max = 0;
+      for (const child of Array.from(el.children)) {
+        max = Math.max(max, (child as HTMLElement).offsetHeight);
+      }
+      if (max) onResize(max);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [el, onResize]);
+
+  return (
+    <div
+      ref={setEl}
+      aria-hidden="true"
+      className="pointer-events-none invisible absolute left-0 top-0 h-0 overflow-hidden"
+      style={desktopWheel ? desktopCarouselStyle : mobileCarouselStyle}
+    >
+      {AREAS.map((area) => (
+        <div
+          key={area.number}
+          className={`rounded-2xl border [container-type:inline-size] ${
+            desktopWheel ? CARD_BOX_DESKTOP : CARD_BOX_MOBILE
+          }`}
+        >
+          <AreaCardContent area={area} desktopWheel={desktopWheel} />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -477,7 +558,7 @@ function CarouselArrows({ onPrevious, onNext, className = "" }: CarouselArrowsPr
 // ── Contact band finale ───────────────────────────────────────────────────────
 function AreeContactBand() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#05155E]">
+    <section className="relative w-full overflow-hidden bg-blue-deep">
       {/* Background image (ha già il suo gradiente, nessun overlay) */}
       <div className="absolute inset-0">
         <Image
@@ -507,7 +588,7 @@ function AreeContactBand() {
         <div className="flex justify-center md:justify-start">
           <Link
             href="/contatti"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-[#05155E] transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E]"
+            className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep"
           >
             Contattaci
             <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />

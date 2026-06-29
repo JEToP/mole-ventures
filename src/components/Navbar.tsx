@@ -43,19 +43,25 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 w-full z-[60] isolate pt-[env(safe-area-inset-top)] transition-colors duration-300 ${
           isScrolled || isMobileMenuOpen
-            ? 'bg-[#01061A]/85 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.06)]'
+            ? 'bg-[#030d3d]/90 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.08)]'
             : 'bg-transparent'
         }`}
       >
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-4 md:py-6 flex justify-between items-center text-white">
+        <div
+          className={`w-full max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center text-white transition-all duration-300 ${
+            isScrolled ? 'py-2 md:py-3' : 'py-4 md:py-6'
+          }`}
+        >
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
-            <Image 
-              src="/images/logo.png" 
-              alt="Mole Venture Logo" 
+            <Image
+              src="/images/logo.png"
+              alt="Mole Venture Logo"
               width={400}
               height={400}
               priority
-              className="h-16 md:h-24 w-auto object-contain mix-blend-screen"
+              className={`w-auto object-contain mix-blend-screen transition-all duration-300 ${
+                isScrolled ? 'h-12 md:h-16' : 'h-16 md:h-24'
+              }`}
               onError={(e) => { e.currentTarget.style.display='none'; }}
             />
           </Link>
@@ -68,7 +74,7 @@ export default function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={isMobileMenuOpen}
           >
-            <svg className="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-9 h-9 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -106,7 +112,7 @@ export default function Navbar() {
 
       {/* Pannello laterale (Right Drawer) Menu Mobile */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 bg-gradient-to-br from-[#05155E] to-black z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
+        className={`fixed top-0 right-0 h-full w-72 bg-blue-deep/90 backdrop-blur-lg z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
           isMobileMenuOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
         }`}
         aria-hidden={!isMobileMenuOpen}
