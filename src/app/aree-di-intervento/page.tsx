@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import ScrollCue from "@/components/ScrollCue";
 import type { CSSProperties, TouchEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -72,7 +73,7 @@ export default function AreeDiIntervento() {
 // ── HERO ──────────────────────────────────────────────────────────────────────
 function HeroAree() {
   return (
-    <section className="relative w-full min-h-[100dvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
+    <section className="relative w-full min-h-[100lvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -108,13 +109,7 @@ function HeroAree() {
         </div>
       </div>
 
-      {/* Indicatore di scroll (mobile): invita a scendere verso le card */}
-      <div
-        aria-hidden="true"
-        className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 text-white/70 animate-bounce md:hidden"
-      >
-        <ChevronDown className="h-7 w-7" strokeWidth={1.75} />
-      </div>
+      <ScrollCue />
     </section>
   );
 }
@@ -193,7 +188,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
   };
 
   return (
-    <section className="relative isolate flex w-full flex-col items-center overflow-hidden bg-blue-deep py-16 md:py-24">
+    <section className="relative isolate flex w-full flex-col items-center justify-center overflow-hidden bg-blue-deep py-16 max-md:min-h-[100dvh] md:py-24">
       {/* Stesso sfondo della contact band "Costruiamo insieme": continuità */}
       <div className="absolute inset-0">
         <Image

@@ -1,8 +1,9 @@
 import Image from 'next/image';
+import ScrollCue from '@/components/ScrollCue';
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden bg-[#05155E]">
+    <section className="relative w-full min-h-[100lvh] flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden bg-[#05155E]">
       {/* Background image. Mobile: ancorata per mostrare più cielo nella zona
           alta (dove cade "ETA"). Desktop: ancorata in alto. */}
       <div className="absolute inset-0">
@@ -46,6 +47,8 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+
+      <ScrollCue />
     </section>
   );
 }

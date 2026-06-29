@@ -2,6 +2,7 @@ import Link from "next/link";
 import LeFasiInterventoSection from "./fasi/organisms/LeFasiInterventoSection";
 import Image from 'next/image';
 import ContattiSection from "@/components/home/ContattiSection";
+import ScrollCue from "@/components/ScrollCue";
 
 export default function IlNostroMetodoSection() {
   return (
@@ -16,7 +17,7 @@ export default function IlNostroMetodoSection() {
 
 function MetodoHero() {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
+    <section className="relative w-full min-h-[100lvh] flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image: adesso occupa tutto lo schermo ed è gestita come la Home */}
       <div className="absolute inset-0">
         <Image
@@ -50,6 +51,8 @@ function MetodoHero() {
           </div>
         </div>
       </div>
+
+      <ScrollCue />
     </section>
   );
 }

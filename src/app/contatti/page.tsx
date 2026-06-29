@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ScrollCue from "@/components/ScrollCue";
 
 export const metadata = {
   title: 'Contatti - Mole Venture',
@@ -9,7 +10,7 @@ export default function ContattiPage() {
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative w-full min-h-screen flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden">
+      <section className="relative w-full min-h-[100lvh] flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
@@ -44,6 +45,8 @@ export default function ContattiPage() {
             </div>
           </div>
         </div>
+
+        <ScrollCue />
       </section>
 
       {/* Form Section */}

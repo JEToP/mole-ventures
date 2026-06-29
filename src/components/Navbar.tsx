@@ -38,11 +38,16 @@ export default function Navbar() {
     { href: '/contatti', label: 'Contatti' },
   ];
 
+  // Pagine senza hero scuro a tutto schermo: la navbar ha lo sfondo navy fin
+  // da subito (altrimenti, trasparente su contenuto chiaro, non si leggerebbe).
+  const solidFromTop = pathname === '/citazioni';
+  const showSolidBackground = isScrolled || isMobileMenuOpen || solidFromTop;
+
   return (
     <>
       <header
         className={`fixed top-0 left-0 w-full z-[60] isolate pt-[env(safe-area-inset-top)] transition-colors duration-300 ${
-          isScrolled || isMobileMenuOpen
+          showSolidBackground
             ? 'bg-[#030d3d]/90 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.08)]'
             : 'bg-transparent'
         }`}

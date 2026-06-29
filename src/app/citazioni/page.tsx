@@ -4,9 +4,6 @@ export default function InsightsPage() {
   return (
     // Aggiunto pb-12 (mobile) e md:pb-20 (desktop) per creare lo spazio bianco sotto
     <main className="relative w-full bg-white pt-24 pb-12 md:pt-32 md:pb-20">
-      
-      {/* SFONDO SFUMATO NAVBAR */}
-      <div className="absolute top-0 inset-x-0 z-40 h-24 md:h-36 w-full bg-[#030E47] bg-[radial-gradient(circle_at_20%_50%,#0A2594_0%,transparent_60%)] border-b border-white/10" />
 
       {/* CONTENITORE COLLAGE */}
       <div className="relative mx-auto w-full max-w-[1000px] aspect-[1/1.55]">
