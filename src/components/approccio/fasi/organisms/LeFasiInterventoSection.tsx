@@ -69,7 +69,7 @@ const EXTENDED_BGS = [
   "absolute inset-0",                                      
   "absolute inset-0 lg:right-auto lg:left-0 lg:w-[100vw]", 
   "absolute inset-0 lg:left-auto lg:right-0 lg:w-[100vw]", 
-  "absolute inset-0 lg:left-1/2 lg:-translate-x-1/2 lg:w-[200vw]", 
+  "absolute inset-0 lg:-bottom-[50vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[200vw]", 
 ];
 
 const LIGHT_EFFECTS = [
