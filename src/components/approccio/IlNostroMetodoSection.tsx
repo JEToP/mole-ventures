@@ -9,14 +9,14 @@ export default function IlNostroMetodoSection() {
       <MetodoHero />
       <LeFasiInterventoSection />
       {/* Utilizza direttamente il blocco della home importato */}
-      <ContattiSection /> 
+      <ContattiSection />
     </div>
   );
 }
 
 function MetodoHero() {
   return (
-    <section className="relative w-full min-h-[100lvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
+    <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image: adesso occupa tutto lo schermo ed è gestita come la Home */}
       <div className="absolute inset-0">
         <Image

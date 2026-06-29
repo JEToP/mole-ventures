@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ScrollCue from "@/components/ScrollCue";
+import ContattiSection from "@/components/home/ContattiSection";
 import type { CSSProperties, TouchEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -64,7 +65,7 @@ export default function AreeDiIntervento() {
         onPrevious={showPrevious}
         onNext={showNext}
       />
-      <AreeContactBand />
+      <ContattiSection />
     </div>
   );
 }
@@ -73,7 +74,7 @@ export default function AreeDiIntervento() {
 // ── HERO ──────────────────────────────────────────────────────────────────────
 function HeroAree() {
   return (
-    <section className="relative w-full min-h-[100lvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
+    <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -270,12 +271,12 @@ const DESKTOP_SIDE_SCALE = 0.82;
 const MOBILE_SIDE_SCALE = 0.66;
 
 const desktopCarouselStyle = {
-  "--desktop-active-card-width": "clamp(360px, 42vw, 440px)",
+  "--desktop-active-card-width": "clamp(380px, 46vw, 480px)",
   "--desktop-card-gap": "clamp(28px, 3vw, 56px)",
 } as CSSProperties;
 
 const mobileCarouselStyle = {
-  "--mobile-card-width": "clamp(290px, 88vw, 380px)",
+  "--mobile-card-width": "clamp(310px, 92vw, 400px)",
   "--mobile-card-gap": "clamp(16px, 4vw, 28px)",
 } as CSSProperties;
 
@@ -347,41 +348,13 @@ function getMobileCardStyle(offset: number): CSSProperties {
   };
 }
 
-// ── Stili tipografici delle card (dimensioni fluide) ──────────────────────────
-type CardTextStyles = {
-  title?: CSSProperties;
-  description?: CSSProperties;
-};
-
-function getDesktopCardTextStyles(): CardTextStyles {
-  return {
-    title: { fontSize: "clamp(30px, calc((100cqw - 4.5rem) / 9), 36px)" },
-    description: {
-      fontSize: "clamp(16px, calc((100cqw - 4.5rem) / 20), 18px)",
-      lineHeight: "1.7",
-    },
-  };
-}
-
-function getMobileCardTextStyles(): CardTextStyles {
-  return {
-    title: { fontSize: "clamp(26px, calc((100cqw - 3rem) / 9), 32px)" },
-    description: {
-      fontSize: "clamp(14px, calc((100cqw - 3rem) / 19), 16px)",
-      lineHeight: "1.55",
-    },
-  };
-}
-
-function getCardTextStyles(desktopWheel: boolean): CardTextStyles {
-  return desktopWheel ? getDesktopCardTextStyles() : getMobileCardTextStyles();
-}
+// ── Stili tipografici rimossi a favore delle classi Tailwind ─────────
 
 // ── Card area ─────────────────────────────────────────────────────────────────
 // Classi del "box" card, condivise tra card reale e misuratore nascosto, così
 // l'altezza misurata corrisponde esattamente a quella renderizzata.
-const CARD_BOX_DESKTOP = "w-[var(--desktop-active-card-width)] px-9 py-8";
-const CARD_BOX_MOBILE = "w-[var(--mobile-card-width)] px-6 py-7";
+const CARD_BOX_DESKTOP = "w-[var(--desktop-active-card-width)] px-8 py-7";
+const CARD_BOX_MOBILE = "w-[var(--mobile-card-width)] px-5 py-6";
 
 function AreaCardContent({
   area,
@@ -392,35 +365,31 @@ function AreaCardContent({
   desktopWheel: boolean;
   clamp?: boolean;
 }) {
-  const numberSize = desktopWheel ? "text-[52px]" : "text-[46px]";
-  const cardTextStyles = getCardTextStyles(desktopWheel);
   const titleText = Array.isArray(area.title) ? area.title.join(" ") : area.title;
   const descriptionText = Array.isArray(area.description)
     ? area.description.join(" ")
     : area.description;
 
   return (
-    <div className="flex h-full flex-col">
-      {/* Numero – allineato a sinistra, in alto */}
-      <span
-        className={`block font-heading font-semibold leading-none tracking-tight text-white/85 ${numberSize}`}
-      >
-        {area.number}
-      </span>
-
-      {/* Titolo – in alto */}
-      <span
-        style={cardTextStyles.title}
-        className="mt-4 block font-heading font-semibold leading-[1.1] text-white md:mt-5"
-      >
-        {titleText}
-      </span>
-
-      {/* Descrizione – centrata verticalmente nello spazio residuo */}
-      <div className="mt-3 flex flex-1 items-center md:mt-4">
+    <div className="flex h-full flex-col text-center">
+      {/* Numero e Titolo centrati */}
+      <div className="flex flex-col items-center justify-center">
         <span
-          style={cardTextStyles.description}
-          className={`block w-full break-words font-body font-light text-white/85 ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
+          className="block font-heading font-semibold leading-none tracking-tight text-white/85 text-4xl md:text-5xl lg:text-6xl"
+        >
+          {area.number}
+        </span>
+        <span
+          className="mt-3 block font-heading font-semibold leading-[1.1] text-white text-[22px] md:text-3xl lg:text-4xl md:mt-4"
+        >
+          {titleText}
+        </span>
+      </div>
+
+      {/* Descrizione */}
+      <div className="mt-3 flex flex-1 items-center justify-center md:mt-5">
+        <span
+          className={`block w-full break-words font-body font-light text-white/85 text-[15px] md:text-[17px] leading-relaxed ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
         >
           {descriptionText}
         </span>
@@ -467,9 +436,6 @@ function AreaCardButton({
   );
 }
 
-// Misuratore nascosto: rende tutte le aree a testo pieno e riporta l'altezza
-// della più alta, così tutte le card usano quella (altezza uniforme = la più
-// lunga, senza tagli e senza che la pagina cambi altezza al variare della card).
 function CardHeightMeasurer({
   desktopWheel,
   onResize,
@@ -486,11 +452,23 @@ function CardHeightMeasurer({
       for (const child of Array.from(el.children)) {
         max = Math.max(max, (child as HTMLElement).offsetHeight);
       }
-      if (max) onResize(max);
+      // Aggiungiamo un piccolo buffer di sicurezza per via di arrotondamenti e line-height
+      if (max) onResize(max + 16);
     };
+    
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    
+    // Osserviamo i singoli figli per intercettare i cambiamenti di altezza reali (es. caricamento font)
+    for (const child of Array.from(el.children)) {
+      observer.observe(child);
+    }
+
+    // Assicuriamoci di ricalcolare quando i font web sono stati caricati
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measure);
+    }
+
     return () => observer.disconnect();
   }, [el, onResize]);
 
@@ -504,9 +482,8 @@ function CardHeightMeasurer({
       {AREAS.map((area) => (
         <div
           key={area.number}
-          className={`rounded-2xl border [container-type:inline-size] ${
-            desktopWheel ? CARD_BOX_DESKTOP : CARD_BOX_MOBILE
-          }`}
+          className={`rounded-2xl border [container-type:inline-size] ${desktopWheel ? CARD_BOX_DESKTOP : CARD_BOX_MOBILE
+            }`}
         >
           <AreaCardContent area={area} desktopWheel={desktopWheel} />
         </div>
@@ -547,49 +524,5 @@ function CarouselArrows({ onPrevious, onNext, className = "" }: CarouselArrowsPr
         </svg>
       </button>
     </div>
-  );
-}
-
-// ── Contact band finale ───────────────────────────────────────────────────────
-function AreeContactBand() {
-  return (
-    <section className="relative w-full overflow-hidden bg-blue-deep">
-      {/* Background image (ha già il suo gradiente, nessun overlay) */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/background_contatti.webp"
-          alt=""
-          fill
-          className="object-cover object-center"
-          sizes="100vw"
-          aria-hidden="true"
-        />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-24">
-        {/* Riga superiore: testo a sinistra */}
-        <div className="mb-12 md:mb-16">
-          <div className="max-w-2xl">
-            <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 leading-[1.1]">
-              Costruiamo insieme la prossima fase<br />della tua impresa
-            </h2>
-            <p className="font-body font-light text-white text-base md:text-lg leading-relaxed max-w-xl">
-              Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
-            </p>
-          </div>
-        </div>
-
-        {/* Bottone */}
-        <div className="flex justify-center md:justify-start">
-          <Link
-            href="/contatti"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep"
-          >
-            Contattaci
-            <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
-          </Link>
-        </div>
-      </div>
-    </section>
   );
 }

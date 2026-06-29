@@ -11,7 +11,7 @@ export default function ContattiPage() {
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[100lvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden">
+      <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image

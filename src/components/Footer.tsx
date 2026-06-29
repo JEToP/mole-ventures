@@ -24,7 +24,7 @@ export default function Footer() {
     <footer className="relative w-full bg-[#030d3d] border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-12">
         {/* Riga principale: brand + colonne */}
-        <div className="flex flex-row items-start justify-between gap-6 md:gap-8">
+        <div className="flex flex-row items-center md:items-start justify-between gap-6 md:gap-8">
           {/* Colonna brand */}
           <div className="max-w-xs">
             <Image
@@ -33,7 +33,7 @@ export default function Footer() {
               width={180}
               height={180}
               priority
-              className="h-16 w-auto object-contain mix-blend-screen mb-5"
+              className="h-12 md:h-16 w-auto object-contain mix-blend-screen mb-0 md:mb-5"
               unoptimized
             />
             <p className="hidden md:block font-body font-light text-white/60 text-sm leading-relaxed">
@@ -62,11 +62,11 @@ export default function Footer() {
           </div>
 
           {/* Colonna contatti (solo email + sede) */}
-          <div>
-            <h3 className="font-heading text-white text-sm font-semibold uppercase tracking-[0.15em] mb-5">
+          <div className="flex flex-col items-end md:items-start">
+            <h3 className="hidden md:block font-heading text-white text-sm font-semibold uppercase tracking-[0.15em] mb-5">
               Contatti
             </h3>
-            <ul className="flex flex-col gap-3 font-body font-light text-white/70 text-sm">
+            <ul className="flex flex-col gap-1 md:gap-3 font-body font-light text-white/70 text-sm text-right md:text-left">
               <li>
                 {/* TODO: sostituire con l'email reale */}
                 <a
