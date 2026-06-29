@@ -1,5 +1,6 @@
 import Image from "next/image";
 import ScrollCue from "@/components/ScrollCue";
+import { ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: 'Contatti - Mole Venture',
@@ -10,7 +11,7 @@ export default function ContattiPage() {
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
-      <section className="relative w-full min-h-[100lvh] flex flex-col justify-center pt-24 pb-4 md:pt-[152px] md:pb-8 overflow-hidden">
+      <section className="relative w-full min-h-[100lvh] flex flex-col max-md:justify-end md:justify-center pt-28 pb-32 md:pt-[152px] md:pb-8 overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
@@ -18,7 +19,7 @@ export default function ContattiPage() {
             alt="Contatti background"
             fill
             priority
-            className="object-cover object-center brightness-[0.90]"
+            className="object-cover max-md:object-[85%_center] md:object-center brightness-[0.90]"
             sizes="100vw"
           />
         </div>
@@ -33,13 +34,13 @@ export default function ContattiPage() {
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-4xl">
-            <h1 className="font-heading text-white/85 text-[2.4rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10 [text-shadow:_0_2px_16px_rgba(0,0,0,0.5)]">
+            <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
               Costruiamo insieme la prossima fase{' '}
-              <span className="bg-[linear-gradient(115deg,_#2E73C4_0%,_#4CACF8_35%,_#9FD2FB_50%,_#4CACF8_65%,_#2E73C4_100%)] bg-clip-text text-transparent [text-shadow:none] font-bold">della tua impresa</span>
+              <span className="font-bold">della tua impresa</span>
             </h1>
 
             <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-              <p className="font-body font-light text-white/80 text-base md:text-lg leading-relaxed [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+              <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
                 Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
               </p>
             </div>
@@ -77,7 +78,7 @@ export default function ContattiPage() {
                   id="nome"
                   name="nome"
                   placeholder="Il tuo nome"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -87,7 +88,7 @@ export default function ContattiPage() {
                   id="azienda"
                   name="azienda"
                   placeholder="La tua azienda"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -101,7 +102,7 @@ export default function ContattiPage() {
                   id="telefono"
                   name="telefono"
                   placeholder="Il tuo numero"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -111,7 +112,7 @@ export default function ContattiPage() {
                   id="email"
                   name="email"
                   placeholder="La tua email"
-                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
+                  className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -124,7 +125,7 @@ export default function ContattiPage() {
                 id="oggetto"
                 name="oggetto"
                 placeholder="Di cosa vorresti parlarci?"
-                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm"
+                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm"
               />
             </div>
 
@@ -136,7 +137,7 @@ export default function ContattiPage() {
                 name="messaggio"
                 placeholder="Raccontaci la tua realtà..."
                 rows={6}
-                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-blue-soft focus:bg-white/10 transition-all backdrop-blur-sm resize-y"
+                className="w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm resize-y"
               ></textarea>
             </div>
 
@@ -144,12 +145,10 @@ export default function ContattiPage() {
             <div className="flex justify-start mt-4">
               <button
                 type="submit"
-                className="group inline-flex items-center gap-3 bg-white text-[#05155E] font-body font-semibold text-base md:text-lg px-10 md:px-14 py-4 md:py-5 rounded-full transition-all duration-300 shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_8px_24px_rgba(76,172,248,0.35)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-[#05155E]"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
               >
                 Invia messaggio
-                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
+                <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
               </button>
             </div>
           </form>
