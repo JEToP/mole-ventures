@@ -3,8 +3,6 @@ import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Mittente verificato su Resend (dominio proprietario). Es: "Mole Ventures <noreply@mole-ventures.it>"
 const FROM = process.env.CONTACT_FROM ?? "onboarding@resend.dev";
 // Destinatario dei lead. Modificabile dalla dashboard Netlify senza toccare il codice.
@@ -28,6 +26,8 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   let data: Record<string, unknown>;
   try {
