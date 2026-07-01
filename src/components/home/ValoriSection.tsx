@@ -256,17 +256,34 @@ export default function ValoriSection() {
   }, [recenter]);
 
   // Ricalcola durante l'espansione della descrizione (l'altezza cambia) e al
-  // resize/rotazione. Il ResizeObserver copre l'intera animazione di apertura.
+  // resize/rotazione. Il ResizeObserver è debounced per non lottare contro
+  // la transizione CSS su mobile (che causa l'effetto "tremolio").
   useEffect(() => {
     const moving = movingRef.current;
     if (!moving) return;
-    const ro = new ResizeObserver(() => recenter());
+
+    let timeoutId: NodeJS.Timeout;
+    const ro = new ResizeObserver(() => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => recenter(), 150);
+    });
     ro.observe(moving);
-    window.addEventListener("resize", recenter);
+
+    let lastWidth = window.innerWidth;
+    const handleResize = () => {
+      // Ignora i resize dovuti alla comparsa/scomparsa della barra degli indirizzi
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        recenter();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", recenter);
     return () => {
       ro.disconnect();
-      window.removeEventListener("resize", recenter);
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", recenter);
     };
   }, [recenter]);
