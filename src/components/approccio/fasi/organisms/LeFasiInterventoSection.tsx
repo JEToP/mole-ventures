@@ -48,12 +48,18 @@ const sanitize = (stops: number[]): number[] => {
   });
 };
 
+// Piani illuminati (ispirati alla reference): solo palette deep/kinetic/soft.
+// La luce entra dall'alto-centro: 01 = parete in ombra (deep→kinetic),
+// 02 = fascia verticale illuminata (soft→kinetic), 03 = parete media che va in
+// ombra (kinetic→deep), 04 = pavimento illuminato (kinetic→soft), 05 = pavimento
+// che sfuma in ombra (kinetic→deep). Transizioni diagonali morbide + feathering.
 const TETRIS_BG = [
-  "linear-gradient(135deg, #0d2159 0%, #153791 100%)",
-  "linear-gradient(180deg, #234f9f 0%, #1a3c7c 100%)",
-  "linear-gradient(180deg, #143275 0%, #0a1b42 100%)",
-  "linear-gradient(90deg, #143787 0%, #2053c4 100%)",
-  "linear-gradient(180deg, #0a1b42 0%, #0d2350 100%)",
+  "linear-gradient(155deg, var(--color-blue-deep) 0%, var(--color-blue-kinetic) 100%)",
+  "linear-gradient(205deg, var(--color-blue-soft) 0%, var(--color-blue-kinetic) 78%)",
+  "linear-gradient(165deg, var(--color-blue-kinetic) 0%, var(--color-blue-deep) 100%)",
+  "linear-gradient(28deg, var(--color-blue-kinetic) 0%, var(--color-blue-soft) 100%)",
+  // 05 = prosegue la 03: parte SCURO in alto (come il fondo della 03/04 sopra)
+  "linear-gradient(178deg, var(--color-blue-deep) 0%, var(--color-blue-kinetic) 100%)",
 ];
 
 // Sfondo continuo che riprende i colori dei blocchi 1–3 e li fonde in una
@@ -62,7 +68,7 @@ const TETRIS_BG = [
 // La rampa in alto è lunga e delicata, così il passaggio header → blocchi
 // è molto graduale.
 const CONTINUOUS_BG =
-  "linear-gradient(180deg, #0d2159 0%, #12307a 18%, #1a4189 36%, #1c458f 50%, #183c80 60%, #10305f 72%, #0a1c40 84%, #04102b 100%)";
+  "linear-gradient(180deg, var(--color-blue-deep) 0%, var(--color-blue-kinetic) 18%, var(--color-blue-kinetic) 36%, var(--color-blue-kinetic) 50%, var(--color-blue-kinetic) 60%, var(--color-blue-kinetic) 72%, var(--color-blue-deep) 84%, var(--color-blue-deep) 100%)";
 
 // Feather su tutti i bordi: fade molto ampio così i blocchi NON leggono più
 // come riquadri sospesi ma sfumano dolcemente nello sfondo continuo (e tra
@@ -124,6 +130,16 @@ const FEATHER_04: CSSProperties = {
   maskComposite: "intersect, intersect",
 };
 
+// Feather dedicato al blocco 05: bordo SUPERIORE molto morbido, così il 05 non
+// ha più la linea netta in alto e prosegue senza stacco dal 04/03 sopra; lati e
+// fondo restano netti.
+const FEATHER_05: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to bottom, transparent 0%, #000 16%, #000 100%)",
+  maskImage:
+    "linear-gradient(to bottom, transparent 0%, #000 16%, #000 100%)",
+};
+
 const GRID_CLASSES = [
   "lg:col-span-4",                 // 01
   "lg:col-span-3",                 // 02
@@ -142,11 +158,11 @@ const EXTENDED_BGS = [
 
 const LIGHT_EFFECTS = [
   <>
-    <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[500px] translate-x-1/2 -translate-y-1/2 bg-[#5592fc] rounded-full opacity-20 blur-[200px] mix-blend-screen pointer-events-none -z-10" />
-    <div className="hidden lg:block absolute bottom-0 right-0 w-[600px] h-[400px] translate-x-1/2 translate-y-1/2 bg-[#5d98ff] rounded-full opacity-[0.35] blur-[250px] mix-blend-screen pointer-events-none -z-10" />
+    <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[500px] translate-x-1/2 -translate-y-1/2 bg-blue-soft rounded-full opacity-20 blur-[200px] mix-blend-screen pointer-events-none -z-10" />
+    <div className="hidden lg:block absolute bottom-0 right-0 w-[600px] h-[400px] translate-x-1/2 translate-y-1/2 bg-blue-soft rounded-full opacity-[0.35] blur-[250px] mix-blend-screen pointer-events-none -z-10" />
   </>,
   <>
-    <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[400px] translate-x-1/2 -translate-y-1/2 bg-[#3f7de8] rounded-full opacity-20 blur-[80px] mix-blend-screen pointer-events-none -z-10" />
+    <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[400px] translate-x-1/2 -translate-y-1/2 bg-blue-soft rounded-full opacity-20 blur-[80px] mix-blend-screen pointer-events-none -z-10" />
   </>,
   null,
   null,
@@ -169,7 +185,8 @@ const SEAM_LIGHTS = [
   <div className="hidden lg:block absolute bottom-0 left-0 h-[280px] w-[340px] -translate-x-[45%] translate-y-[45%] rounded-full bg-white opacity-[0.02] blur-[90px] mix-blend-screen pointer-events-none z-0" />,
   // 04 → riflesso morbido nell'angolo in basso a destra
   <div className="hidden lg:block absolute bottom-0 right-0 h-[280px] w-[340px] translate-x-[45%] translate-y-[45%] rounded-full bg-white opacity-[0.13] blur-[90px] mix-blend-screen pointer-events-none z-0" />,
-  null,
+  // 05 → riflesso morbido nell'angolo in alto a sinistra (unisce 4 e 5 a sinistra)
+  <div className="hidden lg:block absolute top-0 left-0 h-[300px] w-[360px] -translate-x-[30%] -translate-y-[50%] rounded-full bg-white opacity-[0.12] blur-[100px] mix-blend-screen pointer-events-none z-0" />,
 ];
 
 function FaseContent({
@@ -189,17 +206,17 @@ function FaseContent({
       <motion.span
         aria-hidden="true"
         style={numberStyle}
-        className="block font-heading text-5xl font-semibold leading-none tracking-normal text-white md:text-[64px]"
+        className="block font-heading text-4xl md:text-5xl lg:text-6xl font-semibold leading-none tracking-tight text-white"
       >
         {fase.numero}
       </motion.span>
       <h3
-        className={`mt-3 break-words font-heading text-[26px] font-semibold leading-[1.1] tracking-normal text-white md:mt-4 md:text-[32px] ${titleClass}`}
+        className={`mt-3 md:mt-4 break-words font-heading text-[22px] md:text-3xl lg:text-4xl font-semibold leading-[1.1] tracking-tight text-white ${titleClass}`}
       >
         {fase.titolo}
       </h3>
       <p
-        className={`mt-3 break-words font-body text-[15px] font-normal leading-[1.55] tracking-normal text-white/90 md:mt-4 md:text-[17px] ${descClass}`}
+        className={`mt-3 md:mt-4 break-words font-body text-base md:text-xl font-light leading-relaxed text-white ${descClass}`}
       >
         {fase.descrizione}
       </p>
@@ -265,10 +282,24 @@ function FaseFocusItem({
       <div className="-z-20 absolute inset-0">
         <div
           className={EXTENDED_BGS[index]}
-          style={{ background: TETRIS_BG[index], ...(index === 4 ? undefined : index === 3 ? FEATHER_04 : index === 2 ? FEATHER_03 : index === 1 ? FEATHER_02 : index === 0 ? FEATHER_01 : FEATHER_ALL) }}
+          style={{ background: TETRIS_BG[index], ...(index === 4 ? FEATHER_05 : index === 3 ? FEATHER_04 : index === 2 ? FEATHER_03 : index === 1 ? FEATHER_02 : index === 0 ? FEATHER_01 : FEATHER_ALL) }}
         />
       </div>
       
+      {/* Overlay per unire 4 e 5 nel margine sinistro con blue-soft */}
+      {index === 4 && (
+        <div 
+          className="hidden lg:block absolute top-0 left-0 h-[600px] w-[800px] -translate-x-[60%] -translate-y-1/2 z-0"
+          style={{
+            background: "var(--color-blue-kinetic)",
+            maskImage: "linear-gradient(to right, #000 0%, #000 50%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 45%, #000 55%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, #000 0%, #000 50%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 45%, #000 55%, transparent 100%)",
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in"
+          }}
+        />
+      )}
+
       {LIGHT_EFFECTS[index]}
       {SEAM_LIGHTS[index]}
 
@@ -279,12 +310,10 @@ function FaseFocusItem({
         <FaseContent
           index={index}
           numberStyle={{ opacity: numberOpacity, scale: numberScale, transformOrigin: "left center" }}
-          titleClass="text-[20px] lg:text-[24px] xl:text-[28px]"
-          descClass="mt-2 lg:mt-3 text-[14px] xl:text-[14.5px] leading-snug xl:leading-[1.5]"
         />
-        
+
         {index === 4 && (
-          <div className="mt-10 lg:mt-12 flex justify-start w-full">
+          <div className="mt-12 md:mt-16 mb-6 md:mb-12 flex justify-start w-full">
             <Cta />
           </div>
         )}
@@ -414,7 +443,7 @@ export default function LeFasiInterventoSection() {
       <section
         aria-labelledby="fasi-heading-mobile"
         className={`relative w-full overflow-hidden pt-[12vh] ${!reduce ? "lg:hidden" : ""}`}
-        style={{ background: "linear-gradient(180deg, #0b1e50 0%, #123571 100%)" }}
+        style={{ background: "linear-gradient(180deg, var(--color-blue-deep) 0%, var(--color-blue-kinetic) 100%)" }}
       >
         <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0 px-0">
           <div className="px-8 md:px-12">
@@ -429,7 +458,7 @@ export default function LeFasiInterventoSection() {
               style={{ background: CONTINUOUS_BG }}
             />
             {FASI.map((fase, i) => (
-              <article key={fase.numero} className="relative p-10 md:p-14">
+              <article key={fase.numero} className="relative py-10 px-6 md:px-12 md:py-14">
                 <div className="-z-20 absolute inset-0">
                   <div
                     className="absolute inset-0"
@@ -447,7 +476,7 @@ export default function LeFasiInterventoSection() {
                   <FaseContent index={i} />
                   
                   {i === 4 && (
-                    <div className="mt-10 flex justify-start w-full">
+                    <div className="mt-12 md:mt-16 mb-6 md:mb-12 flex justify-start w-full">
                       <Cta />
                     </div>
                   )}
@@ -467,7 +496,7 @@ export default function LeFasiInterventoSection() {
         >
           <div className="sticky top-0 h-screen w-full overflow-hidden">
             
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 50% 50%, rgba(30,80,180,0.1) 0%, transparent 70%)" }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 50% 50%, rgba(6,46,181,0.1) 0%, transparent 70%)" }} />
             
             <motion.div style={{ y: contentY }} className="absolute inset-0 z-10 w-full">
               <div ref={scrollWrapperRef} className="relative mx-auto w-full max-w-7xl px-12">
