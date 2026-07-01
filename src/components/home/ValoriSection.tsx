@@ -11,12 +11,10 @@
  */
 
 import Image from "next/image";
-import { useRef, useState, useEffect, useLayoutEffect, useCallback } from "react";
-import { useScroll, useMotionValueEvent } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { useScroll, useMotionValueEvent, useTransform, motion, MotionStyle } from "framer-motion";
 
-// useLayoutEffect lato client, useEffect in SSR (evita il warning di Next).
-const useIsoLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+// useLayoutEffect non serve più.
 
 // ── Dati valori ─────────────────────────────────────────────────────────────
 const valori = [
@@ -115,10 +113,12 @@ const Header = (
 function Valore({
   index,
   active,
+  staticMeasure,
   innerRef,
 }: {
   index: number;
   active: boolean;
+  staticMeasure?: boolean;
   innerRef?: (el: HTMLElement | null) => void;
 }) {
   const valore = valori[index];
@@ -164,7 +164,7 @@ function Valore({
         className="grid [contain:layout_paint] motion-reduce:transition-none"
         style={{
           gridTemplateRows: active ? "1fr" : "0fr",
-          transition: "grid-template-rows 480ms cubic-bezier(0.22, 1, 0.36, 1)",
+          transition: staticMeasure ? "none" : "grid-template-rows 480ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <div className="overflow-hidden">
@@ -173,8 +173,7 @@ function Valore({
             style={{
               opacity: active ? 1 : 0,
               transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
-              transition:
-                "opacity 480ms cubic-bezier(0.22, 1, 0.36, 1), transform 480ms cubic-bezier(0.22, 1, 0.36, 1)",
+              transition: staticMeasure ? "none" : "opacity 480ms cubic-bezier(0.22, 1, 0.36, 1), transform 480ms cubic-bezier(0.22, 1, 0.36, 1)",
               willChange: active ? "transform, opacity" : "auto",
             }}
           >
@@ -189,12 +188,11 @@ function Valore({
 export default function ValoriSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [reduce, setReduce] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [yOffsets, setYOffsets] = useState<number[]>(valori.map(() => 0));
 
   const sectionRef = useRef<HTMLElement>(null);
-  const movingRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLElement | null)[]>([]);
-  const [translateY, setTranslateY] = useState(0);
+  const measurerContainersRef = useRef<(HTMLDivElement | null)[]>([]);
+  const measurerItemsRef = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -202,91 +200,73 @@ export default function ValoriSection() {
     }
   }, []);
 
-  // Indice attivo dallo scroll: la sezione è alta N×~43vh, il progresso 0→1 si
-  // divide in N segmenti uguali (uno per valore).
+  // Il progresso 0->1 guida sia l'active index sia la traslazione Y.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    let index = Math.floor(latest * valori.length);
+    let index = Math.round(latest * (valori.length - 1));
     if (index >= valori.length) index = valori.length - 1;
     if (index < 0) index = 0;
     setActiveIndex((prev) => (prev !== index ? index : prev));
   });
 
-  // ── Centratura MISURATA del valore attivo ───────────────────────────────────
-  // Trasla la lista di T = (centro viewport) − (centro del valore attivo), così
-  // il valore aperto è SEMPRE al centro dello schermo, indipendentemente da
-  // quanti valori ci sono prima e dalla lunghezza del testo (che su mobile va a
-  // capo). itemRect.top − movingRect.top è invariante rispetto alla traslazione
-  // (si muovono insieme), quindi il calcolo è stabile e non innesca loop.
-  const recenter = useCallback(() => {
-    const moving = movingRef.current;
-    const item = itemRefs.current[activeIndex];
-    if (!moving || !item) return;
+  // ── Calcolo posizioni statiche ──────────────────────────────────────────────
+  const updateOffsets = useCallback(() => {
     const vh = window.innerHeight;
-    const movingRect = moving.getBoundingClientRect();
-    const itemRect = item.getBoundingClientRect();
-    const contentH = movingRect.height; // altezza layout (invariante al transform)
-    const centerInContent = itemRect.top - movingRect.top + itemRect.height / 2;
+    const newOffsets = valori.map((_, k) => {
+      const container = measurerContainersRef.current[k];
+      const item = measurerItemsRef.current[k];
+      if (!container || !item) return 0;
 
-    // T ideale = centra il valore attivo a metà schermo.
-    const centeringT = vh / 2 - centerInContent;
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
+      const contentH = containerRect.height;
+      const centerInContent = itemRect.top - containerRect.top + itemRect.height / 2;
 
-    // Clamp agli estremi per non lasciare vuoti eccessivi:
-    //  • non spingere il contenuto più in basso di TOP_PAD (header sotto navbar);
-    //  • non spingerlo più in alto di quanto serve a lasciare BOTTOM_MARGIN
-    //    sotto l'ultimo valore. Così primo/ultimo non finiscono ai bordi ma la
-    //    sezione non ha buchi enormi.
-    const TOP_PAD = 96;
-    const BOTTOM_MARGIN = 140;
-    const maxT = TOP_PAD;
-    const minT = vh - BOTTOM_MARGIN - contentH;
-    const clampedT =
-      minT > maxT ? maxT : Math.min(Math.max(centeringT, minT), maxT);
+      const targetY = vh / 2 - centerInContent;
+      const TOP_PAD = 96;
+      const BOTTOM_MARGIN = 140;
+      const maxT = TOP_PAD;
+      const minT = vh - BOTTOM_MARGIN - contentH;
+      return minT > maxT ? maxT : Math.min(Math.max(targetY, minT), maxT);
+    });
+    setYOffsets(newOffsets);
+  }, []);
 
-    setTranslateY(clampedT);
-    setReady(true);
-  }, [activeIndex]);
-
-  // Prima del paint (niente salto al primo ingresso, importante su mobile).
-  useIsoLayoutEffect(() => {
-    recenter();
-  }, [recenter]);
-
-  // Ricalcola durante l'espansione della descrizione (l'altezza cambia) e al
-  // resize/rotazione. Il ResizeObserver è debounced per non lottare contro
-  // la transizione CSS su mobile (che causa l'effetto "tremolio").
+  // Aggiorna gli offset al mount e al resize (debounce leggero).
   useEffect(() => {
-    const moving = movingRef.current;
-    if (!moving) return;
+    updateOffsets();
+    
+    // Per intercettare font loading o layout completato
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateOffsets);
+    }
 
     let timeoutId: NodeJS.Timeout;
-    const ro = new ResizeObserver(() => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => recenter(), 150);
-    });
-    ro.observe(moving);
-
     let lastWidth = window.innerWidth;
     const handleResize = () => {
-      // Ignora i resize dovuti alla comparsa/scomparsa della barra degli indirizzi
       if (window.innerWidth !== lastWidth) {
         lastWidth = window.innerWidth;
-        recenter();
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => updateOffsets(), 150);
       }
     };
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", recenter);
+    window.addEventListener("orientationchange", updateOffsets);
     return () => {
-      ro.disconnect();
       clearTimeout(timeoutId);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", recenter);
+      window.removeEventListener("orientationchange", updateOffsets);
     };
-  }, [recenter]);
+  }, [updateOffsets]);
+
+  // Genera gli stop per useTransform: [0, 1/6, 2/6, 3/6, 4/6, 5/6, 1]
+  const stops = valori.map((_, i) => i / (valori.length - 1));
+  const contentY = useTransform(scrollYProgress, stops, yOffsets);
 
   // ── Fallback statico: reduced motion ──────────────────────────────────────────
   if (reduce) {
@@ -320,24 +300,39 @@ export default function ValoriSection() {
   // ── Versione Pinned: il valore attivo resta centrato sullo schermo ───────────
   return (
     <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
+      
+      {/* ── MISURATORE FANTASMA (Hidden Measurer) ── */}
+      {/* Renderizza 7 istanze nascoste, una per ogni stato "aperto", per calcolare a priori la posizione Y.
+          Senza h-0 per costringere Safari iOS a calcolare correttamente il layout. */}
+      <div aria-hidden="true" className="pointer-events-none absolute left-0 top-0 w-full opacity-0 z-[-1] invisible">
+        {valori.map((_, activeIdx) => (
+          <div key={activeIdx} ref={(el) => { measurerContainersRef.current[activeIdx] = el; }}>
+            <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
+              <div className="mb-6 md:mb-8">{Header}</div>
+              <div className="flex flex-col">
+                {valori.map((valore, index) => (
+                  <Valore
+                    key={valore.id}
+                    index={index}
+                    active={index === activeIdx}
+                    staticMeasure
+                    innerRef={index === activeIdx ? (el) => { measurerItemsRef.current[activeIdx] = el; } : undefined}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Contenitore sticky a tutto schermo */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {Background}
 
-        {/* La lista trasla verticalmente per centrare il valore attivo.
-            L'header "I nostri valori" è dentro il flusso: visibile all'inizio,
-            poi scorre via insieme ai valori (non resta fisso) e resta allineato. */}
-        <div
-          ref={movingRef}
+        {/* La lista trasla verticalmente guidata puramente dallo scroll */}
+        <motion.div
           className="relative w-full"
-          style={{
-            transform: `translate3d(0, ${translateY}px, 0)`,
-            transition: ready
-              ? "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)"
-              : "none",
-            willChange: "transform",
-            opacity: ready ? 1 : 0,
-          }}
+          style={{ y: contentY, willChange: "transform" }}
         >
           <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
             <div className="mb-6 md:mb-8">{Header}</div>
@@ -347,14 +342,11 @@ export default function ValoriSection() {
                   key={valore.id}
                   index={index}
                   active={index === activeIndex}
-                  innerRef={(el) => {
-                    itemRefs.current[index] = el;
-                  }}
                 />
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
