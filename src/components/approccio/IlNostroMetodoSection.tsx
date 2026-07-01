@@ -20,7 +20,7 @@ function MetodoHero() {
       {/* Background image: adesso occupa tutto lo schermo ed è gestita come la Home */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-metodo.webp"
+          src="/images/hero-metodo.avif"
           alt="Metodo background"
           fill
           priority

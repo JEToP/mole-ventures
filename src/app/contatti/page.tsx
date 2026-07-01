@@ -15,7 +15,7 @@ export default function ContattiPage() {
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src="/images/contatti-bg.webp"
+            src="/images/contatti-bg.avif"
             alt="Contatti background"
             fill
             priority

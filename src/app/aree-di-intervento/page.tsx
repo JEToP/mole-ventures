@@ -78,7 +78,7 @@ function HeroAree() {
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
-          src="/images/background_areeintervento.webp"
+          src="/images/background_areeintervento.avif"
           alt="Background aree di intervento"
           fill
           priority
