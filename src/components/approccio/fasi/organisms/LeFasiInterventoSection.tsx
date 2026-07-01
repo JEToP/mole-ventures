@@ -53,7 +53,7 @@ const TETRIS_BG = [
   "linear-gradient(180deg, #234f9f 0%, #1a3c7c 100%)",
   "linear-gradient(180deg, #143275 0%, #0a1b42 100%)",
   "linear-gradient(90deg, #143787 0%, #2053c4 100%)",
-  "linear-gradient(180deg, #09173b 0%, #040c21 100%)",
+  "linear-gradient(180deg, #0a1b42 0%, #0d2350 100%)",
 ];
 
 // Sfondo continuo che riprende i colori dei blocchi 1–3 e li fonde in una
@@ -62,7 +62,7 @@ const TETRIS_BG = [
 // La rampa in alto è lunga e delicata, così il passaggio header → blocchi
 // è molto graduale.
 const CONTINUOUS_BG =
-  "linear-gradient(180deg, #0d2159 0%, #12307a 18%, #1a4189 36%, #143577 50%, #0f2a5f 60%, #0a1c40 72%, #071630 84%, #04102b 100%)";
+  "linear-gradient(180deg, #0d2159 0%, #12307a 18%, #1a4189 36%, #1c458f 50%, #183c80 60%, #10305f 72%, #0a1c40 84%, #04102b 100%)";
 
 // Feather su tutti i bordi: fade molto ampio così i blocchi NON leggono più
 // come riquadri sospesi ma sfumano dolcemente nello sfondo continuo (e tra
@@ -81,9 +81,20 @@ const FEATHER_ALL: CSSProperties = {
 // netti così lo stacco col 04 sotto resta pulito, senza alone blu.
 const FEATHER_01: CSSProperties = {
   WebkitMaskImage:
-    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 99%, transparent 100%)",
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%)",
   maskImage:
-    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 99%, transparent 100%)",
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%)",
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
+};
+
+// Feather dedicato al blocco 03: bordo superiore morbido (fusione con
+// l'intestazione), lati e FONDO netti così si salda pulito col 05 sottostante.
+const FEATHER_03: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 7%, #000 100%)",
+  maskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 7%, #000 100%)",
   WebkitMaskComposite: "source-in",
   maskComposite: "intersect",
 };
@@ -106,20 +117,11 @@ const FEATHER_02: CSSProperties = {
 // grazie alla maschera diagonale "to top right".
 const FEATHER_04: CSSProperties = {
   WebkitMaskImage:
-    "linear-gradient(to right, transparent 0%, #000 1%, #000 68%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1.5%, #000 95%, transparent 100%), linear-gradient(to top right, #000 42%, transparent 90%)",
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 68%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1.5%, #000 100%), linear-gradient(to top right, #000 66%, transparent 96%)",
   maskImage:
-    "linear-gradient(to right, transparent 0%, #000 1%, #000 68%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1.5%, #000 95%, transparent 100%), linear-gradient(to top right, #000 42%, transparent 90%)",
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 68%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1.5%, #000 100%), linear-gradient(to top right, #000 66%, transparent 96%)",
   WebkitMaskComposite: "source-in, source-in",
   maskComposite: "intersect, intersect",
-};
-
-// Feather solo verticale per la lista mobile impilata: taglio netto mantenuto
-// ma sfumato sopra/sotto per addolcire il passaggio tra un blocco e l'altro.
-const FEATHER_V: CSSProperties = {
-  WebkitMaskImage:
-    "linear-gradient(to bottom, transparent 0%, #000 7%, #000 93%, transparent 100%)",
-  maskImage:
-    "linear-gradient(to bottom, transparent 0%, #000 7%, #000 93%, transparent 100%)",
 };
 
 const GRID_CLASSES = [
@@ -140,8 +142,8 @@ const EXTENDED_BGS = [
 
 const LIGHT_EFFECTS = [
   <>
-    <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[500px] translate-x-1/2 -translate-y-1/2 bg-[#5592fc] rounded-full opacity-20 blur-[80px] mix-blend-screen pointer-events-none -z-10" />
-    <div className="hidden lg:block absolute bottom-0 right-0 w-[600px] h-[400px] translate-x-1/2 translate-y-1/2 bg-[#5d98ff] rounded-full opacity-[0.25] blur-[100px] mix-blend-screen pointer-events-none -z-10" />
+    <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[500px] translate-x-1/2 -translate-y-1/2 bg-[#5592fc] rounded-full opacity-20 blur-[200px] mix-blend-screen pointer-events-none -z-10" />
+    <div className="hidden lg:block absolute bottom-0 right-0 w-[600px] h-[400px] translate-x-1/2 translate-y-1/2 bg-[#5d98ff] rounded-full opacity-[0.35] blur-[250px] mix-blend-screen pointer-events-none -z-10" />
   </>,
   <>
     <div className="hidden lg:block absolute top-1/2 right-0 w-[400px] h-[400px] translate-x-1/2 -translate-y-1/2 bg-[#3f7de8] rounded-full opacity-20 blur-[80px] mix-blend-screen pointer-events-none -z-10" />
@@ -251,13 +253,19 @@ function FaseFocusItem({
                 ? "pt-10 pb-10 lg:pt-12 lg:pb-12"
                 : "py-10 lg:py-12"
       } ${
-        index === 4 ? "lg:px-20" : "lg:px-10"
+        // Blocchi della colonna sinistra (01, 04, 05): testo allineato al bordo
+        // del container (come navbar/header), niente indentazione a sinistra.
+        index === 0
+          ? "lg:pl-0 lg:pr-10"
+          : index === 3 || index === 4
+            ? "lg:pl-0 lg:pr-20"
+            : "lg:px-10"
       } ${GRID_CLASSES[index]}`}
     >
       <div className="-z-20 absolute inset-0">
         <div
           className={EXTENDED_BGS[index]}
-          style={{ background: TETRIS_BG[index], ...(index === 3 ? FEATHER_04 : index === 1 ? FEATHER_02 : index === 0 ? FEATHER_01 : FEATHER_ALL) }}
+          style={{ background: TETRIS_BG[index], ...(index === 4 ? undefined : index === 3 ? FEATHER_04 : index === 2 ? FEATHER_03 : index === 1 ? FEATHER_02 : index === 0 ? FEATHER_01 : FEATHER_ALL) }}
         />
       </div>
       
@@ -297,7 +305,7 @@ function Header({ className = "" }: { className?: string }) {
       </h2>
       <p className="mt-4 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
         Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
-        sviluppo alla realt&agrave; esistente &mdash; e diventare, insieme a noi, autori di un cambiamento
+        sviluppo alla realt&agrave; esistente, e diventare, insieme a noi, autori di un cambiamento
         imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
         divisa in 5 fasi.
       </p>
@@ -425,7 +433,7 @@ export default function LeFasiInterventoSection() {
                 <div className="-z-20 absolute inset-0">
                   <div
                     className="absolute inset-0"
-                    style={{ background: TETRIS_BG[i], ...FEATHER_V }}
+                    style={{ background: TETRIS_BG[i] }}
                   />
                 </div>
                 
@@ -454,7 +462,7 @@ export default function LeFasiInterventoSection() {
       {!reduce && (
         <section
           aria-labelledby="fasi-heading"
-          className="relative hidden w-full lg:block h-[400vh] bg-[#071333]"
+          className="relative hidden w-full lg:block h-[400vh] bg-blue-deep"
           ref={sectionRef}
         >
           <div className="sticky top-0 h-screen w-full overflow-hidden">

@@ -134,6 +134,29 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
   const [desktopHeight, setDesktopHeight] = useState<number>();
   const [mobileHeight, setMobileHeight] = useState<number>();
 
+  // Cap dell'altezza card su mobile: lo spazio disponibile tra la navbar e il
+  // fondo dello schermo, meno frecce e padding della sezione. Così il carosello
+  // non supera mai l'altezza visibile del viewport.
+  const [mobileCap, setMobileCap] = useState<number>();
+  useEffect(() => {
+    const compute = () => {
+      // navbar compatta (~80) + frecce (~80) + padding sezione (48) + margini,
+      // così l'intera sezione (card + frecce) resta dentro il viewport.
+      const reserved = 236;
+      setMobileCap(Math.max(280, window.innerHeight - reserved));
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
+
+  const effectiveMobileHeight =
+    mobileHeight != null
+      ? mobileCap != null
+        ? Math.min(mobileHeight, mobileCap)
+        : mobileHeight
+      : mobileCap;
+
   const showSoftPrevious = () => {
     onPrevious();
   };
@@ -189,7 +212,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
   };
 
   return (
-    <section className="relative isolate flex w-full flex-col items-center justify-center overflow-hidden bg-blue-deep py-16 max-md:min-h-[100dvh] md:py-24">
+    <section className="relative isolate flex w-full flex-col items-center justify-center overflow-hidden bg-blue-deep py-16 md:py-24 max-md:min-h-[100svh] max-md:py-6">
       {/* Stesso sfondo della contact band "Costruiamo insieme": continuità */}
       <div className="absolute inset-0">
         <Image
@@ -231,7 +254,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
       {/* Carousel mobile/tablet */}
       <div
         className="relative z-10 w-full lg:hidden"
-        style={{ ...mobileCarouselStyle, height: mobileHeight ? `${mobileHeight}px` : undefined, touchAction: "pan-y" }}
+        style={{ ...mobileCarouselStyle, height: effectiveMobileHeight ? `${effectiveMobileHeight}px` : undefined, touchAction: "pan-y" }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={() => {
@@ -248,7 +271,7 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
               compact={!active}
               onClick={() => handleCardClick(step)}
               className="absolute left-1/2 top-1/2"
-              style={{ ...getMobileCardStyle(offset), height: mobileHeight }}
+              style={{ ...getMobileCardStyle(offset), height: effectiveMobileHeight }}
             />
           );
         })}
@@ -371,9 +394,9 @@ function AreaCardContent({
     : area.description;
 
   return (
-    <div className="flex h-full flex-col text-center">
-      {/* Numero e Titolo centrati */}
-      <div className="flex flex-col items-center justify-center">
+    <div className="flex h-full flex-col text-left">
+      {/* Numero e Titolo allineati a sinistra */}
+      <div className="flex flex-col items-start justify-center">
         <span
           className="block font-heading font-semibold leading-none tracking-tight text-white/85 text-4xl md:text-5xl lg:text-6xl"
         >
@@ -386,10 +409,15 @@ function AreaCardContent({
         </span>
       </div>
 
-      {/* Descrizione */}
-      <div className="mt-3 flex flex-1 items-center justify-center md:mt-5">
+      {/* Descrizione: allineata a sinistra e giustificata. Su mobile può
+          scorrere internamente se l'altezza della card è limitata. */}
+      <div
+        className={`mt-3 flex flex-1 justify-start md:mt-5 md:items-center ${
+          desktopWheel ? "items-center" : "min-h-0 items-start overflow-y-auto"
+        }`}
+      >
         <span
-          className={`block w-full break-words font-body font-light text-white/85 text-[15px] md:text-[17px] leading-relaxed ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
+          className={`block w-full break-words text-justify font-body font-light text-white/85 text-[15px] md:text-[17px] leading-relaxed ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
         >
           {descriptionText}
         </span>

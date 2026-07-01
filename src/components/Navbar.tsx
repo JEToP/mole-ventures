@@ -117,7 +117,7 @@ export default function Navbar() {
 
       {/* Pannello laterale (Right Drawer) Menu Mobile */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 bg-blue-deep/90 backdrop-blur-lg z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
+        className={`fixed top-0 right-0 h-full w-72 bg-[#030d3d]/90 backdrop-blur-md z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
           isMobileMenuOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
         }`}
         aria-hidden={!isMobileMenuOpen}
