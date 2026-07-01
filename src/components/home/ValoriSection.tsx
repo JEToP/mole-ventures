@@ -69,7 +69,7 @@ const valori = [
   },
 ];
 
-// ── Sfondo mesh ─────────────────────────────────────────────────────────────
+// ── Sfondo ottimizzato (NO CSS BLUR) ─────────────────────────────────────────
 const Background = (
   <div
     className="pointer-events-none absolute inset-0 overflow-hidden [contain:paint] [transform:translateZ(0)]"
@@ -95,11 +95,21 @@ const Background = (
         ].join(","),
       }}
     />
-    <div className="absolute -bottom-[22%] -left-[16%] w-[60%] h-[70%] rounded-full bg-blue-soft opacity-45 blur-[120px] md:blur-[150px]" />
-    <div className="absolute top-[30%] -left-[14%] w-[42%] h-[48%] rounded-full bg-blue-soft opacity-30 blur-[110px] md:blur-[150px]" />
-    <div className="absolute top-[18%] right-[8%] w-[50%] h-[55%] rounded-full bg-blue-kinetic opacity-40 blur-[120px] md:blur-[160px]" />
-    <div className="absolute -top-[14%] -left-[10%] w-[45%] h-[50%] rounded-full bg-blue-deep opacity-60 blur-[120px] md:blur-[160px]" />
-    <div className="absolute -bottom-[14%] -right-[12%] w-[52%] h-[58%] rounded-full bg-blue-deep opacity-55 blur-[130px] md:blur-[170px]" />
+    
+    {/* Cerchi "sfocati" resi tramite gradienti radiali morbidi anziché filter: blur().
+        Questo risolve i lag estremi (10s freeze) su iOS Safari causati dal render dei blur. */}
+    <div
+      className="absolute inset-0"
+      style={{
+        background: [
+          "radial-gradient(50% 50% at 10% 90%, rgba(76,172,248,0.25) 0%, transparent 80%)", // bottom-left soft
+          "radial-gradient(40% 40% at 0% 40%, rgba(76,172,248,0.15) 0%, transparent 80%)", // mid-left soft
+          "radial-gradient(45% 45% at 85% 30%, rgba(6,46,181,0.25) 0%, transparent 80%)", // top-right kinetic
+          "radial-gradient(40% 40% at 10% 10%, rgba(5,21,94,0.40) 0%, transparent 80%)", // top-left deep
+          "radial-gradient(50% 50% at 90% 95%, rgba(5,21,94,0.35) 0%, transparent 80%)", // bottom-right deep
+        ].join(","),
+      }}
+    />
   </div>
 );
 
