@@ -8,10 +8,12 @@ export default function HeroSection() {
           alta (dove cade "ETA"). Desktop: ancorata in alto. */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-bg.webp"
+          src="/images/hero-bg.avif"
           alt="Hero background"
           fill
           priority
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAQBACdASoUAA0APu1iqU2ppaQiMAgBMB2JYwCdAYvMrRRWy7cl06RSgAD+CTO9JcDOK9MUSUERm1i5+ogcyPlpJeZqUL2x8UDewbXbqAyVkFHEpquKWRABlz147MPHlJl1PoW18IFf6/yUpwbxNpequtWAC3WCZdTIcoNe0o6HWU1vguPae0fW4eWoZAAA"
           className="object-cover object-[78%_8%] md:object-top opacity-90"
           sizes="100vw"
         />
@@ -39,7 +41,7 @@ export default function HeroSection() {
           </h1>
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-            <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+            <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
               Entriamo in prima persona nell&apos;azienda per innescare le dinamiche di cambiamento
               e di discontinuità necessarie a sbloccare il potenziale inespresso e generare le
               successive opportunità di sviluppo

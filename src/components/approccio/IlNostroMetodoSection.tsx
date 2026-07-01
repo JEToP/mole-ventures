@@ -24,6 +24,8 @@ function MetodoHero() {
           alt="Metodo background"
           fill
           priority
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoUAAwAPu1iqU2ppaOiMAgBMB2JYwC2yBKNtqUIBN3jf/VAAP2PwF6PFSCCO/+z/ThzCHC7Q5+UiikB45zyjAEPQnqLu3DCm6DlP4GOiZ6bcheX/RSVFKSTpI2KIAdUTl9Yn7gAAAA="
           className="object-cover object-center opacity-90"
           sizes="100vw"
         />
@@ -43,7 +45,7 @@ function MetodoHero() {
           </h1>
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl">
-            <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+            <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
               Ogni azienda per continuare a evolvere deve impostare il proprio percorso di crescita, di
               evoluzione e di rafforzamento rimettendo in discussione il proprio status quo. Noi
               lavoriamo sul rinnovare l&apos;ecosistema esterno ed interno all&apos;azienda, nuovi soci,

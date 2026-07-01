@@ -24,7 +24,7 @@ export default function ContattiSection() {
             <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 leading-tight">
               Costruiamo insieme la prossima<br /> fase della tua impresa
             </h2>
-            <p className="font-body font-light text-white text-base md:text-lg leading-relaxed max-w-xl">
+            <p className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-xl">
               Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
             </p>
           </div>

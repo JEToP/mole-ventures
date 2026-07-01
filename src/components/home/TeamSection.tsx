@@ -53,22 +53,17 @@ export default function TeamSection() {
       {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/background_team.webp')" }}
+        style={{ backgroundImage: "url('/images/team.avif')" }}
       />
-      {/* Gradiente VERTICALE: blu acceso e luminoso in ALTO (dove era nero),
-          che si dirada verso il basso lasciando EMERGERE la foto dei grattacieli. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#1a47b0] via-[#0a2a8a]/70 via-30% to-transparent to-70%" />
-      {/* Bagliore luminoso in alto a destra (la zona che era più nera) */}
-      <div aria-hidden="true" className="pointer-events-none absolute -top-[15%] right-0 w-[45rem] h-[30rem] rounded-full bg-blue-soft/25 blur-[150px]" />
-      {/* Leggerissimo velo navy solo dietro al testo in alto a sinistra, per leggibilità */}
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-br from-[#05155E]/45 to-transparent" />
+      {/* Overlay nero al 10% */}
+      <div aria-hidden="true" className="absolute inset-0 bg-black/40" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-24">
         {/* Intestazione – stile coerente con "Chi siamo" */}
         <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold mb-6">
           Il nostro team
         </h2>
-        <p className="font-body font-light text-white text-base md:text-lg max-w-3xl mb-12 md:mb-16 leading-relaxed">
+        <p className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-3xl mb-12 md:mb-16">
           Siamo professionisti che hanno deciso di condividere le loro competenze e le precedenti
           esperienze maturate in ruoli apicali e strategici in realtà di rilievo nazionali e
           internazionali così da poter sostenere ogni fase di cambiamento all&apos;interno delle
@@ -102,7 +97,7 @@ export default function TeamSection() {
                 <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight mb-3">
                   {member.name}
                 </h3>
-                <p className="font-body font-light text-white/90 text-sm md:text-base leading-relaxed">
+                <p className="font-body font-light text-white text-sm md:text-lg leading-relaxed">
                   {member.description}
                 </p>
               </div>

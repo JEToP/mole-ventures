@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 type Status = "idle" | "sending" | "success" | "error";
 
 const inputClass =
-  "w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body text-base focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm";
+  "w-full bg-white/5 text-white placeholder-white/50 border border-white/20 rounded-lg px-4 py-3 font-body font-light text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/10 transition-all backdrop-blur-sm";
 const labelClass =
-  "font-body text-white font-semibold text-sm md:text-base";
+  "font-body font-semibold text-white text-base md:text-xl leading-relaxed";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");

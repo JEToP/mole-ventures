@@ -11,8 +11,12 @@
  */
 
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { useRef, useState, useEffect, useLayoutEffect, useCallback } from "react";
+import { useScroll, useMotionValueEvent } from "framer-motion";
+
+// useLayoutEffect lato client, useEffect in SSR (evita il warning di Next).
+const useIsoLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 // ── Dati valori ─────────────────────────────────────────────────────────────
 const valori = [
@@ -111,15 +115,17 @@ const Header = (
 function Valore({
   index,
   active,
+  innerRef,
 }: {
   index: number;
   active: boolean;
+  innerRef?: (el: HTMLElement | null) => void;
 }) {
   const valore = valori[index];
   const num = String(index + 1).padStart(2, "0");
 
   return (
-    <article className="border-t border-white/10 py-5 md:py-8">
+    <article ref={innerRef} className="border-t border-white/10 py-5 md:py-8">
       {/* Riga compatta: numero + titolo (unità coesa) + icona */}
       <div className="flex items-center gap-4 md:gap-6">
         <div className="flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
@@ -163,7 +169,7 @@ function Valore({
       >
         <div className="overflow-hidden">
           <p
-            className="font-body font-light text-white/85 text-base md:text-xl leading-relaxed max-w-2xl pt-4 motion-reduce:transition-none"
+            className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-2xl pt-4 motion-reduce:transition-none"
             style={{
               opacity: active ? 1 : 0,
               transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
@@ -183,7 +189,12 @@ function Valore({
 export default function ValoriSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [reduce, setReduce] = useState(false);
-  const containerRef = useRef<HTMLElement>(null);
+  const [ready, setReady] = useState(false);
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const movingRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLElement | null)[]>([]);
+  const [translateY, setTranslateY] = useState(0);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -191,41 +202,74 @@ export default function ValoriSection() {
     }
   }, []);
 
-  // Mappatura dello scroll (350vh) a un progresso da 0 a 1
+  // Indice attivo dallo scroll: la sezione è alta N×~43vh, il progresso 0→1 si
+  // divide in N segmenti uguali (uno per valore).
   const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
+    target: sectionRef,
+    offset: ["start start", "end end"],
   });
-
-  // Aggiorna l'indice attivo basandosi sul progresso dello scroll
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     let index = Math.floor(latest * valori.length);
     if (index >= valori.length) index = valori.length - 1;
     if (index < 0) index = 0;
-    
-    if (index !== activeIndex) {
-      setActiveIndex(index);
-    }
+    setActiveIndex((prev) => (prev !== index ? index : prev));
   });
 
-  // Calcolo dinamico dell'offset per evitare spazi vuoti eccessivi alla fine.
-  // Su desktop la lista è più corta (in proporzione), quindi serve uno spostamento minore.
-  // Su mobile serve uno spostamento maggiore perché i testi vanno a capo e allungano la lista.
-  const [endOffset, setEndOffset] = useState("-20%");
+  // ── Centratura MISURATA del valore attivo ───────────────────────────────────
+  // Trasla la lista di T = (centro viewport) − (centro del valore attivo), così
+  // il valore aperto è SEMPRE al centro dello schermo, indipendentemente da
+  // quanti valori ci sono prima e dalla lunghezza del testo (che su mobile va a
+  // capo). itemRect.top − movingRect.top è invariante rispetto alla traslazione
+  // (si muovono insieme), quindi il calcolo è stabile e non innesca loop.
+  const recenter = useCallback(() => {
+    const moving = movingRef.current;
+    const item = itemRefs.current[activeIndex];
+    if (!moving || !item) return;
+    const vh = window.innerHeight;
+    const movingRect = moving.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    const contentH = movingRect.height; // altezza layout (invariante al transform)
+    const centerInContent = itemRect.top - movingRect.top + itemRect.height / 2;
 
+    // T ideale = centra il valore attivo a metà schermo.
+    const centeringT = vh / 2 - centerInContent;
+
+    // Clamp agli estremi per non lasciare vuoti eccessivi:
+    //  • non spingere il contenuto più in basso di TOP_PAD (header sotto navbar);
+    //  • non spingerlo più in alto di quanto serve a lasciare BOTTOM_MARGIN
+    //    sotto l'ultimo valore. Così primo/ultimo non finiscono ai bordi ma la
+    //    sezione non ha buchi enormi.
+    const TOP_PAD = 96;
+    const BOTTOM_MARGIN = 140;
+    const maxT = TOP_PAD;
+    const minT = vh - BOTTOM_MARGIN - contentH;
+    const clampedT =
+      minT > maxT ? maxT : Math.min(Math.max(centeringT, minT), maxT);
+
+    setTranslateY(clampedT);
+    setReady(true);
+  }, [activeIndex]);
+
+  // Prima del paint (niente salto al primo ingresso, importante su mobile).
+  useIsoLayoutEffect(() => {
+    recenter();
+  }, [recenter]);
+
+  // Ricalcola durante l'espansione della descrizione (l'altezza cambia) e al
+  // resize/rotazione. Il ResizeObserver copre l'intera animazione di apertura.
   useEffect(() => {
-    const updateOffset = () => {
-      // Desktop ridotto da -50% a -35%, mobile rimane -18%
-      setEndOffset(window.innerWidth < 768 ? "-18%" : "-35%");
+    const moving = movingRef.current;
+    if (!moving) return;
+    const ro = new ResizeObserver(() => recenter());
+    ro.observe(moving);
+    window.addEventListener("resize", recenter);
+    window.addEventListener("orientationchange", recenter);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", recenter);
+      window.removeEventListener("orientationchange", recenter);
     };
-    updateOffset();
-    window.addEventListener("resize", updateOffset);
-    return () => window.removeEventListener("resize", updateOffset);
-  }, []);
-
-  // Mappatura Y da 0 (posizione naturale in alto) a un valore negativo che fa salire la lista 
-  // fino a far scorrere gli ultimi valori verso l'alto prima della fine della sezione.
-  const yOffset = useTransform(scrollYProgress, [0, 1], ["0%", endOffset]);
+  }, [recenter]);
 
   // ── Fallback statico: reduced motion ──────────────────────────────────────────
   if (reduce) {
@@ -256,35 +300,45 @@ export default function ValoriSection() {
     );
   }
 
-  // ── Versione Pinned Scrubbing ────────────────────────────────────────────────
+  // ── Versione Pinned: il valore attivo resta centrato sullo schermo ───────────
   return (
-    <section ref={containerRef} className="relative w-full bg-[#030d3d] h-[300vh] z-20">
-      
+    <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
       {/* Contenitore sticky a tutto schermo */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {Background}
-        
-        {/* Usiamo py-20 md:py-28 per ripristinare i margini originali esatti */}
-        <motion.div 
-          className="relative w-full py-20 md:py-28"
-          style={{ y: yOffset }}
+
+        {/* La lista trasla verticalmente per centrare il valore attivo.
+            L'header "I nostri valori" è dentro il flusso: visibile all'inizio,
+            poi scorre via insieme ai valori (non resta fisso) e resta allineato. */}
+        <div
+          ref={movingRef}
+          className="relative w-full"
+          style={{
+            transform: `translate3d(0, ${translateY}px, 0)`,
+            transition: ready
+              ? "transform 520ms cubic-bezier(0.22, 1, 0.36, 1)"
+              : "none",
+            willChange: "transform",
+            opacity: ready ? 1 : 0,
+          }}
         >
-          <div className="max-w-7xl mx-auto px-6 md:px-12 w-full">
-            <div className="mb-10 md:mb-16">{Header}</div>
-            
+          <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
+            <div className="mb-6 md:mb-8">{Header}</div>
             <div className="flex flex-col">
               {valori.map((valore, index) => (
                 <Valore
                   key={valore.id}
                   index={index}
                   active={index === activeIndex}
+                  innerRef={(el) => {
+                    itemRefs.current[index] = el;
+                  }}
                 />
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
-      
     </section>
   );
 }

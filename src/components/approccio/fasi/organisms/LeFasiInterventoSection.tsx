@@ -303,7 +303,7 @@ function Header({ className = "" }: { className?: string }) {
       >
         Le 5 fasi dell&apos;intervento
       </h2>
-      <p className="mt-4 max-w-full break-words font-body text-[15px] font-normal leading-[1.5] text-white/90 md:text-[16px]">
+      <p className="mt-4 max-w-full font-body font-light text-white text-base md:text-xl leading-relaxed">
         Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
         sviluppo alla realt&agrave; esistente, e diventare, insieme a noi, autori di un cambiamento
         imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,

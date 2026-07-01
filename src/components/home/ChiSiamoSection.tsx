@@ -91,17 +91,17 @@ export default function ChiSiamoSection() {
 
           <ul className="flex flex-col gap-7 md:gap-8 max-w-2xl">
             <li className="border-l-2 border-white/70 pl-5">
-              <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
                 Acquisiamo PMI che necessitano di una fase di cambiamento e le guidiamo in prima persona.
               </p>
             </li>
             <li className="border-l-2 border-white/70 pl-5">
-              <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
                 Generiamo la discontinuità necessaria per sbloccare il potenziale latente dell&apos;impresa.
               </p>
             </li>
             <li className="border-l-2 border-white/70 pl-5">
-              <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
                 Costruiamo un ecosistema fatto di nuova imprenditorialità, management qualificato e
                 continuità con il suo DNA storico, accompagnandola verso una nuova fase di successo.
               </p>

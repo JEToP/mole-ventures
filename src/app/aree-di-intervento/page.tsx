@@ -82,7 +82,9 @@ function HeroAree() {
           alt="Background aree di intervento"
           fill
           priority
-          className="object-cover object-center opacity-90"
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAAAwBACdASoUAAsAPu1iqU2ppaOiMAgBMB2JYwC7MoADU1p3EIJlyKq0LcAA/uzFMrB6+wMU3af5DP+Nylkn7WKhAbmsVF/wV00NjF0AAAA="
+          className="object-cover object-right md:object-center opacity-90"
           sizes="100vw"
         />
       </div>
@@ -101,7 +103,7 @@ function HeroAree() {
           </h1>
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-            <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+            <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
               Lavoriamo all&apos;interno del sistema azienda con azioni quotidiane su tutte le
               principali aree e funzioni aziendali per innestare le dinamiche necessarie
               all&apos;esecuzione del piano di sviluppo condiviso.
@@ -213,13 +215,21 @@ function AreeSelector({ activeStep, onSelectStep, onPrevious, onNext }: Selector
 
   return (
     <section className="relative isolate flex w-full flex-col items-center justify-center overflow-hidden bg-blue-deep py-16 md:py-24 max-md:min-h-[100svh] max-md:py-6">
-      {/* Stesso sfondo della contact band "Costruiamo insieme": continuità */}
+      {/* Sfondo specifico per le card senza overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/images/background_contatti.webp"
+          src="/images/background_chisiamo_mobile.webp"
           alt=""
           fill
-          className="object-cover object-center"
+          className="object-cover object-center md:hidden"
+          sizes="100vw"
+          aria-hidden="true"
+        />
+        <Image
+          src="/images/cards-bg.webp"
+          alt=""
+          fill
+          className="object-cover object-center hidden md:block"
           sizes="100vw"
           aria-hidden="true"
         />
@@ -417,7 +427,7 @@ function AreaCardContent({
         }`}
       >
         <span
-          className={`block w-full break-words text-justify font-body font-light text-white/85 text-[15px] md:text-[17px] leading-relaxed ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
+          className={`block w-full break-words text-start font-body font-light text-white text-base md:text-xl leading-relaxed ${clamp ? "overflow-hidden line-clamp-[7]" : ""}`}
         >
           {descriptionText}
         </span>

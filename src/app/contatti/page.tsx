@@ -19,6 +19,8 @@ export default function ContattiPage() {
             alt="Contatti background"
             fill
             priority
+            placeholder="blur"
+            blurDataURL="data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAwCdASoUAAsAPu1iqU2ppaQiMAgBMB2JQBYdhECZhc6Wv/zUOSTgAN5lLUqWrbDIrIvkRBE3gf9x/1Cy4BIG4jh8KUuPuL3eFHBvBSe6TfIOm3curn7DrBdDa9QlgA4KSmjGAAA="
             className="object-cover max-md:object-[85%_center] md:object-center brightness-[0.90]"
             sizes="100vw"
           />
@@ -40,7 +42,7 @@ export default function ContattiPage() {
             </h1>
 
             <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-              <p className="font-body font-light text-white text-base md:text-lg leading-relaxed">
+              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
                 Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
               </p>
             </div>
