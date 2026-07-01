@@ -1,7 +1,9 @@
-import LeFasiInterventoSection from "./fasi/organisms/LeFasiInterventoSection";
 import Image from 'next/image';
-import ContattiSection from "@/components/home/ContattiSection";
 import ScrollCue from "@/components/ScrollCue";
+import dynamic from "next/dynamic";
+
+const LeFasiInterventoSection = dynamic(() => import("./fasi/organisms/LeFasiInterventoSection"));
+const ContattiSection = dynamic(() => import("@/components/home/ContattiSection"));
 
 export default function IlNostroMetodoSection() {
   return (

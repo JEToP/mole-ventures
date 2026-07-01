@@ -1,19 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import { Syne, DM_Sans } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
-import CookieBanner from '@/components/CookieBanner';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+
+const Footer = dynamic(() => import('@/components/Footer'));
+const CookieBanner = dynamic(() => import('@/components/CookieBanner'));
 
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
   weight: ["600"],
+  display: "swap",
 });
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

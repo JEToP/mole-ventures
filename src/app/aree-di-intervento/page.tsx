@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ScrollCue from "@/components/ScrollCue";
-import ContattiSection from "@/components/home/ContattiSection";
+import dynamic from "next/dynamic";
+
+const ContattiSection = dynamic(() => import("@/components/home/ContattiSection"));
 import type { CSSProperties, TouchEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
