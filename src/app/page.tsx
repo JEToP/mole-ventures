@@ -1,11 +1,9 @@
 import HeroSection from "@/components/home/HeroSection";
 import ValoriSection from "@/components/home/ValoriSection";
-import dynamic from "next/dynamic";
+import ChiSiamoSection from "@/components/home/ChiSiamoSection";
+import TeamSection from "@/components/home/TeamSection";
+import ContattiSection from "@/components/home/ContattiSection";
 import { getImageProps } from "next/image";
-
-const ChiSiamoSection = dynamic(() => import("@/components/home/ChiSiamoSection"));
-const TeamSection = dynamic(() => import("@/components/home/TeamSection"));
-const ContattiSection = dynamic(() => import("@/components/home/ContattiSection"));
 
 import ReactDOM from "react-dom";
 

@@ -200,7 +200,7 @@ export default function ValoriSection() {
     }
   }, []);
 
-  // Il progresso 0->1 guida sia l'active index sia la traslazione Y.
+  // Genera gli stop per l'active index
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -224,23 +224,27 @@ export default function ValoriSection() {
       const containerRect = container.getBoundingClientRect();
       const itemRect = item.getBoundingClientRect();
       const contentH = containerRect.height;
+      
+      // Calcola il centro dell'elemento "aperto" rispetto all'inizio del contenitore
       const centerInContent = itemRect.top - containerRect.top + itemRect.height / 2;
 
+      // Vogliamo che questo centro si trovi a vh / 2
       const targetY = vh / 2 - centerInContent;
+      
       const TOP_PAD = 96;
       const BOTTOM_MARGIN = 140;
       const maxT = TOP_PAD;
       const minT = vh - BOTTOM_MARGIN - contentH;
+      
       return minT > maxT ? maxT : Math.min(Math.max(targetY, minT), maxT);
     });
     setYOffsets(newOffsets);
   }, []);
 
-  // Aggiorna gli offset al mount e al resize (debounce leggero).
+  // Aggiorna gli offset al mount e al resize
   useEffect(() => {
     updateOffsets();
     
-    // Per intercettare font loading o layout completato
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(updateOffsets);
     }
@@ -264,9 +268,8 @@ export default function ValoriSection() {
     };
   }, [updateOffsets]);
 
-  // Genera gli stop per useTransform: [0, 1/6, 2/6, 3/6, 4/6, 5/6, 1]
-  const stops = valori.map((_, i) => i / (valori.length - 1));
-  const contentY = useTransform(scrollYProgress, stops, yOffsets);
+  // Target Y per l'animazione
+  const targetY = yOffsets[activeIndex] || 0;
 
   // ── Fallback statico: reduced motion ──────────────────────────────────────────
   if (reduce) {
@@ -297,14 +300,13 @@ export default function ValoriSection() {
     );
   }
 
-  // ── Versione Pinned: il valore attivo resta centrato sullo schermo ───────────
+  // ── Versione Pinned: il valore attivo salta fluidamente al centro ───────────
   return (
     <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
       
       {/* ── MISURATORE FANTASMA (Hidden Measurer) ── */}
-      {/* Renderizza 7 istanze nascoste, una per ogni stato "aperto", per calcolare a priori la posizione Y.
-          Senza h-0 per costringere Safari iOS a calcolare correttamente il layout. */}
-      <div aria-hidden="true" className="pointer-events-none absolute left-0 top-0 w-full opacity-0 z-[-1] invisible">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
+        <div aria-hidden="true" className="absolute left-0 top-0 w-full opacity-0 invisible">
         {valori.map((_, activeIdx) => (
           <div key={activeIdx} ref={(el) => { measurerContainersRef.current[activeIdx] = el; }}>
             <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
@@ -323,16 +325,25 @@ export default function ValoriSection() {
             </div>
           </div>
         ))}
+        </div>
       </div>
 
       {/* Contenitore sticky a tutto schermo */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {Background}
 
-        {/* La lista trasla verticalmente guidata puramente dallo scroll */}
+        {/* La lista si muove morbidamente con una spring verso il target Y */}
         <motion.div
           className="relative w-full"
-          style={{ y: contentY, willChange: "transform" }}
+          animate={{ y: targetY }}
+          transition={{
+            type: "spring",
+            stiffness: 120,
+            damping: 24,
+            mass: 0.8,
+            restDelta: 0.5
+          }}
+          style={{ willChange: "transform" }}
         >
           <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
             <div className="mb-6 md:mb-8">{Header}</div>

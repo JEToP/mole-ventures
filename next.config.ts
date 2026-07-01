@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
+  allowedDevOrigins: ['192.168.178.48'],
 };
 
 export default nextConfig;
