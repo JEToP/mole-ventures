@@ -305,8 +305,8 @@ export default function ValoriSection() {
     <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
       
       {/* ── MISURATORE FANTASMA (Hidden Measurer) ── */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
-        <div aria-hidden="true" className="absolute left-0 top-0 w-full opacity-0 invisible">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1] [contain:strict]">
+        <div aria-hidden="true" className="absolute left-0 top-0 w-full opacity-0">
         {valori.map((_, activeIdx) => (
           <div key={activeIdx} ref={(el) => { measurerContainersRef.current[activeIdx] = el; }}>
             <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
@@ -329,7 +329,7 @@ export default function ValoriSection() {
       </div>
 
       {/* Contenitore sticky a tutto schermo */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-screen w-full overflow-hidden [transform:translateZ(0)]">
         {Background}
 
         {/* La lista si muove morbidamente con una spring verso il target Y */}
