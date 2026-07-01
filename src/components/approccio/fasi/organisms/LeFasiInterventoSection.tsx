@@ -15,7 +15,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   motion,
   useScroll,
@@ -50,11 +50,77 @@ const sanitize = (stops: number[]): number[] => {
 
 const TETRIS_BG = [
   "linear-gradient(135deg, #0d2159 0%, #153791 100%)",
-  "linear-gradient(180deg, #2c5ebd 0%, #1b3f82 100%)",
+  "linear-gradient(180deg, #234f9f 0%, #1a3c7c 100%)",
   "linear-gradient(180deg, #143275 0%, #0a1b42 100%)",
   "linear-gradient(90deg, #143787 0%, #2053c4 100%)",
   "linear-gradient(180deg, #09173b 0%, #040c21 100%)",
 ];
+
+// Sfondo continuo che riprende i colori dei blocchi 1–3 e li fonde in una
+// sfumatura unica: l'header non "galleggia" più su un navy piatto, ma nasce
+// dagli stessi toni dei blocchi sottostanti e vi confluisce con dolcezza.
+// La rampa in alto è lunga e delicata, così il passaggio header → blocchi
+// è molto graduale.
+const CONTINUOUS_BG =
+  "linear-gradient(180deg, #0d2159 0%, #12307a 18%, #1a4189 36%, #143577 50%, #0f2a5f 60%, #0a1c40 72%, #071630 84%, #04102b 100%)";
+
+// Feather su tutti i bordi: fade molto ampio così i blocchi NON leggono più
+// come riquadri sospesi ma sfumano dolcemente nello sfondo continuo (e tra
+// loro). Restano distinti per tono, non per bordo netto.
+const FEATHER_ALL: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%)",
+  maskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%)",
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
+};
+
+// Feather dedicato al blocco 01: bordo superiore molto morbido così si fonde
+// dolcemente con l'intestazione (passaggio graduale header → 01); lati e fondo
+// netti così lo stacco col 04 sotto resta pulito, senza alone blu.
+const FEATHER_01: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 99%, transparent 100%)",
+  maskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 22%, #000 99%, transparent 100%)",
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
+};
+
+// Feather dedicato al blocco 02: bordo superiore NETTO (stacco marcato con
+// l'intestazione, sono due colori diversi), bordo inferiore molto morbido così
+// si fonde col 04 sottostante. Lati netti.
+const FEATHER_02: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1%, #000 74%, transparent 100%)",
+  maskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 99%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1%, #000 74%, transparent 100%)",
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
+};
+
+// Feather dedicato al blocco 04: bordo sinistro netto, destro molto sfumato
+// verso il vuoto. Il bordo SUPERIORE è netto a sinistra (stacco col 01) ma si
+// scioglie solo verso l'angolo in alto a destra (fusione continua col 02),
+// grazie alla maschera diagonale "to top right".
+const FEATHER_04: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 68%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1.5%, #000 95%, transparent 100%), linear-gradient(to top right, #000 42%, transparent 90%)",
+  maskImage:
+    "linear-gradient(to right, transparent 0%, #000 1%, #000 68%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 1.5%, #000 95%, transparent 100%), linear-gradient(to top right, #000 42%, transparent 90%)",
+  WebkitMaskComposite: "source-in, source-in",
+  maskComposite: "intersect, intersect",
+};
+
+// Feather solo verticale per la lista mobile impilata: taglio netto mantenuto
+// ma sfumato sopra/sotto per addolcire il passaggio tra un blocco e l'altro.
+const FEATHER_V: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to bottom, transparent 0%, #000 7%, #000 93%, transparent 100%)",
+  maskImage:
+    "linear-gradient(to bottom, transparent 0%, #000 7%, #000 93%, transparent 100%)",
+};
 
 const GRID_CLASSES = [
   "lg:col-span-4",                 // 01
@@ -69,7 +135,7 @@ const EXTENDED_BGS = [
   "absolute inset-0",                                      
   "absolute inset-0 lg:right-auto lg:left-0 lg:w-[100vw]", 
   "absolute inset-0 lg:left-auto lg:right-0 lg:w-[100vw]", 
-  "absolute inset-0 lg:-bottom-[50vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[200vw]", 
+  "absolute inset-0 lg:left-1/2 lg:-translate-x-1/2 lg:w-[200vw]",
 ];
 
 const LIGHT_EFFECTS = [
@@ -82,6 +148,25 @@ const LIGHT_EFFECTS = [
   </>,
   null,
   null,
+  null,
+];
+
+// Riflessi bianchi come luce proveniente da un unico punto (come nel Figma):
+// bagliori morbidi e conici SOLO negli angoli in basso + il raggio accentuato
+// sulla piega tra 01 e 02. Tutto in mix-blend-screen, niente linee dritte.
+const SEAM_LIGHTS = [
+  // 01 → riflesso morbido nell'angolo in basso a destra
+  <div className="hidden lg:block absolute bottom-0 right-0 h-[300px] w-[360px] translate-x-[45%] translate-y-[45%] rounded-full bg-white opacity-[0.09] blur-[90px] mix-blend-screen pointer-events-none z-0" />,
+  // 02 → raggio di sole accentuato sulla piega tra 01 e 02 (conico, dall'alto)
+  //      + riflesso morbido nell'angolo in basso a sinistra
+  <>
+    <div className="hidden lg:block absolute left-0 top-0 h-[540px] w-[210px] -translate-x-[44%] -translate-y-[6%] rounded-full bg-white opacity-[0.02] blur-[100px] mix-blend-screen pointer-events-none z-0" />
+    <div className="hidden lg:block absolute bottom-0 left-0 h-[240px] w-[300px] -translate-x-[42%] translate-y-[45%] rounded-full bg-white opacity-[0.12] blur-[90px] mix-blend-screen pointer-events-none z-0" />
+  </>,
+  // 03 → riflesso morbido nell'angolo in basso a sinistra
+  <div className="hidden lg:block absolute bottom-0 left-0 h-[280px] w-[340px] -translate-x-[45%] translate-y-[45%] rounded-full bg-white opacity-[0.02] blur-[90px] mix-blend-screen pointer-events-none z-0" />,
+  // 04 → riflesso morbido nell'angolo in basso a destra
+  <div className="hidden lg:block absolute bottom-0 right-0 h-[280px] w-[340px] translate-x-[45%] translate-y-[45%] rounded-full bg-white opacity-[0.13] blur-[90px] mix-blend-screen pointer-events-none z-0" />,
   null,
 ];
 
@@ -156,20 +241,28 @@ function FaseFocusItem({
   return (
     <article
       className={`relative px-8 md:px-12 ${
-        index < 3 
-          ? "pt-16 pb-10 lg:pt-20 lg:pb-12" 
-          : index === 4 
-            ? "pt-10 pb-10 lg:pt-12 lg:pb-12" 
-            : "py-10 lg:py-12"
+        index === 0
+          ? "pt-8 pb-10 lg:pt-10 lg:pb-12"        // 01: più in alto
+          : index === 2
+            ? "pt-28 pb-10 lg:pt-36 lg:pb-12"     // 03: più in basso nella colonna
+            : index === 1
+              ? "pt-16 pb-10 lg:pt-20 lg:pb-12"
+              : index === 4
+                ? "pt-10 pb-10 lg:pt-12 lg:pb-12"
+                : "py-10 lg:py-12"
       } ${
         index === 4 ? "lg:px-20" : "lg:px-10"
       } ${GRID_CLASSES[index]}`}
     >
-      <div className="-z-20 overflow-hidden lg:overflow-visible absolute inset-0">
-        <div className={EXTENDED_BGS[index]} style={{ background: TETRIS_BG[index] }} />
+      <div className="-z-20 absolute inset-0">
+        <div
+          className={EXTENDED_BGS[index]}
+          style={{ background: TETRIS_BG[index], ...(index === 3 ? FEATHER_04 : index === 1 ? FEATHER_02 : index === 0 ? FEATHER_01 : FEATHER_ALL) }}
+        />
       </div>
       
       {LIGHT_EFFECTS[index]}
+      {SEAM_LIGHTS[index]}
 
       <motion.div 
         className="relative z-10 flex flex-col h-full justify-start"
@@ -312,7 +405,8 @@ export default function LeFasiInterventoSection() {
       {/* ── MOBILE (o Reduced motion): lista a flusso naturale (no scroll-jacking) ── */}
       <section
         aria-labelledby="fasi-heading-mobile"
-        className={`relative w-full overflow-hidden bg-[#071333] pt-[12vh] ${!reduce ? "lg:hidden" : ""}`}
+        className={`relative w-full overflow-hidden pt-[12vh] ${!reduce ? "lg:hidden" : ""}`}
+        style={{ background: "linear-gradient(180deg, #0b1e50 0%, #123571 100%)" }}
       >
         <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0 px-0">
           <div className="px-8 md:px-12">
@@ -320,10 +414,19 @@ export default function LeFasiInterventoSection() {
           </div>
           
           <div className="mt-14 flex flex-col gap-0 w-full relative">
+            {/* Sfondo continuo dietro la colonna: i feather dei blocchi vi confluiscono */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-30"
+              style={{ background: CONTINUOUS_BG }}
+            />
             {FASI.map((fase, i) => (
-              <article key={fase.numero} className="relative p-10 md:p-14 overflow-hidden">
+              <article key={fase.numero} className="relative p-10 md:p-14">
                 <div className="-z-20 absolute inset-0">
-                  <div className="absolute inset-0" style={{ background: TETRIS_BG[i] }} />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: TETRIS_BG[i], ...FEATHER_V }}
+                  />
                 </div>
                 
                 <motion.div
@@ -360,7 +463,14 @@ export default function LeFasiInterventoSection() {
             
             <motion.div style={{ y: contentY }} className="absolute inset-0 z-10 w-full">
               <div ref={scrollWrapperRef} className="relative mx-auto w-full max-w-7xl px-12">
-                
+
+                {/* Sfondo continuo full-bleed: unico gradiente dietro header + griglia */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -inset-x-[50vw] top-0 bottom-0 -z-30"
+                  style={{ background: CONTINUOUS_BG }}
+                />
+
                 <div className="pt-[12vh]">
                   <Header className="max-w-3xl" />
                 </div>
