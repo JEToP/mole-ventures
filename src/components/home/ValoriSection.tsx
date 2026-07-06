@@ -144,9 +144,8 @@ function Valore({
         <div className="flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
           <span
             aria-hidden="true"
-            className={`font-heading text-2xl md:text-4xl font-light tabular-nums text-white transition-opacity duration-500 ${
-              active ? "opacity-90" : "opacity-40"
-            }`}
+            className={`font-heading text-2xl md:text-4xl font-light tabular-nums text-white transition-opacity duration-500 ${active ? "opacity-90" : "opacity-40"
+              }`}
           >
             {num}
           </span>
@@ -157,9 +156,8 @@ function Valore({
 
         <div
           aria-hidden="true"
-          className={`shrink-0 transition-opacity duration-500 [filter:drop-shadow(0_0_18px_rgba(127,176,224,0.45))] ${
-            active ? "opacity-80" : "opacity-30"
-          }`}
+          className={`shrink-0 transition-opacity duration-500 [filter:drop-shadow(0_0_18px_rgba(127,176,224,0.45))] ${active ? "opacity-80" : "opacity-30"
+            }`}
         >
           <Image
             src={valore.icon}
@@ -179,7 +177,7 @@ function Valore({
           gridTemplateRows: active ? "1fr" : "0fr",
           transition: staticMeasure
             ? "none"
-            : "grid-template-rows 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+            : "grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <div className="overflow-hidden">
@@ -190,7 +188,7 @@ function Valore({
               transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
               transition: staticMeasure
                 ? "none"
-                : "opacity 420ms cubic-bezier(0.22, 1, 0.36, 1), transform 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+                : "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
             }}
           >
             {valore.description}
@@ -207,28 +205,65 @@ function Valore({
 function MobileValori() {
   const [activeIndex, setActiveIndex] = useState(0);
   const itemsRef = useRef<(HTMLElement | null)[]>([]);
+  const activeRef = useRef(0);
 
+  // Selezione del valore attivo STABILE e poco sensibile:
+  //  • àncora = centro della riga "numero + titolo", che NON si sposta quando la
+  //    descrizione si apre sotto → niente oscillazioni auto-indotte all'apertura;
+  //  • si sceglie il valore la cui àncora è più vicina a una linea di lettura;
+  //  • ISTERESI: si cambia valore solo se il candidato è nettamente più centrato
+  //    dell'attuale, così un "minimo scroll" non apre/chiude i valori corti.
+  //  • letture nel rAF (solo durante lo scroll): leggero, non pesa sul caricamento.
   useEffect(() => {
-    const els = itemsRef.current.filter(Boolean) as HTMLElement[];
-    if (!els.length) return;
+    const ROW_ANCHOR = 38; // ≈ centro della riga compatta dal bordo superiore
+    const HYSTERESIS = 72; // px di "vantaggio" richiesti per cambiare valore
+    let raf = 0;
 
-    // rootMargin a LINEA centrale (0px di altezza al centro dello schermo): un
-    // solo valore la attraversa alla volta → si apre uno per volta. Non azzeriamo
-    // mai l'attivo (solo isIntersecting=true), così ai confini non c'è flicker.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const idx = itemsRef.current.indexOf(entry.target as HTMLElement);
-            if (idx !== -1) setActiveIndex(idx);
-          }
+    const measureDist = (el: HTMLElement, triggerY: number) => {
+      const r = el.getBoundingClientRect();
+      return Math.abs(r.top + ROW_ANCHOR - triggerY);
+    };
+
+    const compute = () => {
+      raf = 0;
+      const items = itemsRef.current;
+      const triggerY = window.innerHeight * 0.45; // linea di lettura poco sopra il centro
+
+      let best = activeRef.current;
+      let bestDist = Infinity;
+      for (let i = 0; i < items.length; i++) {
+        const el = items[i];
+        if (!el) continue;
+        const d = measureDist(el, triggerY);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
         }
-      },
-      { rootMargin: "-50% 0px -50% 0px", threshold: 0 }
-    );
+      }
 
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+      const cur = activeRef.current;
+      if (best !== cur) {
+        const curEl = items[cur];
+        const curDist = curEl ? measureDist(curEl, triggerY) : Infinity;
+        if (bestDist < curDist - HYSTERESIS) {
+          activeRef.current = best;
+          setActiveIndex(best);
+        }
+      }
+    };
+
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(compute);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    compute();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
@@ -382,8 +417,8 @@ function DesktopValori() {
                       innerRef={
                         index === activeIdx
                           ? (el) => {
-                              measurerItemsRef.current[activeIdx] = el;
-                            }
+                            measurerItemsRef.current[activeIdx] = el;
+                          }
                           : undefined
                       }
                     />
