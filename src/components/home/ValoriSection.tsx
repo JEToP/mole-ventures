@@ -138,61 +138,62 @@ function DesktopValore({
   const num = String(index + 1).padStart(2, "0");
 
   return (
-    <article ref={innerRef} className="border-t border-white/10 py-5 md:py-8">
-      {/* Riga compatta: numero + titolo (unità coesa) + icona */}
-      <div className="flex items-center gap-4 md:gap-6">
-        <div className="flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
-          <span
-            aria-hidden="true"
-            className={`font-heading text-2xl md:text-4xl font-light tabular-nums text-white transition-opacity duration-500 ${active ? "opacity-90" : "opacity-40"
+    <article ref={innerRef} className="relative border-t border-white/10 py-6 md:py-10 min-h-[200px] md:min-h-[250px] lg:min-h-0 lg:py-8 overflow-hidden">
+      <div className="flex flex-col items-start w-full">
+        {/* Riga compatta: numero + titolo (unità coesa) + icona */}
+        <div className="flex items-center justify-between w-full">
+          <div className="relative z-10 flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
+            <span
+              aria-hidden="true"
+              className={`font-heading text-2xl md:text-4xl font-light tabular-nums text-white transition-opacity duration-500 ${
+                active ? "opacity-90" : "opacity-40"
               }`}
-          >
-            {num}
-          </span>
-          <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
-            {valore.name}
-          </h3>
-        </div>
+            >
+              {num}
+            </span>
+            <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
+              {valore.name}
+            </h3>
+          </div>
 
-        <div
-          aria-hidden="true"
-          className={`shrink-0 transition-opacity duration-500 [filter:drop-shadow(0_0_18px_rgba(127,176,224,0.45))] ${active ? "opacity-80" : "opacity-30"
-            }`}
-        >
-          <Image
+          <motion.img
+            layout={!staticMeasure}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             src={valore.icon}
             alt=""
-            width={96}
-            height={96}
-            className="h-10 w-10 md:h-14 md:w-14 object-contain"
-            unoptimized
+            className={
+              active
+                ? "absolute right-0 top-0 bottom-0 my-auto z-0 w-32 h-32 lg:w-48 lg:h-48 object-contain pointer-events-none"
+                : "relative z-10 shrink-0 h-10 w-10 md:h-14 md:w-14 object-contain pointer-events-none"
+            }
+            style={{ opacity: 0.1 }}
           />
         </div>
-      </div>
 
-      {/* Descrizione: lo spazio usa grid-rows 0fr→1fr, il testo opacity + translate */}
-      <div
-        className="grid [contain:layout_paint] motion-reduce:transition-none"
-        style={{
-          gridTemplateRows: active ? "1fr" : "0fr",
-          transition: staticMeasure
-            ? "none"
-            : "grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
-        <div className="overflow-hidden">
-          <p
-            className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-2xl pt-4 motion-reduce:transition-none"
-            style={{
-              opacity: active ? 1 : 0,
-              transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
-              transition: staticMeasure
-                ? "none"
-                : "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
-            }}
-          >
-            {valore.description}
-          </p>
+        {/* Descrizione: lo spazio usa grid-rows 0fr→1fr, il testo opacity + translate */}
+        <div
+          className="relative z-10 grid [contain:layout_paint] motion-reduce:transition-none w-full"
+          style={{
+            gridTemplateRows: active ? "1fr" : "0fr",
+            transition: staticMeasure
+              ? "none"
+              : "grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          <div className="overflow-hidden">
+            <p
+              className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-2xl pt-4 motion-reduce:transition-none"
+              style={{
+                opacity: active ? 1 : 0,
+                transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
+                transition: staticMeasure
+                  ? "none"
+                  : "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            >
+              {valore.description}
+            </p>
+          </div>
         </div>
       </div>
     </article>
@@ -221,10 +222,10 @@ function MobileValore({
         active ? "min-h-[40vh] py-12" : "min-h-0 py-6 md:py-8"
       }`}
     >
-      <div className="relative z-10 flex flex-col items-start w-full">
+      <div className="flex flex-col items-start w-full">
         {/* Riga superiore */}
         <div className="flex items-center justify-between w-full">
-          <div className="flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
+          <div className="relative z-10 flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
             <span
               className={`font-heading text-2xl font-light tabular-nums text-white transition-opacity duration-700 ${
                 active ? "opacity-90" : "opacity-40"
@@ -237,21 +238,24 @@ function MobileValore({
             </h3>
           </div>
 
-          {/* Icona chiusa (sempre trasparente) */}
-          {!active && (
-            <motion.img
-              layoutId={`icon-${valore.id}`}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              src={valore.icon}
-              alt=""
-              className="shrink-0 h-12 w-12 md:h-14 md:w-14 object-contain opacity-10"
-            />
-          )}
+          {/* Icona (singola animata con layout, per evitare flash di opacità) */}
+          <motion.img
+            layout
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            src={valore.icon}
+            alt=""
+            className={
+              active
+                ? "absolute right-0 top-0 bottom-0 my-auto z-0 w-32 h-32 md:w-40 md:h-40 object-contain pointer-events-none"
+                : "relative z-10 shrink-0 h-12 w-12 md:h-14 md:w-14 object-contain pointer-events-none"
+            }
+            style={{ opacity: 0.1 }}
+          />
         </div>
 
         {/* Descrizione */}
         <div
-          className="grid [contain:layout_paint] motion-reduce:transition-none w-full"
+          className="relative z-10 grid [contain:layout_paint] motion-reduce:transition-none w-full"
           style={{
             gridTemplateRows: active ? "1fr" : "0fr",
             transition: "grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1)",
@@ -271,17 +275,6 @@ function MobileValore({
           </div>
         </div>
       </div>
-
-      {/* Icona aperta (watermark in basso a dx) */}
-      {active && (
-        <motion.img
-          layoutId={`icon-${valore.id}`}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          src={valore.icon}
-          alt=""
-          className="absolute right-[-10%] bottom-[-5%] z-0 w-64 h-64 md:w-72 md:h-72 object-contain opacity-[0.08] pointer-events-none"
-        />
-      )}
     </article>
   );
 }
