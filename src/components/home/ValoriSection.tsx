@@ -128,17 +128,25 @@ function DesktopValore({
   active,
   staticMeasure,
   innerRef,
+  onClick,
 }: {
   index: number;
   active: boolean;
   staticMeasure?: boolean;
   innerRef?: (el: HTMLElement | null) => void;
+  onClick?: () => void;
 }) {
   const valore = valori[index];
   const num = String(index + 1).padStart(2, "0");
 
   return (
-    <article ref={innerRef} className="relative border-t border-white/10 py-5 md:py-8 overflow-hidden">
+    <article 
+      ref={innerRef} 
+      onClick={onClick}
+      className={`relative border-t border-white/10 py-5 md:py-8 overflow-hidden ${
+        onClick && !active ? "cursor-pointer" : ""
+      }`}
+    >
       <div className="flex flex-col items-start w-full">
         {/* Riga compatta: numero + titolo (unità coesa) + icona */}
         <div className="flex items-center justify-between w-full">
@@ -249,6 +257,24 @@ function DesktopValori() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+
+  const handleItemClick = (index: number) => {
+    if (!sectionRef.current) return;
+    const offsetTop = sectionRef.current.offsetTop;
+    const offsetHeight = sectionRef.current.offsetHeight;
+    const vh = window.innerHeight;
+    const scrollableDistance = offsetHeight - vh;
+    
+    // Percentuale di scroll desiderata per attivare 'index'
+    const targetPercentage = index / (valori.length - 1);
+    
+    const targetScrollY = offsetTop + (targetPercentage * scrollableDistance);
+    
+    window.scrollTo({
+      top: targetScrollY,
+      behavior: "smooth"
+    });
+  };
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     let index = Math.round(latest * (valori.length - 1));
@@ -368,6 +394,7 @@ function DesktopValori() {
                   key={valore.id}
                   index={index}
                   active={index === activeIndex}
+                  onClick={() => handleItemClick(index)}
                 />
               ))}
             </div>
