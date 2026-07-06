@@ -138,7 +138,7 @@ function DesktopValore({
   const num = String(index + 1).padStart(2, "0");
 
   return (
-    <article ref={innerRef} className="relative border-t border-white/10 py-6 md:py-10 min-h-[200px] md:min-h-[250px] lg:min-h-0 lg:py-8 overflow-hidden">
+    <article ref={innerRef} className="relative border-t border-white/10 py-5 md:py-8 overflow-hidden">
       <div className="flex flex-col items-start w-full">
         {/* Riga compatta: numero + titolo (unità coesa) + icona */}
         <div className="flex items-center justify-between w-full">
@@ -200,167 +200,7 @@ function DesktopValore({
   );
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Singolo valore MOBILE: altezza derivata (chiuso) o 40vh (aperto), centrato, watermark
-// ──────────────────────────────────────────────────────────────────────────────
-function MobileValore({
-  index,
-  active,
-  innerRef,
-}: {
-  index: number;
-  active: boolean;
-  innerRef?: (el: HTMLElement | null) => void;
-}) {
-  const valore = valori[index];
-  const num = String(index + 1).padStart(2, "0");
 
-  return (
-    <article
-      ref={innerRef}
-      className={`relative w-full border-t border-white/10 flex flex-col justify-center overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        active ? "min-h-[40vh] py-12" : "min-h-0 py-6 md:py-8"
-      }`}
-    >
-      <div className="flex flex-col items-start w-full">
-        {/* Riga superiore */}
-        <div className="flex items-center justify-between w-full">
-          <div className="relative z-10 flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
-            <span
-              className={`font-heading text-2xl font-light tabular-nums text-white transition-opacity duration-700 ${
-                active ? "opacity-90" : "opacity-40"
-              }`}
-            >
-              {num}
-            </span>
-            <h3 className="font-heading text-3xl md:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
-              {valore.name}
-            </h3>
-          </div>
-
-          {/* Icona (singola animata con layout, per evitare flash di opacità) */}
-          <motion.img
-            layout
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            src={valore.icon}
-            alt=""
-            className={
-              active
-                ? "absolute right-0 top-0 bottom-0 my-auto z-0 w-32 h-32 md:w-40 md:h-40 object-contain pointer-events-none"
-                : "relative z-10 shrink-0 h-12 w-12 md:h-14 md:w-14 object-contain pointer-events-none"
-            }
-            style={{ opacity: 0.1 }}
-          />
-        </div>
-
-        {/* Descrizione */}
-        <div
-          className="relative z-10 grid [contain:layout_paint] motion-reduce:transition-none w-full"
-          style={{
-            gridTemplateRows: active ? "1fr" : "0fr",
-            transition: "grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1)",
-          }}
-        >
-          <div className="overflow-hidden">
-            <p
-              className="font-body font-light text-white text-base md:text-lg leading-relaxed pt-4"
-              style={{
-                opacity: active ? 1 : 0,
-                transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
-                transition: "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
-              }}
-            >
-              {valore.description}
-            </p>
-          </div>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// MOBILE — accordion a scroll naturale (IntersectionObserver). Leggero e fluido.
-// ══════════════════════════════════════════════════════════════════════════════
-function MobileValori() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const itemsRef = useRef<(HTMLElement | null)[]>([]);
-  const activeRef = useRef(0);
-
-  // Essendo l'altezza fissa a 65vh, il centro esatto dell'articolo è stabile.
-  // Questo elimina ogni oscillazione. Usiamo il centro dell'articolo come àncora.
-  useEffect(() => {
-    const HYSTERESIS = 72; // px di "vantaggio" richiesti per cambiare valore
-    let raf = 0;
-
-    const measureDist = (el: HTMLElement, triggerY: number) => {
-      const r = el.getBoundingClientRect();
-      return Math.abs(r.top + (r.height / 2) - triggerY);
-    };
-
-    const compute = () => {
-      raf = 0;
-      const items = itemsRef.current;
-      const triggerY = window.innerHeight * 0.5; // centro esatto dello schermo
-
-      let best = activeRef.current;
-      let bestDist = Infinity;
-      for (let i = 0; i < items.length; i++) {
-        const el = items[i];
-        if (!el) continue;
-        const d = measureDist(el, triggerY);
-        if (d < bestDist) {
-          bestDist = d;
-          best = i;
-        }
-      }
-
-      const cur = activeRef.current;
-      if (best !== cur) {
-        const curEl = items[cur];
-        const curDist = curEl ? measureDist(curEl, triggerY) : Infinity;
-        if (bestDist < curDist - HYSTERESIS) {
-          activeRef.current = best;
-          setActiveIndex(best);
-        }
-      }
-    };
-
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(compute);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    compute();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  return (
-    <section className="relative w-full overflow-hidden bg-[#030d3d] py-20 z-20">
-      {Background}
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className="mb-8">{Header}</div>
-        <div className="flex flex-col">
-          {valori.map((valore, index) => (
-            <MobileValore
-              key={valore.id}
-              index={index}
-              active={index === activeIndex}
-              innerRef={(el) => {
-                itemsRef.current[index] = el;
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // STATIC — reduced motion: lista completa, tutte le descrizioni visibili.
@@ -539,30 +379,26 @@ function DesktopValori() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// Router: sceglie la variante in base a device / preferenze. SSR e primo paint
-// usano la variante MOBILE (leggera): iPhone non monta mai il desktop pesante.
+// Router: sceglie la variante in base a preferenze (reduced-motion). 
+// Usa la variante animata con scroll-jacking su TUTTI i device.
 // ══════════════════════════════════════════════════════════════════════════════
 export default function ValoriSection() {
-  const [mode, setMode] = useState<"mobile" | "desktop" | "reduce" | null>(null);
+  const [mode, setMode] = useState<"animated" | "reduce" | null>(null);
 
   useEffect(() => {
     const reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const deskMq = window.matchMedia("(min-width: 1024px)");
     const update = () => {
-      if (reduceMq.matches) setMode("reduce");
-      else setMode(deskMq.matches ? "desktop" : "mobile");
+      setMode(reduceMq.matches ? "reduce" : "animated");
     };
     update();
     reduceMq.addEventListener("change", update);
-    deskMq.addEventListener("change", update);
     return () => {
       reduceMq.removeEventListener("change", update);
-      deskMq.removeEventListener("change", update);
     };
   }, []);
 
   if (mode === "reduce") return <StaticValori />;
-  if (mode === "desktop") return <DesktopValori />;
-  // mode === null (primo paint) o "mobile"
-  return <MobileValori />;
+  
+  // mode === "animated" o SSR
+  return <DesktopValori />;
 }
