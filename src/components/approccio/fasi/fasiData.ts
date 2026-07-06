@@ -15,7 +15,7 @@ export const FASI: Fase[] = [
     numero: "02",
     titolo: "Acquisizione e ingresso",
     descrizione:
-      "Una volta finalizzata la convergenza tra il nuovo gruppo di investimento e di management insieme agli azionisti storici, lavoriamo sulla disciplina delle varie funzioni aziendali, applicando le scelte strategiche discusse nel rispetto del valore esistente e introducendo i nuovi elementi identificati nella fase di discussione.",
+      "Una volta finalizzata la convergenza tra il nuovo gruppo di investimento e di management insieme agli azionisti storici, lavoriamo sulla disciplina delle varie funzioni aziendali, applicando le scelte strategiche discusse nel rispetto del valore esistente e introducendo i nuovi elementi identificati nella fase di discussione e definizione del nuovo piano industriale.",
   },
   {
     numero: "03",

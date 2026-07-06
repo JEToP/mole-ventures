@@ -1,20 +1,22 @@
 "use client";
 
 /**
- * ValoriSection — Pinned Scroll-Jacking (Scrubbing)
+ * ValoriSection
  * ------------------------------------------------------------------
- * L'animazione è fissata allo scroll.
- * La sezione è ancorata (sticky) mentre l'utente scorre.
- * Il contenitore dei valori trasla dinamicamente lungo l'asse Y per 
- * mantenere il valore "attivo" (quello aperto) perfettamente 
- * al centro dello schermo.
+ * - Desktop (≥1024px): sezione "pinnata" con il valore attivo centrato
+ *   (scroll-jacking + misuratore per la centratura esatta).
+ * - Mobile: accordion a SCROLL NATURALE guidato da IntersectionObserver.
+ *   Niente pin, niente trasformazioni JS a ogni frame, niente misuratore
+ *   fantasma: fluido su iOS Safari e apre UN valore alla volta.
+ * - prefers-reduced-motion: lista statica.
+ *
+ * La versione desktop (pesante) viene montata SOLO su desktop: così iPhone non
+ * paga mai il costo del misuratore né dello scroll-jacking.
  */
 
 import Image from "next/image";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useScroll, useMotionValueEvent, useTransform, motion, MotionStyle } from "framer-motion";
-
-// useLayoutEffect non serve più.
+import { useScroll, useMotionValueEvent, motion } from "framer-motion";
 
 // ── Dati valori ─────────────────────────────────────────────────────────────
 const valori = [
@@ -70,6 +72,8 @@ const valori = [
 ];
 
 // ── Sfondo ottimizzato (NO CSS BLUR) ─────────────────────────────────────────
+// I "cerchi sfocati" sono resi con gradienti radiali morbidi anziché filter:blur():
+// questo evita i freeze estremi su iOS Safari causati dal render dei blur grandi.
 const Background = (
   <div
     className="pointer-events-none absolute inset-0 overflow-hidden [contain:paint] [transform:translateZ(0)]"
@@ -95,18 +99,15 @@ const Background = (
         ].join(","),
       }}
     />
-    
-    {/* Cerchi "sfocati" resi tramite gradienti radiali morbidi anziché filter: blur().
-        Questo risolve i lag estremi (10s freeze) su iOS Safari causati dal render dei blur. */}
     <div
       className="absolute inset-0"
       style={{
         background: [
-          "radial-gradient(50% 50% at 10% 90%, rgba(76,172,248,0.25) 0%, transparent 80%)", // bottom-left soft
-          "radial-gradient(40% 40% at 0% 40%, rgba(76,172,248,0.15) 0%, transparent 80%)", // mid-left soft
-          "radial-gradient(45% 45% at 85% 30%, rgba(6,46,181,0.25) 0%, transparent 80%)", // top-right kinetic
-          "radial-gradient(40% 40% at 10% 10%, rgba(5,21,94,0.40) 0%, transparent 80%)", // top-left deep
-          "radial-gradient(50% 50% at 90% 95%, rgba(5,21,94,0.35) 0%, transparent 80%)", // bottom-right deep
+          "radial-gradient(50% 50% at 10% 90%, rgba(76,172,248,0.25) 0%, transparent 80%)",
+          "radial-gradient(40% 40% at 0% 40%, rgba(76,172,248,0.15) 0%, transparent 80%)",
+          "radial-gradient(45% 45% at 85% 30%, rgba(6,46,181,0.25) 0%, transparent 80%)",
+          "radial-gradient(40% 40% at 10% 10%, rgba(5,21,94,0.40) 0%, transparent 80%)",
+          "radial-gradient(50% 50% at 90% 95%, rgba(5,21,94,0.35) 0%, transparent 80%)",
         ].join(","),
       }}
     />
@@ -119,6 +120,8 @@ const Header = (
   </h2>
 );
 
+// ──────────────────────────────────────────────────────────────────────────────
+// Singolo valore: chiuso (numero + titolo + icona) → aperto (anche descrizione).
 // ──────────────────────────────────────────────────────────────────────────────
 function Valore({
   index,
@@ -154,7 +157,7 @@ function Valore({
 
         <div
           aria-hidden="true"
-          className={`shrink-0 transition-opacity duration-500 will-change-[opacity] [filter:drop-shadow(0_0_18px_rgba(127,176,224,0.45))] ${
+          className={`shrink-0 transition-opacity duration-500 [filter:drop-shadow(0_0_18px_rgba(127,176,224,0.45))] ${
             active ? "opacity-80" : "opacity-30"
           }`}
         >
@@ -169,12 +172,14 @@ function Valore({
         </div>
       </div>
 
-      {/* Descrizione: lo spazio usa grid-rows 0fr→1fr */}
+      {/* Descrizione: lo spazio usa grid-rows 0fr→1fr, il testo opacity + translate */}
       <div
         className="grid [contain:layout_paint] motion-reduce:transition-none"
         style={{
           gridTemplateRows: active ? "1fr" : "0fr",
-          transition: staticMeasure ? "none" : "grid-template-rows 480ms cubic-bezier(0.22, 1, 0.36, 1)",
+          transition: staticMeasure
+            ? "none"
+            : "grid-template-rows 420ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <div className="overflow-hidden">
@@ -183,8 +188,9 @@ function Valore({
             style={{
               opacity: active ? 1 : 0,
               transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
-              transition: staticMeasure ? "none" : "opacity 480ms cubic-bezier(0.22, 1, 0.36, 1), transform 480ms cubic-bezier(0.22, 1, 0.36, 1)",
-              willChange: active ? "transform, opacity" : "auto",
+              transition: staticMeasure
+                ? "none"
+                : "opacity 420ms cubic-bezier(0.22, 1, 0.36, 1), transform 420ms cubic-bezier(0.22, 1, 0.36, 1)",
             }}
           >
             {valore.description}
@@ -195,22 +201,101 @@ function Valore({
   );
 }
 
-export default function ValoriSection() {
+// ══════════════════════════════════════════════════════════════════════════════
+// MOBILE — accordion a scroll naturale (IntersectionObserver). Leggero e fluido.
+// ══════════════════════════════════════════════════════════════════════════════
+function MobileValori() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [reduce, setReduce] = useState(false);
+  const itemsRef = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    const els = itemsRef.current.filter(Boolean) as HTMLElement[];
+    if (!els.length) return;
+
+    // rootMargin a LINEA centrale (0px di altezza al centro dello schermo): un
+    // solo valore la attraversa alla volta → si apre uno per volta. Non azzeriamo
+    // mai l'attivo (solo isIntersecting=true), così ai confini non c'è flicker.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = itemsRef.current.indexOf(entry.target as HTMLElement);
+            if (idx !== -1) setActiveIndex(idx);
+          }
+        }
+      },
+      { rootMargin: "-50% 0px -50% 0px", threshold: 0 }
+    );
+
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section className="relative w-full overflow-hidden bg-[#030d3d] py-20 z-20">
+      {Background}
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="mb-8">{Header}</div>
+        <div className="flex flex-col">
+          {valori.map((valore, index) => (
+            <Valore
+              key={valore.id}
+              index={index}
+              active={index === activeIndex}
+              innerRef={(el) => {
+                itemsRef.current[index] = el;
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// STATIC — reduced motion: lista completa, tutte le descrizioni visibili.
+// ══════════════════════════════════════════════════════════════════════════════
+function StaticValori() {
+  return (
+    <section className="relative w-full overflow-hidden bg-[#030d3d] py-20 md:py-28 z-20">
+      {Background}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+        <div className="mb-12 md:mb-16">{Header}</div>
+        <div className="flex flex-col">
+          {valori.map((valore, i) => (
+            <div key={valore.id} className="border-t border-white/10 py-7 md:py-9">
+              <div className="flex items-center gap-4">
+                <span className="font-heading text-2xl md:text-4xl font-light tabular-nums text-white/80">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
+                  {valore.name}
+                </h3>
+              </div>
+              <p className="font-body font-light text-white/85 text-base md:text-lg leading-relaxed max-w-2xl pt-4">
+                {valore.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DESKTOP — pinned scroll-jacking: il valore attivo resta centrato.
+// (Invariato; montato solo su desktop, così mobile non ne paga il costo.)
+// ══════════════════════════════════════════════════════════════════════════════
+function DesktopValori() {
+  const [activeIndex, setActiveIndex] = useState(0);
   const [yOffsets, setYOffsets] = useState<number[]>(valori.map(() => 0));
 
   const sectionRef = useRef<HTMLElement>(null);
   const measurerContainersRef = useRef<(HTMLDivElement | null)[]>([]);
   const measurerItemsRef = useRef<(HTMLElement | null)[]>([]);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setReduce(true);
-    }
-  }, []);
-
-  // Genera gli stop per l'active index
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -223,7 +308,6 @@ export default function ValoriSection() {
     setActiveIndex((prev) => (prev !== index ? index : prev));
   });
 
-  // ── Calcolo posizioni statiche ──────────────────────────────────────────────
   const updateOffsets = useCallback(() => {
     const vh = window.innerHeight;
     const newOffsets = valori.map((_, k) => {
@@ -234,32 +318,26 @@ export default function ValoriSection() {
       const containerRect = container.getBoundingClientRect();
       const itemRect = item.getBoundingClientRect();
       const contentH = containerRect.height;
-      
-      // Calcola il centro dell'elemento "aperto" rispetto all'inizio del contenitore
-      const centerInContent = itemRect.top - containerRect.top + itemRect.height / 2;
-
-      // Vogliamo che questo centro si trovi a vh / 2
+      const centerInContent =
+        itemRect.top - containerRect.top + itemRect.height / 2;
       const targetY = vh / 2 - centerInContent;
-      
+
       const TOP_PAD = 96;
       const BOTTOM_MARGIN = 140;
       const maxT = TOP_PAD;
       const minT = vh - BOTTOM_MARGIN - contentH;
-      
       return minT > maxT ? maxT : Math.min(Math.max(targetY, minT), maxT);
     });
     setYOffsets(newOffsets);
   }, []);
 
-  // Aggiorna gli offset al mount e al resize
   useEffect(() => {
     updateOffsets();
-    
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(updateOffsets);
     }
 
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     let lastWidth = window.innerWidth;
     const handleResize = () => {
       if (window.innerWidth !== lastWidth) {
@@ -278,63 +356,42 @@ export default function ValoriSection() {
     };
   }, [updateOffsets]);
 
-  // Target Y per l'animazione
   const targetY = yOffsets[activeIndex] || 0;
 
-  // ── Fallback statico: reduced motion ──────────────────────────────────────────
-  if (reduce) {
-    return (
-      <section className="relative w-full overflow-hidden bg-[#030d3d] py-20 md:py-28 z-20">
-        {Background}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-          <div className="mb-12 md:mb-16">{Header}</div>
-          <div className="flex flex-col">
-            {valori.map((valore, i) => (
-              <div key={valore.id} className="border-t border-white/10 py-7 md:py-9">
-                <div className="flex items-center gap-4">
-                  <span className="font-heading text-2xl md:text-4xl font-light tabular-nums text-white/80">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
-                    {valore.name}
-                  </h3>
-                </div>
-                <p className="font-body font-light text-white/85 text-base md:text-lg leading-relaxed max-w-2xl pt-4">
-                  {valore.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // ── Versione Pinned: il valore attivo salta fluidamente al centro ───────────
   return (
     <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
-      
       {/* ── MISURATORE FANTASMA (Hidden Measurer) ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1] [contain:strict]">
         <div aria-hidden="true" className="absolute left-0 top-0 w-full opacity-0">
-        {valori.map((_, activeIdx) => (
-          <div key={activeIdx} ref={(el) => { measurerContainersRef.current[activeIdx] = el; }}>
-            <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
-              <div className="mb-6 md:mb-8">{Header}</div>
-              <div className="flex flex-col">
-                {valori.map((valore, index) => (
-                  <Valore
-                    key={valore.id}
-                    index={index}
-                    active={index === activeIdx}
-                    staticMeasure
-                    innerRef={index === activeIdx ? (el) => { measurerItemsRef.current[activeIdx] = el; } : undefined}
-                  />
-                ))}
+          {valori.map((_, activeIdx) => (
+            <div
+              key={activeIdx}
+              ref={(el) => {
+                measurerContainersRef.current[activeIdx] = el;
+              }}
+            >
+              <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
+                <div className="mb-6 md:mb-8">{Header}</div>
+                <div className="flex flex-col">
+                  {valori.map((valore, index) => (
+                    <Valore
+                      key={valore.id}
+                      index={index}
+                      active={index === activeIdx}
+                      staticMeasure
+                      innerRef={
+                        index === activeIdx
+                          ? (el) => {
+                              measurerItemsRef.current[activeIdx] = el;
+                            }
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
       </div>
 
@@ -342,7 +399,6 @@ export default function ValoriSection() {
       <div className="sticky top-0 h-screen w-full overflow-hidden [transform:translateZ(0)]">
         {Background}
 
-        {/* La lista si muove morbidamente con una spring verso il target Y */}
         <motion.div
           className="relative w-full"
           animate={{ y: targetY }}
@@ -351,7 +407,7 @@ export default function ValoriSection() {
             stiffness: 120,
             damping: 24,
             mass: 0.8,
-            restDelta: 0.5
+            restDelta: 0.5,
           }}
           style={{ willChange: "transform" }}
         >
@@ -371,4 +427,33 @@ export default function ValoriSection() {
       </div>
     </section>
   );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Router: sceglie la variante in base a device / preferenze. SSR e primo paint
+// usano la variante MOBILE (leggera): iPhone non monta mai il desktop pesante.
+// ══════════════════════════════════════════════════════════════════════════════
+export default function ValoriSection() {
+  const [mode, setMode] = useState<"mobile" | "desktop" | "reduce" | null>(null);
+
+  useEffect(() => {
+    const reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const deskMq = window.matchMedia("(min-width: 1024px)");
+    const update = () => {
+      if (reduceMq.matches) setMode("reduce");
+      else setMode(deskMq.matches ? "desktop" : "mobile");
+    };
+    update();
+    reduceMq.addEventListener("change", update);
+    deskMq.addEventListener("change", update);
+    return () => {
+      reduceMq.removeEventListener("change", update);
+      deskMq.removeEventListener("change", update);
+    };
+  }, []);
+
+  if (mode === "reduce") return <StaticValori />;
+  if (mode === "desktop") return <DesktopValori />;
+  // mode === null (primo paint) o "mobile"
+  return <MobileValori />;
 }

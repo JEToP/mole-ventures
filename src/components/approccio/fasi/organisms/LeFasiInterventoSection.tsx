@@ -446,7 +446,7 @@ export default function LeFasiInterventoSection() {
         style={{ background: "linear-gradient(180deg, var(--color-blue-deep) 0%, var(--color-blue-kinetic) 100%)" }}
       >
         <div className="relative z-10 mx-auto w-full max-w-7xl min-w-0 px-0">
-          <div className="px-8 md:px-12">
+          <div className="px-6 md:px-12">
             <Header />
           </div>
           
@@ -467,10 +467,10 @@ export default function LeFasiInterventoSection() {
                 </div>
                 
                 <motion.div
-                  initial={{ opacity: 0.35, y: 24 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.5 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   className="relative z-10"
                 >
                   <FaseContent index={i} />
