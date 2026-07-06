@@ -123,7 +123,7 @@ const Header = (
 // ──────────────────────────────────────────────────────────────────────────────
 // Singolo valore: chiuso (numero + titolo + icona) → aperto (anche descrizione).
 // ──────────────────────────────────────────────────────────────────────────────
-function Valore({
+function DesktopValore({
   index,
   active,
   staticMeasure,
@@ -199,6 +199,93 @@ function Valore({
   );
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// Singolo valore MOBILE: altezza derivata (chiuso) o 40vh (aperto), centrato, watermark
+// ──────────────────────────────────────────────────────────────────────────────
+function MobileValore({
+  index,
+  active,
+  innerRef,
+}: {
+  index: number;
+  active: boolean;
+  innerRef?: (el: HTMLElement | null) => void;
+}) {
+  const valore = valori[index];
+  const num = String(index + 1).padStart(2, "0");
+
+  return (
+    <article
+      ref={innerRef}
+      className={`relative w-full border-t border-white/10 flex flex-col justify-center overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        active ? "min-h-[40vh] py-12" : "min-h-0 py-6 md:py-8"
+      }`}
+    >
+      <div className="relative z-10 flex flex-col items-start w-full">
+        {/* Riga superiore */}
+        <div className="flex items-center justify-between w-full">
+          <div className="flex min-w-0 flex-1 items-baseline gap-3 md:gap-4">
+            <span
+              className={`font-heading text-2xl font-light tabular-nums text-white transition-opacity duration-700 ${
+                active ? "opacity-90" : "opacity-40"
+              }`}
+            >
+              {num}
+            </span>
+            <h3 className="font-heading text-3xl md:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
+              {valore.name}
+            </h3>
+          </div>
+
+          {/* Icona chiusa (sempre trasparente) */}
+          {!active && (
+            <motion.img
+              layoutId={`icon-${valore.id}`}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              src={valore.icon}
+              alt=""
+              className="shrink-0 h-12 w-12 md:h-14 md:w-14 object-contain opacity-10"
+            />
+          )}
+        </div>
+
+        {/* Descrizione */}
+        <div
+          className="grid [contain:layout_paint] motion-reduce:transition-none w-full"
+          style={{
+            gridTemplateRows: active ? "1fr" : "0fr",
+            transition: "grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          <div className="overflow-hidden">
+            <p
+              className="font-body font-light text-white text-base md:text-lg leading-relaxed pt-4"
+              style={{
+                opacity: active ? 1 : 0,
+                transform: active ? "translate3d(0,0,0)" : "translate3d(0,12px,0)",
+                transition: "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            >
+              {valore.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Icona aperta (watermark in basso a dx) */}
+      {active && (
+        <motion.img
+          layoutId={`icon-${valore.id}`}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          src={valore.icon}
+          alt=""
+          className="absolute right-[-10%] bottom-[-5%] z-0 w-64 h-64 md:w-72 md:h-72 object-contain opacity-[0.08] pointer-events-none"
+        />
+      )}
+    </article>
+  );
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 // MOBILE — accordion a scroll naturale (IntersectionObserver). Leggero e fluido.
 // ══════════════════════════════════════════════════════════════════════════════
@@ -207,27 +294,21 @@ function MobileValori() {
   const itemsRef = useRef<(HTMLElement | null)[]>([]);
   const activeRef = useRef(0);
 
-  // Selezione del valore attivo STABILE e poco sensibile:
-  //  • àncora = centro della riga "numero + titolo", che NON si sposta quando la
-  //    descrizione si apre sotto → niente oscillazioni auto-indotte all'apertura;
-  //  • si sceglie il valore la cui àncora è più vicina a una linea di lettura;
-  //  • ISTERESI: si cambia valore solo se il candidato è nettamente più centrato
-  //    dell'attuale, così un "minimo scroll" non apre/chiude i valori corti.
-  //  • letture nel rAF (solo durante lo scroll): leggero, non pesa sul caricamento.
+  // Essendo l'altezza fissa a 65vh, il centro esatto dell'articolo è stabile.
+  // Questo elimina ogni oscillazione. Usiamo il centro dell'articolo come àncora.
   useEffect(() => {
-    const ROW_ANCHOR = 38; // ≈ centro della riga compatta dal bordo superiore
     const HYSTERESIS = 72; // px di "vantaggio" richiesti per cambiare valore
     let raf = 0;
 
     const measureDist = (el: HTMLElement, triggerY: number) => {
       const r = el.getBoundingClientRect();
-      return Math.abs(r.top + ROW_ANCHOR - triggerY);
+      return Math.abs(r.top + (r.height / 2) - triggerY);
     };
 
     const compute = () => {
       raf = 0;
       const items = itemsRef.current;
-      const triggerY = window.innerHeight * 0.45; // linea di lettura poco sopra il centro
+      const triggerY = window.innerHeight * 0.5; // centro esatto dello schermo
 
       let best = activeRef.current;
       let bestDist = Infinity;
@@ -273,7 +354,7 @@ function MobileValori() {
         <div className="mb-8">{Header}</div>
         <div className="flex flex-col">
           {valori.map((valore, index) => (
-            <Valore
+            <MobileValore
               key={valore.id}
               index={index}
               active={index === activeIndex}
@@ -409,7 +490,7 @@ function DesktopValori() {
                 <div className="mb-6 md:mb-8">{Header}</div>
                 <div className="flex flex-col">
                   {valori.map((valore, index) => (
-                    <Valore
+                    <DesktopValore
                       key={valore.id}
                       index={index}
                       active={index === activeIdx}
@@ -450,7 +531,7 @@ function DesktopValori() {
             <div className="mb-6 md:mb-8">{Header}</div>
             <div className="flex flex-col">
               {valori.map((valore, index) => (
-                <Valore
+                <DesktopValore
                   key={valore.id}
                   index={index}
                   active={index === activeIndex}
