@@ -3,7 +3,7 @@ import ScrollCue from "@/components/ScrollCue";
 import ContactForm from "./ContactForm";
 
 export const metadata = {
-  title: 'Contatti - Mole Venture',
+  title: 'Contatti',
   description: 'Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.',
 };
 
@@ -26,13 +26,13 @@ export default function ContattiPage() {
           />
         </div>
         {/* Overlay brand: sfumatura navy profondo → blue deep per profondità e identità */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/85 via-[#05155E]/55 to-[#05155E]/0 md:to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#01061A]/60 via-[#05155E]/30 to-[#05155E]/0 md:to-black/30" />
 
         {/* Sfumatura in alto: navy profondo nella safe area che sfuma molto dolcemente verso il basso (visibile solo su mobile) */}
-        <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
+        <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A]/80 from-[15%] via-[#01061A]/40 via-[50%] to-transparent md:hidden z-0" />
 
         {/* Overlay laterale */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-transparent" />
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-4xl">

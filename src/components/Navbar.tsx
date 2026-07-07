@@ -59,12 +59,12 @@ export default function Navbar() {
         >
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
             <Image
-              src="/images/logo.png"
+              src="/images/logo.svg"
               alt="Mole Venture Logo"
               width={400}
               height={400}
               priority
-              className={`w-auto object-contain mix-blend-screen transition-all duration-300 ${
+              className={`w-auto object-contain transition-all duration-300 ${
                 isScrolled ? 'h-12 md:h-16' : 'h-16 md:h-24'
               }`}
               onError={(e) => { e.currentTarget.style.display='none'; }}
@@ -89,14 +89,14 @@ export default function Navbar() {
           </button>
 
           {/* Menu Desktop */}
-          <nav className="hidden md:flex gap-9 font-body text-lg font-semibold">
+          <nav className="hidden md:flex gap-9 font-body text-lg font-medium tracking-wide">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link key={link.href} href={link.href} className="relative group py-1">
                   <span>{link.label}</span>
                   <span 
-                    className={`absolute left-0 -bottom-1 h-0.5 bg-white transition-all duration-300 ease-in-out ${
+                    className={`absolute left-0 bottom-0 h-[1.5px] bg-white transition-all duration-300 ease-in-out ${
                       isActive ? 'w-full' : 'w-0 group-hover:w-full'
                     }`}
                   />

@@ -21,7 +21,10 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Mole Venture",
+  title: {
+    template: "Mole Venture - %s",
+    default: "Mole Venture - Home",
+  },
   description: "Un meccanismo di ETA come linfa di cambiamento per una nuova fase di sviluppo.",
 };
 

@@ -28,12 +28,12 @@ export default function Footer() {
           {/* Colonna brand */}
           <div className="max-w-xs">
             <Image
-              src="/images/logo.png"
+              src="/images/logo.svg"
               alt="Mole Venture"
               width={180}
               height={180}
               priority
-              className="h-12 md:h-20 w-auto object-contain mix-blend-screen"
+              className="h-12 md:h-20 w-auto object-contain"
               unoptimized
             />
           </div>

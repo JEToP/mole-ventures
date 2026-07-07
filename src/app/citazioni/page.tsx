@@ -1,5 +1,9 @@
 import Image from "next/image";
 
+export const metadata = {
+  title: 'Insight',
+};
+
 // Rassegna stampa: ogni voce è la testata che ha pubblicato + il ritaglio
 // dell'articolo corrispondente, nell'ordine del design Figma (alto → basso).
 type PressItem = {
