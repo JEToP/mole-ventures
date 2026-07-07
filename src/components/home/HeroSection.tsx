@@ -42,7 +42,7 @@ export default function HeroSection() {
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
             <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
-              Entriamo in prima persona nell&apos;azienda per innescare le dinamiche di cambiamento
+              Investiamo in prima persona nell&apos;azienda per innescare le dinamiche di cambiamento
               e di discontinuità necessarie a sbloccare il potenziale inespresso e generare le
               successive opportunità di sviluppo
             </p>
