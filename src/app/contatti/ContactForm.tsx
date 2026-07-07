@@ -16,10 +16,12 @@ export default function ContactForm() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    
     setStatus("sending");
     setErrorMsg("");
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
 
     try {
@@ -36,7 +38,7 @@ export default function ContactForm() {
         return;
       }
 
-      event.currentTarget.reset();
+      form.reset();
       setStatus("success");
     } catch {
       setErrorMsg("Errore di connessione, riprova.");
