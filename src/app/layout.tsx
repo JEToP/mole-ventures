@@ -26,6 +26,15 @@ export const metadata: Metadata = {
     default: "Mole Venture - Home",
   },
   description: "Un meccanismo di ETA come linfa di cambiamento per una nuova fase di sviluppo.",
+  icons: {
+    icon: [
+      { url: "/images/favicon.svg", type: "image/svg+xml" },
+      { url: "/images/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/images/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
