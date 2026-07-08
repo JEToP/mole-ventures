@@ -8,22 +8,16 @@ export default function HeroSection() {
           alta (dove cade "ETA"). Desktop: ancorata in alto. */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-bg.avif"
+          src="/images/hero/home-hero.avif"
           alt="Hero background"
           fill
           priority
           placeholder="blur"
           blurDataURL="data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAQBACdASoUAA0APu1iqU2ppaQiMAgBMB2JYwCdAYvMrRRWy7cl06RSgAD+CTO9JcDOK9MUSUERm1i5+ogcyPlpJeZqUL2x8UDewbXbqAyVkFHEpquKWRABlz147MPHlJl1PoW18IFf6/yUpwbxNpequtWAC3WCZdTIcoNe0o6HWU1vguPae0fW4eWoZAAA"
-          className="object-cover object-[78%_8%] md:object-top opacity-90"
+          className="object-cover object-center md:object-bottom opacity-100"
           sizes="100vw"
         />
       </div>
-
-      {/* Overlay come da Figma: colore #000110 al 37% */}
-      <div className="absolute inset-0 bg-[#000110]/[0.37]" />
-
-      {/* Sfumatura in alto: navy nella safe area che sfuma dolcemente (mobile) */}
-      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
 
       {/* Contenuto */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">

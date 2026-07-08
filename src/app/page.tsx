@@ -18,8 +18,8 @@ function preloadImage(src: string) {
 
 export default function Home() {
   // Precaricamento delle immagini hero ottimizzate
-  preloadImage("/images/background_areeintervento.avif");
-  preloadImage("/images/hero-metodo.avif");
+  preloadImage("/images/hero/intervento-hero.avif");
+  preloadImage("/images/hero/metodo-hero.avif");
   preloadImage("/images/background_contatti.webp");
   preloadImage("/images/background_contatti_mobile.webp");
 

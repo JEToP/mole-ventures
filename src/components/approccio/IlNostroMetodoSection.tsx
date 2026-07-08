@@ -22,22 +22,16 @@ function MetodoHero() {
       {/* Background image: adesso occupa tutto lo schermo ed è gestita come la Home */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-metodo.avif"
+          src="/images/hero/metodo-hero.avif"
           alt="Metodo background"
           fill
           priority
           placeholder="blur"
           blurDataURL="data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoUAAwAPu1iqU2ppaOiMAgBMB2JYwC2yBKNtqUIBN3jf/VAAP2PwF6PFSCCO/+z/ThzCHC7Q5+UiikB45zyjAEPQnqLu3DCm6DlP4GOiZ6bcheX/RSVFKSTpI2KIAdUTl9Yn7gAAAA="
-          className="object-cover object-center opacity-90"
+          className="object-cover object-[25%_center] md:object-center"
           sizes="100vw"
         />
       </div>
-
-      {/* Overlay come da Figma: colore #000110 al 37% (stesso di Aree) */}
-      <div className="absolute inset-0 bg-[#000110]/[0.37]" />
-
-      {/* Sfumatura in alto: navy nella safe area che sfuma dolcemente (mobile) */}
-      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
 
       {/* Contenuto: stessa impostazione della hero "Aree di intervento" */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">

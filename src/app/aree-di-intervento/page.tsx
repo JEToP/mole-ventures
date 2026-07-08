@@ -68,19 +68,16 @@ function HeroAree() {
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
-          src="/images/background_areeintervento.avif"
+          src="/images/hero/intervento-hero.avif"
           alt="Background aree di intervento"
           fill
           priority
           placeholder="blur"
           blurDataURL="data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAAAwBACdASoUAAsAPu1iqU2ppaOiMAgBMB2JYwC7MoADU1p3EIJlyKq0LcAA/uzFMrB6+wMU3af5DP+Nylkn7WKhAbmsVF/wV00NjF0AAAA="
-          className="object-cover object-right md:object-center opacity-90"
+          className="object-cover object-center"
           sizes="100vw"
         />
       </div>
-
-      {/* Sfumatura in alto: navy nella safe area che sfuma dolcemente (mobile) */}
-      <div className="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-[#01061A] from-[15%] via-[#01061A]/50 via-[50%] to-transparent md:hidden z-0" />
 
       {/* Contenuto */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
