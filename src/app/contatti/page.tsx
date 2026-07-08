@@ -26,15 +26,18 @@ export default function ContattiPage() {
           />
         </div>
 
+        {/* Overlay chiaro (tema light) */}
+        <div className="absolute inset-0 bg-white/55" />
+
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-4xl">
-            <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
+            <h1 className="font-heading text-blue-deep text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
               Costruiamo insieme la prossima fase{' '}
               <span className="font-bold">della tua impresa</span>
             </h1>
 
-            <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
-              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
+            <div className="border-l-2 border-blue-deep/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
+              <p className="font-body font-medium text-blue-deep text-base md:text-xl leading-relaxed">
                 Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
               </p>
             </div>

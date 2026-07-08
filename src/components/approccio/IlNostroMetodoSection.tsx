@@ -33,15 +33,18 @@ function MetodoHero() {
         />
       </div>
 
+      {/* Overlay chiaro (tema light) */}
+      <div className="absolute inset-0 bg-white/55" />
+
       {/* Contenuto: stessa impostazione della hero "Aree di intervento" */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <div className="max-w-4xl">
-          <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
+          <h1 className="font-heading text-blue-deep text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
             Il nostro metodo
           </h1>
 
-          <div className="border-l-2 border-white/60 pl-4 max-w-xl">
-            <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
+          <div className="border-l-2 border-blue-deep/60 pl-4 max-w-xl">
+            <p className="font-body font-medium text-blue-deep text-base md:text-xl leading-relaxed">
               Ogni azienda per continuare a evolvere deve impostare il proprio percorso di crescita, di
               evoluzione e di rafforzamento rimettendo in discussione il proprio status quo. Noi
               lavoriamo sul rinnovare l&apos;ecosistema esterno ed interno all&apos;azienda, nuovi soci,

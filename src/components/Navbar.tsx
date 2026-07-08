@@ -43,6 +43,11 @@ export default function Navbar() {
   const solidFromTop = pathname === '/citazioni';
   const showSolidBackground = isScrolled || isMobileMenuOpen || solidFromTop;
 
+  // Tema light: in cima a queste pagine l'hero è chiaro, quindi la navbar
+  // trasparente deve usare testo/logo blu per essere leggibile.
+  const lightHeroPages = ['/', '/approccio', '/aree-di-intervento', '/contatti'];
+  const lightHeroTop = !showSolidBackground && lightHeroPages.includes(pathname);
+
   return (
     <>
       <header
@@ -53,13 +58,13 @@ export default function Navbar() {
         }`}
       >
         <div
-          className={`w-full max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center text-white transition-all duration-300 ${
-            isScrolled ? 'py-2 md:py-3' : 'py-4 md:py-6'
-          }`}
+          className={`w-full max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center transition-all duration-300 ${
+            lightHeroTop ? 'text-blue-deep' : 'text-white'
+          } ${isScrolled ? 'py-2 md:py-3' : 'py-4 md:py-6'}`}
         >
           <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
             <Image
-              src="/images/logo.svg"
+              src={lightHeroTop ? "/images/logo-blue.svg" : "/images/logo.svg"}
               alt="Mole Venture Logo"
               width={400}
               height={400}
@@ -74,7 +79,7 @@ export default function Navbar() {
           {/* Hamburger / X Icon per Mobile */}
           <button
             type="button"
-            className="md:hidden text-white focus:outline-none relative z-[70] p-3 -mr-3 cursor-pointer touch-manipulation"
+            className="md:hidden focus:outline-none relative z-[70] p-3 -mr-3 cursor-pointer touch-manipulation"
             onClick={() => setIsMobileMenuOpen((open) => !open)}
             aria-label="Toggle menu"
             aria-expanded={isMobileMenuOpen}
@@ -95,10 +100,10 @@ export default function Navbar() {
               return (
                 <Link key={link.href} href={link.href} className="relative group py-1">
                   <span>{link.label}</span>
-                  <span 
-                    className={`absolute left-0 bottom-0 h-[1.5px] bg-white transition-all duration-300 ease-in-out ${
-                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`}
+                  <span
+                    className={`absolute left-0 bottom-0 h-[1.5px] transition-all duration-300 ease-in-out ${
+                      lightHeroTop ? 'bg-blue-deep' : 'bg-white'
+                    } ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}
                   />
                 </Link>
               );
