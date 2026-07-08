@@ -16,7 +16,7 @@
 
 import Image from "next/image";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { useScroll, useMotionValueEvent, motion } from "framer-motion";
+import { useScroll, useMotionValueEvent, useTransform, useSpring, motion } from "framer-motion";
 
 // ── Dati valori ─────────────────────────────────────────────────────────────
 const valori = [
@@ -53,7 +53,7 @@ const valori = [
     name: "Dinamicità",
     icon: "/images/icons/dinamicita.svg",
     description:
-      "La capacità di evolvere e di evolvere velocemente seguendo il percorso tracciato è sale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
+      "La capacità di evolvere, e di farlo velocemente, seguendo il percorso tracciato è sale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
   },
   {
     id: "trasparenza",
@@ -252,6 +252,7 @@ function DesktopValori() {
   const sectionRef = useRef<HTMLElement>(null);
   const measurerContainersRef = useRef<(HTMLDivElement | null)[]>([]);
   const measurerItemsRef = useRef<(HTMLElement | null)[]>([]);
+  const yOffsetsRef = useRef<number[]>(valori.map(() => 0));
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -297,12 +298,15 @@ function DesktopValori() {
         itemRect.top - containerRect.top + itemRect.height / 2;
       const targetY = vh / 2 - centerInContent;
 
-      const TOP_PAD = 96;
+      // Più alto: lascia respiro sotto lo sfondo/navbar così il titolo
+      // "I nostri valori" resta visibile e non finisce troppo in alto.
+      const TOP_PAD = 120;
       const BOTTOM_MARGIN = 140;
       const maxT = TOP_PAD;
       const minT = vh - BOTTOM_MARGIN - contentH;
       return minT > maxT ? maxT : Math.min(Math.max(targetY, minT), maxT);
     });
+    yOffsetsRef.current = newOffsets;
     setYOffsets(newOffsets);
   }, []);
 
@@ -331,7 +335,24 @@ function DesktopValori() {
     };
   }, [updateOffsets]);
 
-  const targetY = yOffsets[activeIndex] || 0;
+  // Posizione verticale continua, legata direttamente allo scroll: interpola
+  // tra l'offset del valore corrente e quello successivo, così lo scorrimento
+  // è fluido e non "aggancia" più a scatti sul valore attivo.
+  const y = useTransform(scrollYProgress, (latest) => {
+    const n = valori.length - 1;
+    const pos = Math.min(Math.max(latest, 0), 1) * n;
+    const i = Math.floor(pos);
+    const frac = pos - i;
+    const offs = yOffsetsRef.current;
+    const a = offs[i] ?? 0;
+    const b = offs[Math.min(i + 1, n)] ?? a;
+    return a + (b - a) * frac;
+  });
+  // Smoothing leggero: rende lo scorrimento ancora più morbido senza
+  // reintrodurre lo scatto di "aggancio".
+  const ySmooth = useSpring(y, { stiffness: 140, damping: 40, mass: 0.4 });
+  // yOffsets è tenuto in stato solo per forzare il re-render dopo la misura.
+  void yOffsets;
 
   return (
     <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
@@ -376,15 +397,7 @@ function DesktopValori() {
 
         <motion.div
           className="relative w-full"
-          animate={{ y: targetY }}
-          transition={{
-            type: "spring",
-            stiffness: 120,
-            damping: 24,
-            mass: 0.8,
-            restDelta: 0.5,
-          }}
-          style={{ willChange: "transform" }}
+          style={{ y: ySmooth, willChange: "transform" }}
         >
           <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
             <div className="mb-6 md:mb-8">{Header}</div>

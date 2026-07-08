@@ -72,10 +72,6 @@ export default function Footer() {
                   info@moleventure.com
                 </a>
               </li>
-              <li className="text-white/50">
-                {/* TODO: sostituire con la sede reale */}
-                Torino, Italia
-              </li>
             </ul>
           </div>
         </div>

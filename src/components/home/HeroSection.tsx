@@ -31,7 +31,7 @@ export default function HeroSection() {
           <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
             Un meccanismo{' '}<br className="md:hidden" />
             di{' '}
-            <span className="text-blue-deep font-bold">ETA</span>
+            <span className="text-white font-bold">ETA</span>
             <span className="block md:inline">{' '}(Entrepreneurship Through Acquisition)</span>
             {' '}come{' '}<br className="md:hidden" />
             motore di{' '}<br className="md:hidden" />
