@@ -62,7 +62,7 @@ export default function ChiSiamoSection() {
           viewBox="0 0 54 91"
           role="img"
           aria-label="Contorno stilizzato della Mole Antonelliana, logo Mole Venture"
-          className="pointer-events-none select-none text-white absolute z-0 -right-16 -bottom-8 h-[70%] opacity-[0.18] md:right-auto md:left-[10%] md:bottom-6 md:top-auto md:translate-y-0 md:h-[80%] md:opacity-[0.7]"
+          className="pointer-events-none select-none text-white absolute z-0 right-4 bottom-6 h-[60%] opacity-[0.18] md:right-auto md:left-[10%] md:bottom-6 md:top-auto md:translate-y-0 md:h-[80%] md:opacity-[0.7]"
           style={{
             clipPath: isDesktop && !revealed ? 'inset(100% 0 0 0)' : 'inset(0% 0 0 0)',
             transition: isDesktop ? 'clip-path 6200ms cubic-bezier(0.16, 1, 0.3, 1) 500ms' : 'none',

@@ -33,8 +33,10 @@ import { FASI } from "../fasiData";
 //  [HEAD_END, REVEAL] → focus 1→2→3→4 (4 segmenti)
 //  [REVEAL, 1]     → la 5ª fase + CTA si rivelano
 const HEAD_END = 0.13;
-const REVEAL = 0.82; // Ritardato per bilanciare il focus 4
-const BOUNDS = [HEAD_END, 0.3, 0.47, 0.68, REVEAL, 1.0]; // 0.68 ritarda il focus 4 rispetto al 3
+const REVEAL = 0.82; // inizio focus 5
+// Segmenti di focus 1→4 con plateau via via più lunghi per 2, 3 e 4, così la
+// fase 3 non viene "tagliata" e la 4 resta accesa mentre si continua a scorrere.
+const BOUNDS = [HEAD_END, 0.28, 0.45, 0.63, REVEAL, 1.0];
 const CF = 0.05;
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
@@ -359,10 +361,11 @@ export default function LeFasiInterventoSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   
-  const [scrollRange, setScrollRange] = useState({ 
-    start: "-32vh", 
-    mid: "-75vh", 
-    end: "-95vh" 
+  const [scrollRange, setScrollRange] = useState({
+    start: "-32vh",
+    early: "-52vh",
+    mid: "-75vh",
+    end: "-95vh"
   });
 
   const { scrollYProgress } = useScroll({
@@ -391,11 +394,15 @@ export default function LeFasiInterventoSection() {
         endPixels = startPixels;
       }
       
-      // Il passaggio intermedio (focus 5) avviene a metà strada verso la fine
-      const midPixels = startPixels + (endPixels - startPixels) * 0.5;
+      // early: scorrimento iniziale mentre si accende la fase 3 (la solleva in
+      // vista senza tagliarla). mid: focus 5.
+      const range = endPixels - startPixels;
+      const earlyPixels = startPixels + range * 0.28;
+      const midPixels = startPixels + range * 0.5;
 
       setScrollRange({
         start: `-${startPixels}px`,
+        early: `-${earlyPixels}px`,
         mid: `-${midPixels}px`,
         end: `-${endPixels}px`
       });
@@ -425,15 +432,15 @@ export default function LeFasiInterventoSection() {
   // verso l'alto per centrare il blocco 4 PRIMA che prenda il focus.
   const contentY = useTransform(
     progress,
-    [0, BOUNDS[0], BOUNDS[1], BOUNDS[2], 0.58, BOUNDS[4], 1],
+    [0, BOUNDS[0], BOUNDS[1], BOUNDS[2], BOUNDS[3], BOUNDS[4], 1],
     [
       "0px",
       scrollRange.start,  // Focus 1: l'header sparisce, griglia al top
       scrollRange.start,  // Focus 2: fermo
-      scrollRange.start,  // Focus 3 (0.47): fermo
-      scrollRange.start,  // 0.58: Inizia a scorrere in anticipo rispetto al focus 4
-      scrollRange.mid,    // Focus 5 (0.82): inquadra il blocco 5
-      scrollRange.end     // Fine: rivela comodamente la CTA garantendo di raggiungere la fine
+      scrollRange.start,  // Inizio focus 3 (0.45): ancora fermo
+      scrollRange.early,  // Inizio focus 4 (0.63): la 3 è stata sollevata in vista, ora entra la 4
+      scrollRange.mid,    // Focus 5 (0.82): la 4 resta accesa mentre si scorre fino a inquadrare la 5
+      scrollRange.end     // Fine: rivela comodamente la CTA
     ]
   );
 

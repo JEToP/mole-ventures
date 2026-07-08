@@ -26,6 +26,9 @@ export default function ContattiPage() {
           />
         </div>
 
+        {/* Velo bluastro leggerissimo: solo per rendere leggibile il testo bianco */}
+        <div className="absolute inset-0 bg-blue-deep/20" />
+
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-4xl">
             <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">

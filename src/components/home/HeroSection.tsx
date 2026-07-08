@@ -19,6 +19,9 @@ export default function HeroSection() {
         />
       </div>
 
+      {/* Velo bluastro leggerissimo: solo per rendere leggibile il testo bianco */}
+      <div className="absolute inset-0 bg-blue-deep/20" />
+
       {/* Contenuto */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <div className="max-w-4xl">

@@ -33,6 +33,10 @@ function MetodoHero() {
         />
       </div>
 
+      {/* Velo bluastro: un po' più marcato qui perché lo sfondo è molto chiaro
+          e il testo bianco altrimenti risulta illeggibile. Immagine comunque chiara. */}
+      <div className="absolute inset-0 bg-blue-deep/35" />
+
       {/* Contenuto: stessa impostazione della hero "Aree di intervento" */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <div className="max-w-4xl">
