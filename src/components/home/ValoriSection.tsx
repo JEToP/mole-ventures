@@ -348,9 +348,10 @@ function DesktopValori() {
     const b = offs[Math.min(i + 1, n)] ?? a;
     return a + (b - a) * frac;
   });
-  // Smoothing leggero: rende lo scorrimento ancora più morbido senza
-  // reintrodurre lo scatto di "aggancio".
-  const ySmooth = useSpring(y, { stiffness: 140, damping: 40, mass: 0.4 });
+  // Smoothing: molla più morbida e con scia leggermente più lunga, così il
+  // movimento verticale "scivola" dietro allo scroll in modo fluido invece di
+  // seguirlo in modo rigido/reattivo. damping tarato per non oscillare.
+  const ySmooth = useSpring(y, { stiffness: 55, damping: 22, mass: 0.6 });
   // yOffsets è tenuto in stato solo per forzare il re-render dopo la misura.
   void yOffsets;
 

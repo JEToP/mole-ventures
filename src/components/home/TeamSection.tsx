@@ -116,7 +116,7 @@ export default function TeamSection() {
                   </div>
                 </div>
 
-                {/* Colonna testo */}
+                {/* Colonna testo. Da collassato: centra il nome (verticale) */}
                 <div className="relative min-w-0 flex-1 p-6 md:p-7 flex flex-col justify-end">
                   {/* Toggle +/− in alto a destra */}
                   <button
@@ -135,13 +135,16 @@ export default function TeamSection() {
                     {isActive ? "−" : "+"}
                   </button>
 
-                  {/* Nome: su desktop, quando collassato, ruota in verticale */}
+                  {/* Nome: ruota di 90° in senso antiorario (fulcro prima lettera)
+                      + una leggera traslazione nella STESSA transizione, così da
+                      centrarlo un po' nella striscia verticale restando fluido
+                      (niente scatto di layout). */}
                   <div
-                    className={`transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
-                      isCollapsed ? "md:[writing-mode:vertical-rl] md:rotate-180 md:mb-1" : ""
+                    className={`inline-block w-fit origin-bottom-left transition-transform duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
+                      isCollapsed ? "md:-rotate-90 md:-translate-y-4 md:translate-x-[30px]" : "md:rotate-0"
                     }`}
                   >
-                    <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight">
+                    <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight whitespace-nowrap">
                       {member.name}
                     </h3>
                   </div>

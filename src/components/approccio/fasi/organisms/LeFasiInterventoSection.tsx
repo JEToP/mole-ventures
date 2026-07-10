@@ -362,7 +362,7 @@ export default function LeFasiInterventoSection() {
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   
   const [scrollRange, setScrollRange] = useState({
-    start: "-32vh",
+    start: "-40vh",
     end: "-95vh"
   });
 
@@ -385,13 +385,13 @@ export default function LeFasiInterventoSection() {
       const height = scrollWrapperRef.current.scrollHeight;
       const vh = window.innerHeight;
       
-      const startPixels = vh * 0.32;
-      let endPixels = height - vh; 
-      
+      const startPixels = vh * 0.40;
+      let endPixels = height - vh;
+
       if (endPixels < startPixels) {
         endPixels = startPixels;
       }
-      
+
       setScrollRange({
         start: `-${startPixels}px`,
         end: `-${endPixels}px`
@@ -427,8 +427,8 @@ export default function LeFasiInterventoSection() {
     [
       "0px",
       scrollRange.start,  // Focus 1: l'header sparisce, griglia al top
-      scrollRange.start,  // Focus 2: fermo
-      scrollRange.start,  // Inizio focus 3 (0.45): fermo fino a qui, poi inizia a scorrere a velocità costante
+      scrollRange.start,  // Focus 2: fermo (pinnato)
+      scrollRange.start,  // Fine focus 2 / accensione fase 3 (0.45): fermo fin qui, poi scorre
       scrollRange.end     // Fine: rivela comodamente la CTA (1.0)
     ]
   );
