@@ -14,14 +14,26 @@ export default function ContattiPage() {
       <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
+          {/* Mobile image */}
           <Image
-            src="/images/contatti-bg.avif"
+            src="/images/hero/contatti/contatti-bg-def-mobile.webp"
             alt="Contatti background"
             fill
             priority
             placeholder="blur"
-            blurDataURL="data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAwCdASoUAAsAPu1iqU2ppaQiMAgBMB2JQBYdhECZhc6Wv/zUOSTgAN5lLUqWrbDIrIvkRBE3gf9x/1Cy4BIG4jh8KUuPuL3eFHBvBSe6TfIOm3curn7DrBdDa9QlgA4KSmjGAAA="
-            className="object-cover max-md:object-[85%_center] md:object-center"
+            blurDataURL="data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADwAQCdASoGAAoABUB8JYwCdAEUngS/uAAA/U6A2TXSt7rmHh759NwfeA89FWmuYAA="
+            className="object-cover object-center md:hidden"
+            sizes="100vw"
+          />
+          {/* Desktop image */}
+          <Image
+            src="/images/hero/contatti/contatti-bg-def-desktop.webp"
+            alt="Contatti background"
+            fill
+            priority
+            placeholder="blur"
+            blurDataURL="data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADwAQCdASoKAAYABUB8JYgCdAEQDDOIxgAA/ieu8MbtE0Drx/o94hzanB+sAA=="
+            className="object-cover object-center hidden md:block"
             sizes="100vw"
           />
         </div>

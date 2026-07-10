@@ -21,21 +21,31 @@ function MetodoHero() {
     <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image: adesso occupa tutto lo schermo ed è gestita come la Home */}
       <div className="absolute inset-0">
+        {/* Mobile image */}
         <Image
-          src="/images/hero/metodo-hero.avif"
+          src="/images/hero/metodo/metodo-bg-def-mobile.webp"
           alt="Metodo background"
           fill
           priority
           placeholder="blur"
-          blurDataURL="data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoUAAwAPu1iqU2ppaOiMAgBMB2JYwC2yBKNtqUIBN3jf/VAAP2PwF6PFSCCO/+z/ThzCHC7Q5+UiikB45zyjAEPQnqLu3DCm6DlP4GOiZ6bcheX/RSVFKSTpI2KIAdUTl9Yn7gAAAA="
-          className="object-cover object-[25%_center] md:object-center"
+          blurDataURL="data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAACwAQCdASoGAAoABUB8JQAAU20vKpgAANuBNofgItEjt8dgsNEMoZtLUisl2g8AAAA="
+          className="object-cover object-[25%_center] md:hidden"
+          sizes="100vw"
+        />
+        {/* Desktop image */}
+        <Image
+          src="/images/hero/metodo/metodo-bg-def-desktop.webp"
+          alt="Metodo background"
+          fill
+          priority
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAABwAQCdASoKAAYABUB8JZwAAiPP4ADgGB6ihhpBJlq3m+bwcazCjm2KKl10x+AcAAA="
+          className="object-cover object-center hidden md:block"
           sizes="100vw"
         />
       </div>
 
-      {/* Velo bluastro: un po' più marcato qui perché lo sfondo è molto chiaro
-          e il testo bianco altrimenti risulta illeggibile. Immagine comunque chiara. */}
-      <div className="absolute inset-0 bg-blue-deep/35" />
+
 
       {/* Contenuto: stessa impostazione della hero "Aree di intervento" */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">

@@ -1,24 +1,28 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Per aggiungere un membro del team, aggiungi un oggetto a questo array.
 // Le foto vanno in public/images/team/<id>.<ext>
-// Foto a bassa risoluzione → mostrate come ritratto contenuto, non stirate.
 // ──────────────────────────────────────────────────────────────────────────────
 const teamMembers = [
   {
     id: "matteo-gera",
     name: "Matteo Gera",
     photo: "/images/team/matteo-gera.jpg",
+    // Zoom/posizione per uniformare l'inquadratura a quella di Francesco
+    // (stesso spazio sopra la testa). Matteo è più "largo" → ingrandisco un po'.
+    photoClass: "object-cover scale-[1.25] -translate-y-3",
     description:
       "Chief Executive con importanti e consolidate esperienze di sviluppo business e di gestione di P&L completi in aziende family owned business e multinazionali operanti nei settori Transportation, Rail, Aerospace & Defense, Energy e Industrial Goods sia in contesti nazionali che internazionali. Strutturato e diretto molteplici operazioni di M&A e integrazione. Finalizzata con successo una quotazione all’Euronext Growth Milan partecipando a tutti gli step del processo.",
   },
   {
     id: "francesco-motta",
     name: "Francesco Motta",
-    photo: "/images/team/francesco-motta.png",
+    photo: "/images/team/francesco-motta.jpg",
+    photoClass: "object-cover origin-top scale-[1.18]",
     description:
       "Chief Executive con esperienze di sviluppo business e di gestione di P&L completi in multinazionali e PMI operanti nei settori Automation, Machinery, Rail, Automotive. Esperienza nel processo di M&A e di turn-around. 10 anni di permanenza a Shanghai + 2 in India per vivere il cambiamento da vicino. Business Angel dal 2020, attivo in diverse community, con investimenti in una decina di start-up multi settore.",
   },
@@ -48,18 +52,20 @@ function PersonIcon({ className }: { className?: string }) {
 
 // ── Componente principale ─────────────────────────────────────────────────────
 export default function TeamSection() {
+  const [activeId, setActiveId] = useState<string | null>(null);
+
   return (
     <section className="relative w-full overflow-hidden bg-[#05155E]">
-      {/* Background image */}
+      {/* Background image (invariato) */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/images/team.avif')" }}
       />
-      {/* Overlay nero al 10% */}
+      {/* Overlay */}
       <div aria-hidden="true" className="absolute inset-0 bg-black/40" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-24">
-        {/* Intestazione – stile coerente con "Chi siamo" */}
+        {/* Intestazione */}
         <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold mb-6">
           Il nostro team
         </h2>
@@ -70,39 +76,88 @@ export default function TeamSection() {
           realtà acquisite.
         </p>
 
-        {/* Card compatte affiancate (altezza adattata al contenuto) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {teamMembers.map((member) => (
-            <article
-              key={member.id}
-              className="flex flex-col sm:flex-row gap-5 sm:gap-6 rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md p-6 md:p-7"
-            >
-              {/* Ritratto contenuto */}
-              <div className="relative h-32 w-32 sm:h-36 sm:w-36 flex-shrink-0 overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-lg">
-                <Image
-                  src={member.photo}
-                  alt={member.name}
-                  fill
-                  sizes="144px"
-                  className="object-cover object-center"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }}
-                />
-                <div className="absolute inset-0 -z-10 flex items-center justify-center">
-                  <PersonIcon className="w-12 h-12 text-white/30" />
+        {/* ── Accordion orizzontale: card "glass" con foto CONTENUTA a sinistra ─── */}
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:h-[440px]">
+          {teamMembers.map((member) => {
+            const isActive = member.id === activeId;
+            const isCollapsed = activeId !== null && !isActive;
+            return (
+              <div
+                key={member.id}
+                onMouseLeave={() =>
+                  setActiveId((curr) => (curr === member.id ? null : curr))
+                }
+                aria-expanded={isActive}
+                className={`group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:hover:border-white/25
+                  ${activeId === null ? "md:flex-1" : isActive ? "md:flex-[3.2]" : "md:flex-[1]"}
+                `}
+              >
+                {/* Foto CONTENUTA. Mobile: in cima, ritratto full-width.
+                    Desktop: colonna a sinistra; quando la card è collassata la
+                    foto si restringe per lasciar spazio alla strip glass col
+                    nome ruotato. */}
+                <div
+                  className={`relative w-full aspect-[4/5] shrink-0 overflow-hidden transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:aspect-auto md:h-full ${
+                    isCollapsed ? "md:w-40 lg:w-48" : "md:w-60 lg:w-72"
+                  }`}
+                >
+                  <Image
+                    src={member.photo}
+                    alt={member.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 300px"
+                    className={member.photoClass}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                  <div className="absolute inset-0 -z-10 flex items-center justify-center bg-white/5">
+                    <PersonIcon className="w-16 h-16 text-white/25" />
+                  </div>
+                </div>
+
+                {/* Colonna testo */}
+                <div className="relative min-w-0 flex-1 p-6 md:p-7 flex flex-col justify-end">
+                  {/* Toggle +/− in alto a destra */}
+                  <button
+                    type="button"
+                    onMouseEnter={() => setActiveId(member.id)}
+                    onFocus={() => setActiveId(member.id)}
+                    onClick={() => setActiveId(isActive ? null : member.id)}
+                    aria-expanded={isActive}
+                    aria-label={
+                      isActive
+                        ? `Chiudi il profilo di ${member.name}`
+                        : `Apri il profilo di ${member.name}`
+                    }
+                    className="hidden md:flex absolute top-6 right-6 z-20 h-9 w-9 items-center justify-center rounded-full border border-white/40 text-white text-xl leading-none cursor-pointer transition-all duration-300 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft"
+                  >
+                    {isActive ? "−" : "+"}
+                  </button>
+
+                  {/* Nome: su desktop, quando collassato, ruota in verticale */}
+                  <div
+                    className={`transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
+                      isCollapsed ? "md:[writing-mode:vertical-rl] md:rotate-180 md:mb-1" : ""
+                    }`}
+                  >
+                    <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight">
+                      {member.name}
+                    </h3>
+                  </div>
+
+                  {/* Bio: sempre visibile su mobile, solo se attivo su desktop */}
+                  <p
+                    className={`font-body font-light text-white/85 text-base md:text-lg leading-relaxed mt-4 max-w-lg transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:overflow-hidden
+                      ${isActive ? "opacity-100 md:max-h-96" : "opacity-100 md:max-h-0 md:opacity-0"}
+                    `}
+                  >
+                    {member.description}
+                  </p>
                 </div>
               </div>
-
-              {/* Nome + bio */}
-              <div className="min-w-0 flex-1">
-                <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight mb-3">
-                  {member.name}
-                </h3>
-                <p className="font-body font-light text-white text-sm md:text-lg leading-relaxed">
-                  {member.description}
-                </p>
-              </div>
-            </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

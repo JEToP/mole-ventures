@@ -363,8 +363,6 @@ export default function LeFasiInterventoSection() {
   
   const [scrollRange, setScrollRange] = useState({
     start: "-32vh",
-    early: "-52vh",
-    mid: "-75vh",
     end: "-95vh"
   });
 
@@ -394,16 +392,8 @@ export default function LeFasiInterventoSection() {
         endPixels = startPixels;
       }
       
-      // early: scorrimento iniziale mentre si accende la fase 3 (la solleva in
-      // vista senza tagliarla). mid: focus 5.
-      const range = endPixels - startPixels;
-      const earlyPixels = startPixels + range * 0.28;
-      const midPixels = startPixels + range * 0.5;
-
       setScrollRange({
         start: `-${startPixels}px`,
-        early: `-${earlyPixels}px`,
-        mid: `-${midPixels}px`,
         end: `-${endPixels}px`
       });
     };
@@ -428,19 +418,18 @@ export default function LeFasiInterventoSection() {
   // Il contenuto scorre verso l'alto progressivamente!
   // Per garantire che il blocco 3 non finisca sotto la navbar, il layout
   // rimane bloccato (pinned) durante il focus 1, 2 e parte del 3.
-  // A 0.58 (prima che inizi il focus 4 a 0.68), la pagina inizia a scivolare 
-  // verso l'alto per centrare il blocco 4 PRIMA che prenda il focus.
+  // A BOUNDS[2] (0.45) la pagina inizia a scivolare verso l'alto con 
+  // velocità costante, per un'esperienza fluida e senza "scatti" o accelerazioni
+  // improvvise tra le fasi 3, 4 e 5.
   const contentY = useTransform(
     progress,
-    [0, BOUNDS[0], BOUNDS[1], BOUNDS[2], BOUNDS[3], BOUNDS[4], 1],
+    [0, BOUNDS[0], BOUNDS[1], BOUNDS[2], 1],
     [
       "0px",
       scrollRange.start,  // Focus 1: l'header sparisce, griglia al top
       scrollRange.start,  // Focus 2: fermo
-      scrollRange.start,  // Inizio focus 3 (0.45): ancora fermo
-      scrollRange.early,  // Inizio focus 4 (0.63): la 3 è stata sollevata in vista, ora entra la 4
-      scrollRange.mid,    // Focus 5 (0.82): la 4 resta accesa mentre si scorre fino a inquadrare la 5
-      scrollRange.end     // Fine: rivela comodamente la CTA
+      scrollRange.start,  // Inizio focus 3 (0.45): fermo fino a qui, poi inizia a scorrere a velocità costante
+      scrollRange.end     // Fine: rivela comodamente la CTA (1.0)
     ]
   );
 

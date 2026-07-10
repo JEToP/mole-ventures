@@ -53,7 +53,7 @@ const valori = [
     name: "Dinamicità",
     icon: "/images/icons/dinamicita.svg",
     description:
-      "La capacità di evolvere, e di farlo velocemente, seguendo il percorso tracciato è sale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
+      "La capacità di evolvere e di evolvere velocemente seguendo il percorso tracciato è vitale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
   },
   {
     id: "trasparenza",
@@ -67,7 +67,7 @@ const valori = [
     name: "Valorizzazione",
     icon: "/images/icons/valorizzazione.svg",
     description:
-      "Un sistema cresce se lo si valorizza: Nel valore delle persone, nelle relazioni con i Clienti, nel valore riconosciuto ai prodotti e servizi e nei KPI. Valorizzare in modo che questo percorso sia misurabile, riconosciuto e non autoreferenziale.",
+      "Un sistema cresce se lo si valorizza: nel valore delle persone, nelle relazioni con i Clienti, nel valore riconosciuto ai prodotti e servizi e nei KPI. Valorizzare in modo che questo percorso sia misurabile, riconosciuto e non autoreferenziale.",
   },
 ];
 
@@ -266,8 +266,8 @@ function DesktopValori() {
     const vh = window.innerHeight;
     const scrollableDistance = offsetHeight - vh;
     
-    // Percentuale di scroll desiderata per attivare 'index'
-    const targetPercentage = index / (valori.length - 1);
+    // Percentuale di scroll desiderata per attivare 'index' (esattamente a metà del suo slot)
+    const targetPercentage = (index + 0.5) / valori.length;
     
     const targetScrollY = offsetTop + (targetPercentage * scrollableDistance);
     
@@ -278,7 +278,7 @@ function DesktopValori() {
   };
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    let index = Math.round(latest * (valori.length - 1));
+    let index = Math.floor(latest * valori.length);
     if (index >= valori.length) index = valori.length - 1;
     if (index < 0) index = 0;
     setActiveIndex((prev) => (prev !== index ? index : prev));
@@ -355,7 +355,7 @@ function DesktopValori() {
   void yOffsets;
 
   return (
-    <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[240vh] z-20">
+    <section ref={sectionRef} className="relative w-full bg-[#030d3d] h-[500vh] md:h-[400vh] lg:h-[300vh] z-20">
       {/* ── MISURATORE FANTASMA (Hidden Measurer) ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1] [contain:strict]">
         <div aria-hidden="true" className="absolute left-0 top-0 w-full opacity-0">

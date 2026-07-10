@@ -11,9 +11,9 @@ import Link from "next/link";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/approccio", label: "Metodo e strategia" },
+  { href: "/metodo-e-strategia", label: "Metodo e strategia" },
   { href: "/aree-di-intervento", label: "Aree di intervento" },
-  { href: "/citazioni", label: "Insight" },
+  { href: "/insights", label: "Insight" },
   { href: "/contatti", label: "Contatti" },
 ];
 

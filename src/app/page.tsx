@@ -18,8 +18,12 @@ function preloadImage(src: string) {
 
 export default function Home() {
   // Precaricamento delle immagini hero ottimizzate
-  preloadImage("/images/hero/intervento-hero.avif");
-  preloadImage("/images/hero/metodo-hero.avif");
+  preloadImage("/images/hero/home/home-bg-def-desktop.webp");
+  preloadImage("/images/hero/home/home-bg-def-mobile.webp");
+  preloadImage("/images/hero/aree-intervento/aree-intervento-bg-def-desktop.webp");
+  preloadImage("/images/hero/aree-intervento/aree-intervento-bg-def-mobile.webp");
+  preloadImage("/images/hero/metodo/metodo-bg-def-desktop.webp");
+  preloadImage("/images/hero/metodo/metodo-bg-def-mobile.webp");
   preloadImage("/images/background_contatti.webp");
   preloadImage("/images/background_contatti_mobile.webp");
 

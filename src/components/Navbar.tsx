@@ -32,15 +32,15 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/approccio', label: 'Metodo e strategia' },
+    { href: '/metodo-e-strategia', label: 'Metodo e strategia' },
     { href: '/aree-di-intervento', label: 'Aree di intervento' },
-    { href: '/citazioni', label: 'Insight' },
+    { href: '/insights', label: 'Insight' },
     { href: '/contatti', label: 'Contatti' },
   ];
 
   // Pagine senza hero scuro a tutto schermo: la navbar ha lo sfondo navy fin
   // da subito (altrimenti, trasparente su contenuto chiaro, non si leggerebbe).
-  const solidFromTop = pathname === '/citazioni';
+  const solidFromTop = pathname === '/insights';
   const showSolidBackground = isScrolled || isMobileMenuOpen || solidFromTop;
 
   return (
@@ -48,7 +48,7 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 w-full z-[60] isolate pt-[env(safe-area-inset-top)] transition-colors duration-300 ${
           showSolidBackground
-            ? 'bg-[#030d3d]/90 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.08)]'
+            ? 'bg-blue-deep/90 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.08)]'
             : 'bg-transparent'
         }`}
       >
@@ -117,7 +117,7 @@ export default function Navbar() {
 
       {/* Pannello laterale (Right Drawer) Menu Mobile */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 bg-[#030d3d]/90 backdrop-blur-md z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
+        className={`fixed top-0 right-0 h-full w-72 bg-blue-deep/90 backdrop-blur-md z-[55] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-28 px-8 ${
           isMobileMenuOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
         }`}
         aria-hidden={!isMobileMenuOpen}

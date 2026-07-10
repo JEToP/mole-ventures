@@ -67,14 +67,26 @@ function HeroAree() {
     <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image */}
       <div className="absolute inset-0">
+        {/* Mobile image */}
         <Image
-          src="/images/hero/intervento-hero.avif"
+          src="/images/hero/aree-intervento/aree-intervento-bg-def-mobile.webp"
           alt="Background aree di intervento"
           fill
           priority
           placeholder="blur"
-          blurDataURL="data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAAAwBACdASoUAAsAPu1iqU2ppaOiMAgBMB2JYwC7MoADU1p3EIJlyKq0LcAA/uzFMrB6+wMU3af5DP+Nylkn7WKhAbmsVF/wV00NjF0AAAA="
-          className="object-cover object-center"
+          blurDataURL="data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACwAQCdASoGAAoABUB8JYwCdADzY3wAAM4TgGXpufyb1H1RCJ+gA4zPaySUAAAA"
+          className="object-cover object-center md:hidden"
+          sizes="100vw"
+        />
+        {/* Desktop image */}
+        <Image
+          src="/images/hero/aree-intervento/aree-intervento-bg-def-desktop.webp"
+          alt="Background aree di intervento"
+          fill
+          priority
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADwAQCdASoKAAYABUB8JZQCdAD1eLgQPVAA/uXWIlAGnjwKprcM4gMFDsWZUAAA"
+          className="object-cover object-center hidden md:block"
           sizes="100vw"
         />
       </div>

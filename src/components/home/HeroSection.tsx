@@ -7,34 +7,43 @@ export default function HeroSection() {
       {/* Background image. Mobile: ancorata per mostrare più cielo nella zona
           alta (dove cade "ETA"). Desktop: ancorata in alto. */}
       <div className="absolute inset-0">
+        {/* Mobile image */}
         <Image
-          src="/images/hero/home-hero.avif"
+          src="/images/hero/home/home-bg-def-mobile.webp"
           alt="Hero background"
           fill
           priority
           placeholder="blur"
-          blurDataURL="data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAQBACdASoUAA0APu1iqU2ppaQiMAgBMB2JYwCdAYvMrRRWy7cl06RSgAD+CTO9JcDOK9MUSUERm1i5+ogcyPlpJeZqUL2x8UDewbXbqAyVkFHEpquKWRABlz147MPHlJl1PoW18IFf6/yUpwbxNpequtWAC3WCZdTIcoNe0o6HWU1vguPae0fW4eWoZAAA"
-          className="object-cover object-center md:object-bottom opacity-100"
+          blurDataURL="data:image/webp;base64,UklGRl4AAABXRUJQVlA4WAoAAAAQAAAABQAACQAAQUxQSAoAAAABB1D9iAhERP8DVlA4IC4AAADwAQCdASoGAAoABUB8JYwCdADcrrRYoAAAzinSxB0cLHq2o0VvTWi28716AAAA"
+          className="object-cover object-center opacity-100 md:hidden"
+          sizes="100vw"
+        />
+        {/* Desktop image */}
+        <Image
+          src="/images/hero/home/home-bg-def-desktop.webp"
+          alt="Hero background"
+          fill
+          priority
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRmQAAABXRUJQVlA4WAoAAAAQAAAACQAABQAAQUxQSAoAAAABB1D9iAhERP8DVlA4IDQAAADwAQCdASoKAAYABUB8JQBOgCPWGADwMEAA/s4C0kTTGKo1zZccQUpifeJrfkq4nmkFA/gA"
+          className="object-cover object-bottom opacity-100 hidden md:block"
           sizes="100vw"
         />
       </div>
 
-      {/* Velo bluastro leggerissimo: solo per rendere leggibile il testo bianco */}
-      <div className="absolute inset-0 bg-blue-deep/20" />
+
 
       {/* Contenuto */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <div className="max-w-4xl">
           <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
             Un meccanismo{' '}<br className="md:hidden" />
-            di{' '}
-            <span className="text-white font-bold">ETA</span>
-            <span className="block md:inline">{' '}(Entrepreneurship Through Acquisition)</span>
-            {' '}come{' '}<br className="md:hidden" />
-            motore di{' '}<br className="md:hidden" />
-            cambiamento per{' '}<br className="md:hidden" />
-            una nuova fase di{' '}<br className="md:hidden" />
-            sviluppo
+            di <span className="text-white font-bold">ETA</span>{' '}<br className="md:hidden" />
+            (Entrepreneurship Through{' '}<br className="md:hidden" />
+            Acquisition){' '}<br className="md:hidden" />
+            come motore di{' '}<br className="md:hidden" />
+            cambiamento per una{' '}<br className="md:hidden" />
+            nuova fase di sviluppo
           </h1>
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
