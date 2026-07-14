@@ -8,17 +8,21 @@ const nextConfig: NextConfig = {
   },
   allowedDevOrigins: ['192.168.178.48'],
   async redirects() {
+    // Dominio canonico UNICO: moleventure.com (senza www).
+    // Tutte le varianti .it puntano direttamente lì con un solo redirect 301,
+    // così non ci sono doppi salti né ambiguità di canonico per la SEO.
+    // (Il redirect www.moleventure.com → moleventure.com è gestito da Netlify.)
     return [
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'moleventure.it' }],
-        destination: 'https://www.moleventure.com/:path*',
-        permanent: true, // Questo genera un redirect 301, ottimo per la SEO
+        destination: 'https://moleventure.com/:path*',
+        permanent: true, // 301
       },
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.moleventure.it' }],
-        destination: 'https://www.moleventure.com/:path*',
+        destination: 'https://moleventure.com/:path*',
         permanent: true,
       },
     ];

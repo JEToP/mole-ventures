@@ -21,7 +21,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.moleventure.com"),
+  metadataBase: new URL("https://moleventure.com"),
   title: {
     template: "Mole Venture - %s",
     default: "Mole Venture - Home",

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 
-// Dominio canonico (vedi redirect in next.config.ts: *.moleventure.it → www.moleventure.com)
-const BASE_URL = "https://www.moleventure.com";
+// Dominio canonico REALE: www.moleventure.com redirige (301) a moleventure.com,
+// quindi il canonico servito è senza www. La sitemap deve elencare gli URL finali.
+const BASE_URL = "https://moleventure.com";
 
 // Genera /sitemap.xml con le pagine principali del sito, così i motori di
 // ricerca le scoprono e indicizzano correttamente (intervento tecnico richiesto).
