@@ -34,7 +34,7 @@ export default function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/metodo-e-strategia', label: 'Metodo e strategia' },
     { href: '/aree-di-intervento', label: 'Aree di intervento' },
-    { href: '/insights', label: 'Insight' },
+    { href: '/insights', label: 'Insights' },
     { href: '/contatti', label: 'Contatti' },
   ];
 

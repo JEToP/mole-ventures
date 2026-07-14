@@ -1,7 +1,9 @@
 import Image from "next/image";
 
 export const metadata = {
-  title: 'Insight',
+  title: { absolute: "Insights sul nostro metodo | Mole Venture" },
+  description:
+    "Scopri una selezione di articoli, studi e insights sul Entrepreneurship Through Acquisition",
 };
 
 // Rassegna stampa: ogni voce è la testata che ha pubblicato + il ritaglio
@@ -70,6 +72,8 @@ const PRESS: PressItem[] = [
 export default function InsightsPage() {
   return (
     <main className="relative w-full bg-white pt-28 pb-16 md:pt-44 md:pb-24">
+      {/* H1 SEO (nascosto visivamente, presente nel DOM per i motori di ricerca) */}
+      <h1 className="sr-only">Insights sul nostro metodo</h1>
       <div className="mx-auto w-full max-w-7xl px-6 md:px-12">
         {/* MOBILE LAYOUT: Elenco testata + articolo */}
         <div className="flex flex-col gap-4 md:hidden">

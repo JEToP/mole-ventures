@@ -3,8 +3,11 @@ import ScrollCue from "@/components/ScrollCue";
 import ContactForm from "./ContactForm";
 
 export const metadata = {
-  title: 'Contatti',
-  description: 'Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.',
+  title: {
+    absolute: "Contatti | Passaggio Generazionale e Vendita PMI | Mole Venture",
+  },
+  description:
+    "Contatta il team di Mole Venture per discutere del passaggio generazionale o della vendita della tua impresa.",
 };
 
 export default function ContattiPage() {

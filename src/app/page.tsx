@@ -7,6 +7,14 @@ import { getImageProps } from "next/image";
 
 import ReactDOM from "react-dom";
 
+export const metadata = {
+  title: {
+    absolute: "Entrepreneurship Through Acquisition e sviluppo PMI | Mole Venture",
+  },
+  description:
+    "Scopri come investiamo in PMI italiane attraverso l'Entrepreneurship Through Acquisition per guidarle in una nuova fase di sviluppo.",
+};
+
 function preloadImage(src: string) {
   const { props } = getImageProps({ src, alt: "", width: 1920, height: 1080 });
   ReactDOM.preload(props.src, {
