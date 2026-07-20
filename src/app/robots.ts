@@ -7,6 +7,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Le vCard sono file di download per i QR code dei founder, non pagine
+      // di contenuto: escluse dalla scansione per non interferire con la SEO.
+      disallow: ["/vcard/"],
     },
     sitemap: "https://moleventure.com/sitemap.xml",
     host: "https://moleventure.com",
