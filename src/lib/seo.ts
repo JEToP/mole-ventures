@@ -8,3 +8,25 @@ export const OG_IMAGE = {
   height: 630,
   alt: "Mole Venture",
 };
+
+const SITE_URL = "https://moleventure.com";
+
+// Dati strutturati (JSON-LD, schema.org): aiutano Google a riconoscere
+// Mole Venture come entità/brand, non solo come pagina web. Invisibili
+// all'utente, nessun impatto sul rendering del sito.
+export const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Mole Venture",
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/team/vcard/logo-avatar.jpg`,
+  email: "info@moleventure.com",
+  sameAs: ["https://www.linkedin.com/company/mole-venture/"],
+};
+
+export const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Mole Venture",
+  url: SITE_URL,
+};
