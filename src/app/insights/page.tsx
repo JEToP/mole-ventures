@@ -1,9 +1,23 @@
 import Image from "next/image";
+import { OG_IMAGE } from "@/lib/seo";
 
 export const metadata = {
   title: { absolute: "Insights sul nostro metodo | Mole Venture" },
   description:
     "Scopri una selezione di articoli, studi e insights sul Entrepreneurship Through Acquisition",
+  alternates: {
+    canonical: "/insights",
+  },
+  openGraph: {
+    title: "Insights sul nostro metodo | Mole Venture",
+    description:
+      "Scopri una selezione di articoli, studi e insights sul Entrepreneurship Through Acquisition",
+    url: "/insights",
+    siteName: "Mole Venture",
+    locale: "it_IT",
+    type: "website",
+    images: [OG_IMAGE],
+  },
 };
 
 // Rassegna stampa: ogni voce è la testata che ha pubblicato + il ritaglio

@@ -6,6 +6,7 @@ import ContattiSection from "@/components/home/ContattiSection";
 import { getImageProps } from "next/image";
 
 import ReactDOM from "react-dom";
+import { OG_IMAGE } from "@/lib/seo";
 
 export const metadata = {
   title: {
@@ -13,6 +14,19 @@ export const metadata = {
   },
   description:
     "Scopri come investiamo in PMI italiane attraverso l'Entrepreneurship Through Acquisition per guidarle in una nuova fase di sviluppo.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Entrepreneurship Through Acquisition e sviluppo PMI | Mole Venture",
+    description:
+      "Scopri come investiamo in PMI italiane attraverso l'Entrepreneurship Through Acquisition per guidarle in una nuova fase di sviluppo.",
+    url: "/",
+    siteName: "Mole Venture",
+    locale: "it_IT",
+    type: "website",
+    images: [OG_IMAGE],
+  },
 };
 
 function preloadImage(src: string) {

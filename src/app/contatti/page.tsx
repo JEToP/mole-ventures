@@ -1,6 +1,7 @@
 import Image from "next/image";
 import ScrollCue from "@/components/ScrollCue";
 import ContactForm from "./ContactForm";
+import { OG_IMAGE } from "@/lib/seo";
 
 export const metadata = {
   title: {
@@ -8,6 +9,19 @@ export const metadata = {
   },
   description:
     "Contatta il team di Mole Venture per discutere del passaggio generazionale o della vendita della tua impresa.",
+  alternates: {
+    canonical: "/contatti",
+  },
+  openGraph: {
+    title: "Contatti | Passaggio Generazionale e Vendita PMI | Mole Venture",
+    description:
+      "Contatta il team di Mole Venture per discutere del passaggio generazionale o della vendita della tua impresa.",
+    url: "/contatti",
+    siteName: "Mole Venture",
+    locale: "it_IT",
+    type: "website",
+    images: [OG_IMAGE],
+  },
 };
 
 export default function ContattiPage() {

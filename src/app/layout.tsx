@@ -27,6 +27,22 @@ export const metadata: Metadata = {
     default: "Mole Venture - Home",
   },
   description: "Un meccanismo di ETA come linfa di cambiamento per una nuova fase di sviluppo.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    siteName: "Mole Venture",
+    locale: "it_IT",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Mole Venture",
+      },
+    ],
+  },
   icons: {
     icon: [
       { url: "/images/favicon.svg", type: "image/svg+xml" },
