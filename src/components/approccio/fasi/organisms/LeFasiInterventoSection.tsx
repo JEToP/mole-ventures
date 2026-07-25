@@ -13,7 +13,7 @@
  * statica.
  */
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
@@ -26,6 +26,7 @@ import {
   type MotionValue,
   type MotionStyle,
 } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { FASI } from "../fasiData";
 
 // Fasi del progress:
@@ -203,6 +204,7 @@ function FaseContent({
   descClass?: string;
 }) {
   const fase = FASI[index];
+  const t = useTranslations("Method.phases");
   return (
     <>
       <motion.span
@@ -215,12 +217,12 @@ function FaseContent({
       <h3
         className={`mt-3 md:mt-4 break-words font-heading text-[22px] md:text-3xl lg:text-4xl font-semibold leading-[1.1] tracking-tight text-white ${titleClass}`}
       >
-        {fase.titolo}
+        {t(`${fase.id}.title`)}
       </h3>
       <p
         className={`mt-3 md:mt-4 break-words font-body text-base md:text-xl font-light leading-relaxed text-white ${descClass}`}
       >
-        {fase.descrizione}
+        {t(`${fase.id}.description`)}
       </p>
     </>
   );
@@ -326,31 +328,30 @@ function FaseFocusItem({
 
 
 function Header({ className = "" }: { className?: string }) {
+  const t = useTranslations("Method.phases");
   return (
     <header className={`max-w-3xl min-w-0 ${className}`}>
       <h2
         id="fasi-heading"
         className="break-words font-heading text-3xl font-semibold leading-none tracking-normal text-white md:text-[40px]"
       >
-        Le 5 fasi dell&apos;intervento
+        {t("title")}
       </h2>
       <p className="mt-4 max-w-full font-body font-light text-white text-base md:text-xl leading-relaxed">
-        Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo
-        sviluppo alla realt&agrave; esistente, e diventare, insieme a noi, autori di un cambiamento
-        imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa,
-        divisa in 5 fasi.
+        {t("intro")}
       </p>
     </header>
   );
 }
 
 function Cta() {
+  const t = useTranslations("Method.phases");
   return (
     <Link
       href="/aree-di-intervento"
       className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
     >
-      Scopri le aree di intervento
+      {t("cta")}
       <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
     </Link>
   );

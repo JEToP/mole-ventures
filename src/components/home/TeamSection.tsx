@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Per aggiungere un membro del team, aggiungi un oggetto a questo array.
@@ -9,25 +10,18 @@ import { useState } from "react";
 // ──────────────────────────────────────────────────────────────────────────────
 const teamMembers = [
   {
-    id: "matteo-gera",
+    id: "matteoGera",
     name: "Matteo Gera",
     photo: "/images/team/matteo-gera.jpg",
-    // Zoom/posizione per uniformare l'inquadratura a quella di Francesco
-    // (stesso spazio sopra la testa). Matteo è più "largo" → ingrandisco un po'.
     photoClass: "object-cover scale-[1.25] -translate-y-3",
-    description:
-      "Chief Executive con importanti e consolidate esperienze di sviluppo business e di gestione di P&L completi in aziende family owned business e multinazionali operanti nei settori Transportation, Rail, Aerospace & Defense, Energy e Industrial Goods sia in contesti nazionali che internazionali. Strutturato e diretto molteplici operazioni di M&A e integrazione. Finalizzata con successo una quotazione all’Euronext Growth Milan partecipando a tutti gli step del processo.",
   },
   {
-    id: "francesco-motta",
+    id: "francescoMotta",
     name: "Francesco Motta",
     photo: "/images/team/francesco-motta.jpg",
     photoClass: "object-cover origin-top scale-[1.18]",
-    description:
-      "Chief Executive con esperienze di sviluppo business e di gestione di P&L completi in multinazionali e PMI operanti nei settori Automation, Machinery, Rail, Automotive. Esperienza nel processo di M&A e di turn-around. 10 anni di permanenza a Shanghai + 2 in India per vivere il cambiamento da vicino. Business Angel dal 2020, attivo in diverse community, con investimenti in una decina di start-up multi settore.",
   },
-  // ← Aggiungi qui altri membri del team
-];
+] as const;
 
 // ── Placeholder SVG persona ───────────────────────────────────────────────────
 function PersonIcon({ className }: { className?: string }) {
@@ -52,6 +46,7 @@ function PersonIcon({ className }: { className?: string }) {
 
 // ── Componente principale ─────────────────────────────────────────────────────
 export default function TeamSection() {
+  const t = useTranslations("Home.team");
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
@@ -67,13 +62,10 @@ export default function TeamSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-24">
         {/* Intestazione */}
         <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold mb-6">
-          Il nostro team
+          {t("title")}
         </h2>
         <p className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-3xl mb-12 md:mb-16">
-          Siamo professionisti che hanno deciso di condividere le loro competenze e le precedenti
-          esperienze maturate in ruoli apicali e strategici in realtà di rilievo nazionali e
-          internazionali così da poter sostenere ogni fase di cambiamento all&apos;interno delle
-          realtà acquisite.
+          {t("intro")}
         </p>
 
         {/* ── Accordion orizzontale: card "glass" con foto CONTENUTA a sinistra ─── */}
@@ -127,8 +119,8 @@ export default function TeamSection() {
                     aria-expanded={isActive}
                     aria-label={
                       isActive
-                        ? `Chiudi il profilo di ${member.name}`
-                        : `Apri il profilo di ${member.name}`
+                        ? t("closeProfile", { name: member.name })
+                        : t("openProfile", { name: member.name })
                     }
                     className="hidden md:flex absolute top-6 right-6 z-20 h-9 w-9 items-center justify-center rounded-full border border-white/40 text-white text-xl leading-none cursor-pointer transition-all duration-300 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft"
                   >
@@ -155,7 +147,7 @@ export default function TeamSection() {
                       ${isActive ? "opacity-100 md:max-h-96" : "opacity-100 md:max-h-0 md:opacity-0"}
                     `}
                   >
-                    {member.description}
+                    {t(member.id)}
                   </p>
                 </div>
               </div>

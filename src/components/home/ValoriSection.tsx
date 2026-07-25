@@ -17,59 +17,18 @@
 import Image from "next/image";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useScroll, useMotionValueEvent, useTransform, useSpring, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 // ── Dati valori ─────────────────────────────────────────────────────────────
 const valori = [
-  {
-    id: "rispetto",
-    name: "Rispetto",
-    icon: "/images/icons/rispetto.svg",
-    description:
-      "Ogni azienda ha una sua storia che va capita e rispettata. Un cambiamento, una discontinuità va sempre affrontata con il rispetto del percorso fatto, delle persone che lo hanno realizzato e dei valori intrinseci dell'azienda.",
-  },
-  {
-    id: "ascolto",
-    name: "Ascolto",
-    icon: "/images/icons/ascolto.svg",
-    description:
-      "Le persone aderiscono e attuano il cambiamento se contribuiscono alla sua definizione e impostazione. Per noi questa contribuzione è un elemento chiave del processo e quindi l'ascolto attivo è il denominatore alla base del progetto di trasformazione.",
-  },
-  {
-    id: "cambiamento",
-    name: "Cambiamento",
-    icon: "/images/icons/cambiamento.svg",
-    description:
-      "Un sistema evolve con successo se continua a rinnovarsi e ad anticipare le nuove esigenze. L'immobilismo impedisce ad un'azienda di vedere i passi necessari ad affrontare le nuove sfide dimensionanti. Noi agiamo per rimettere in discussione abitudini e modalità operative che minano la trasformazione e quindi le opportunità di nuova crescita.",
-  },
-  {
-    id: "coerenza",
-    name: "Coerenza",
-    icon: "/images/icons/coerenza.svg",
-    description:
-      "Dopo una fase di condivisione, l'attuazione del cambiamento passa per una importante capacità di coerenza, costanza, e rispetto di quanto definito sia a livello di direzione che di valori attuativi del piano.",
-  },
-  {
-    id: "dinamicita",
-    name: "Dinamicità",
-    icon: "/images/icons/dinamicita.svg",
-    description:
-      "La capacità di evolvere e di evolvere velocemente seguendo il percorso tracciato è vitale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo.",
-  },
-  {
-    id: "trasparenza",
-    name: "Trasparenza",
-    icon: "/images/icons/trasparenza.svg",
-    description:
-      "La trasparenza verso tutti gli stakeholders coinvolti è fondamentale per permettere sempre la lettura dei vari segnali e costruire relazioni di fiducia con dipendenti, Clienti, partners e azionisti, che favoriscono il percorso condiviso di crescita e di successo dell'azienda.",
-  },
-  {
-    id: "valorizzazione",
-    name: "Valorizzazione",
-    icon: "/images/icons/valorizzazione.svg",
-    description:
-      "Un sistema cresce se lo si valorizza: nel valore delle persone, nelle relazioni con i Clienti, nel valore riconosciuto ai prodotti e servizi e nei KPI. Valorizzare in modo che questo percorso sia misurabile, riconosciuto e non autoreferenziale.",
-  },
-];
+  { id: "rispetto", icon: "/images/icons/rispetto.svg" },
+  { id: "ascolto", icon: "/images/icons/ascolto.svg" },
+  { id: "cambiamento", icon: "/images/icons/cambiamento.svg" },
+  { id: "coerenza", icon: "/images/icons/coerenza.svg" },
+  { id: "dinamicita", icon: "/images/icons/dinamicita.svg" },
+  { id: "trasparenza", icon: "/images/icons/trasparenza.svg" },
+  { id: "valorizzazione", icon: "/images/icons/valorizzazione.svg" },
+] as const;
 
 // ── Sfondo ottimizzato (NO CSS BLUR) ─────────────────────────────────────────
 // I "cerchi sfocati" sono resi con gradienti radiali morbidi anziché filter:blur():
@@ -114,11 +73,14 @@ const Background = (
   </div>
 );
 
-const Header = (
-  <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold">
-    I nostri valori
-  </h2>
-);
+function Header() {
+  const t = useTranslations("Home.values");
+  return (
+    <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold">
+      {t("title")}
+    </h2>
+  );
+}
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Singolo valore: chiuso (numero + titolo + icona) → aperto (anche descrizione).
@@ -137,6 +99,7 @@ function DesktopValore({
   onClick?: () => void;
 }) {
   const valore = valori[index];
+  const t = useTranslations("Home.values");
   const num = String(index + 1).padStart(2, "0");
 
   return (
@@ -160,7 +123,7 @@ function DesktopValore({
               {num}
             </span>
             <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
-              {valore.name}
+              {t(`${valore.id}.name`)}
             </h3>
           </div>
 
@@ -199,7 +162,7 @@ function DesktopValore({
                   : "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
-              {valore.description}
+              {t(`${valore.id}.description`)}
             </p>
           </div>
         </div>
@@ -214,11 +177,12 @@ function DesktopValore({
 // STATIC — reduced motion: lista completa, tutte le descrizioni visibili.
 // ══════════════════════════════════════════════════════════════════════════════
 function StaticValori() {
+  const t = useTranslations("Home.values");
   return (
     <section className="relative w-full overflow-hidden bg-[#030d3d] py-20 md:py-28 z-20">
       {Background}
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-        <div className="mb-12 md:mb-16">{Header}</div>
+        <div className="mb-12 md:mb-16"><Header /></div>
         <div className="flex flex-col">
           {valori.map((valore, i) => (
             <div key={valore.id} className="border-t border-white/10 py-7 md:py-9">
@@ -227,11 +191,11 @@ function StaticValori() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight text-white">
-                  {valore.name}
+                  {t(`${valore.id}.name`)}
                 </h3>
               </div>
               <p className="font-body font-light text-white/85 text-base md:text-lg leading-relaxed max-w-2xl pt-4">
-                {valore.description}
+                {t(`${valore.id}.description`)}
               </p>
             </div>
           ))}
@@ -368,7 +332,7 @@ function DesktopValori() {
               }}
             >
               <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
-                <div className="mb-6 md:mb-8">{Header}</div>
+                <div className="mb-6 md:mb-8"><Header /></div>
                 <div className="flex flex-col">
                   {valori.map((valore, index) => (
                     <DesktopValore
@@ -401,7 +365,7 @@ function DesktopValori() {
           style={{ y: ySmooth, willChange: "transform" }}
         >
           <div className="max-w-7xl mx-auto w-full px-6 md:px-12">
-            <div className="mb-6 md:mb-8">{Header}</div>
+            <div className="mb-6 md:mb-8"><Header /></div>
             <div className="flex flex-col">
               {valori.map((valore, index) => (
                 <DesktopValore

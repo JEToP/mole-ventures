@@ -1,11 +1,13 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname } from '@/i18n/navigation';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Navbar() {
+  const t = useTranslations('Nav');
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,12 +33,12 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/metodo-e-strategia', label: 'Metodo e strategia' },
-    { href: '/aree-di-intervento', label: 'Aree di intervento' },
-    { href: '/insights', label: 'Insights' },
-    { href: '/contatti', label: 'Contatti' },
-  ];
+    { href: '/', label: t('home') },
+    { href: '/metodo-e-strategia', label: t('method') },
+    { href: '/aree-di-intervento', label: t('areas') },
+    { href: '/insights', label: t('insights') },
+    { href: '/contatti', label: t('contact') },
+  ] as const;
 
   // Pagine senza hero scuro a tutto schermo: la navbar ha lo sfondo navy fin
   // da subito (altrimenti, trasparente su contenuto chiaro, non si leggerebbe).
@@ -89,13 +91,13 @@ export default function Navbar() {
           </button>
 
           {/* Menu Desktop */}
-          <nav className="hidden md:flex gap-9 font-body text-lg font-medium tracking-wide">
+          <nav className="hidden md:flex items-center gap-9 font-body text-lg font-medium tracking-wide">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link key={link.href} href={link.href} className="relative group py-1">
                   <span>{link.label}</span>
-                  <span 
+                  <span
                     className={`absolute left-0 bottom-0 h-[1.5px] bg-white transition-all duration-300 ease-in-out ${
                       isActive ? 'w-full' : 'w-0 group-hover:w-full'
                     }`}
@@ -103,6 +105,7 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            <LanguageSwitcher className="text-base" />
           </nav>
         </div>
       </header>
@@ -139,6 +142,7 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <LanguageSwitcher className="text-lg pt-6" />
         </nav>
       </div>
     </>

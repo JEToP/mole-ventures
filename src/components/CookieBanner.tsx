@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import CookieConsent, { getCookieConsentValue } from 'react-cookie-consent';
 import Script from 'next/script';
+import { useTranslations } from 'next-intl';
 
 export default function CookieBanner() {
+  const t = useTranslations('Cookie');
   const [hasConsent, setHasConsent] = useState(false);
   const gaId = process.env.NEXT_PUBLIC_GA_ID || 'G-INSERISCI_IL_TUO_ID';
 
@@ -18,8 +20,8 @@ export default function CookieBanner() {
     <>
       <CookieConsent
         location="bottom"
-        buttonText="Accetta tutti"
-        declineButtonText="Rifiuta"
+        buttonText={t('accept')}
+        declineButtonText={t('decline')}
         enableDeclineButton
         onAccept={() => setHasConsent(true)}
         onDecline={() => setHasConsent(false)}
@@ -30,7 +32,7 @@ export default function CookieBanner() {
         buttonClasses="w-full sm:w-auto rounded-full bg-white px-7 py-2.5 font-body text-[15px] font-semibold text-[#05155E] transition-all duration-300 hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
         declineButtonClasses="w-full sm:w-auto rounded-full border border-white/25 bg-transparent px-7 py-2.5 font-body text-[15px] font-medium text-white transition-all duration-300 hover:border-white/60 hover:bg-white/5 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
       >
-        Utilizziamo i cookie per analizzare il traffico e migliorare l'esperienza di navigazione sul nostro sito.
+        {t('text')}
       </CookieConsent>
 
       {/* GA viene iniettato SOLO se hasConsent è true */}

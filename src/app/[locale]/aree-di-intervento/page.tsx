@@ -7,48 +7,19 @@ import dynamic from "next/dynamic";
 const ContattiSection = dynamic(() => import("@/components/home/ContattiSection"));
 import type { TouchEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Dati aree di intervento.
 // ──────────────────────────────────────────────────────────────────────────────
 const AREAS = [
-  {
-    number: "01",
-    title: ["Intervento", "Strategico"],
-    description:
-      "Costruiamo insieme da un lato il piano di sviluppo strategico e il suo deployment operativo per concentrarci su un'esecuzione rapida ed efficace del processo di trasformazione e dall'altro una visione chiara su dove portare l'azienda e sulle azioni necessarie per arrivarci.",
-  },
-  {
-    number: "02",
-    title: "Organizzazione",
-    description:
-      "Dopo aver analizzato la struttura organizzativa, la facciamo evolvere per rispondere al meglio ai bisogni del processo di trasformazione. Lavoriamo sulla retention delle persone chiave, sullo sviluppo dei talenti interni e sull'inserimento delle competenze necessarie, sui processi di delega e di responsabilizzazione. Un'azienda cresce e si sviluppa se crescono e si sviluppano le persone che la abitano.",
-  },
-  {
-    number: "03",
-    title: ["Operations e", "Finance"],
-    description:
-      "Ottimizziamo i processi operativi, dalla supply chain alla delivery. Definiamo le dashboard finanziarie, i KPI di redditività e gli eventuali miglioramenti, la mappa dei rischi con i piani di mitigazione. L'efficienza operativa e la continua attenzione all'incremento dei margini come motore della sostenibilità della crescita.",
-  },
-  {
-    number: "04",
-    title: ["Innovazione e", "digitalizzazione"],
-    description:
-      "La revisione dei processi e delle attività aziendali alla luce degli ultimi sviluppi legati all'AI, alle automazioni e alla digitalizzazione come fattori chiave dell'incremento di redditività. Valorizziamo dati, brevetti e know-how aziendale, rafforziamo la R&D interna per rendere l'azienda competitiva nel medio-lungo periodo e per non disperdere la trasmissione del know-how.",
-  },
-  {
-    number: "05",
-    title: ["Sales e Sviluppo", "Business"],
-    description:
-      "Lavoriamo per estendere e diversificare la catena del valore, il pricing e la gestione della marginalità. Costruiamo strategie di cross-selling e upselling legate ai punti di forza esistenti, sviluppiamo piani di marketing e di alleanze commerciali per estendere e incrementare l'offerta e il portafoglio clienti. Strutturiamo le azioni necessarie e la loro implementazione per favorire l'ingresso in nuovi mercati o geografie.",
-  },
-  {
-    number: "06",
-    title: "Next steps",
-    description:
-      "Definiamo la traiettoria successiva: operazioni M&A aggregative, espansione su nuovi mercati, ampliamento del portafoglio prodotti, fabbisogno di investimento e di competenze e ci attiviamo in prima persona per il deployment delle azioni necessarie.",
-  },
-];
+  { number: "01", id: "area1" },
+  { number: "02", id: "area2" },
+  { number: "03", id: "area3" },
+  { number: "04", id: "area4" },
+  { number: "05", id: "area5" },
+  { number: "06", id: "area6" },
+] as const;
 
 export default function AreeDiIntervento() {
   return (
@@ -63,6 +34,7 @@ export default function AreeDiIntervento() {
 
 // ── HERO ──────────────────────────────────────────────────────────────────────
 function HeroAree() {
+  const t = useTranslations("Areas");
   return (
     <section className="relative w-full min-h-[100lvh] flex flex-col justify-center py-20 md:pt-[152px] md:pb-8 overflow-hidden bg-blue-deep">
       {/* Background image */}
@@ -98,14 +70,12 @@ function HeroAree() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
         <div className="max-w-4xl">
           <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
-            Le aree di intervento
+            {t("hero.title")}
           </h1>
 
           <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
             <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
-              Lavoriamo all&apos;interno del sistema azienda con azioni quotidiane su tutte le
-              principali aree e funzioni aziendali per innestare le dinamiche necessarie
-              all&apos;esecuzione del piano di sviluppo condiviso.
+              {t("hero.paragraph")}
             </p>
           </div>
         </div>
@@ -342,10 +312,9 @@ function AreeSelector() {
 
 // ── Card area ─────────────────────────────────────────────────────────────────
 function AreaCardContent({ area }: { area: (typeof AREAS)[number] }) {
-  const titleText = Array.isArray(area.title) ? area.title.join(" ") : area.title;
-  const descriptionText = Array.isArray(area.description)
-    ? area.description.join(" ")
-    : area.description;
+  const t = useTranslations("Areas");
+  const titleText = t(`${area.id}.title`);
+  const descriptionText = t(`${area.id}.description`);
 
   return (
     <div className="flex h-full flex-col text-left">
@@ -383,6 +352,7 @@ function CarouselArrows({
   canNext,
   className = "",
 }: CarouselArrowsProps) {
+  const t = useTranslations("Areas");
   const base =
     "flex h-12 w-12 items-center justify-center rounded-full border text-white transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50";
   const enabled = "border-white/25 hover:border-white/60 hover:bg-white/5";
@@ -395,7 +365,7 @@ function CarouselArrows({
         onClick={onPrevious}
         disabled={!canPrevious}
         className={`${base} ${canPrevious ? enabled : disabled}`}
-        aria-label="Area precedente"
+        aria-label={t("prevArea")}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6" />
@@ -407,7 +377,7 @@ function CarouselArrows({
         onClick={onNext}
         disabled={!canNext}
         className={`${base} ${canNext ? enabled : disabled}`}
-        aria-label="Area successiva"
+        aria-label={t("nextArea")}
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
           <path d="M9 18l6-6-6-6" />

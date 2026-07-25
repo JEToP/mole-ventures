@@ -1,30 +1,22 @@
 import Image from "next/image";
 import ScrollCue from "@/components/ScrollCue";
 import ContactForm from "./ContactForm";
+import { useTranslations } from "next-intl";
 import { OG_IMAGE } from "@/lib/seo";
+import { buildPageMetadata } from "@/lib/seo";
+import type { Locale } from "@/i18n/routing";
 
-export const metadata = {
-  title: {
-    absolute: "Contatti | Passaggio Generazionale e Vendita PMI | Mole Venture",
-  },
-  description:
-    "Contatta il team di Mole Venture per discutere del passaggio generazionale o della vendita della tua impresa.",
-  alternates: {
-    canonical: "/contatti",
-  },
-  openGraph: {
-    title: "Contatti | Passaggio Generazionale e Vendita PMI | Mole Venture",
-    description:
-      "Contatta il team di Mole Venture per discutere del passaggio generazionale o della vendita della tua impresa.",
-    url: "/contatti",
-    siteName: "Mole Venture",
-    locale: "it_IT",
-    type: "website",
-    images: [OG_IMAGE],
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  return buildPageMetadata({ locale, page: "contact", pathname: "/contatti" });
+}
 
 export default function ContattiPage() {
+  const t = useTranslations("Contact.hero");
   return (
     <div className="min-h-screen bg-[#05155E] flex flex-col w-full">
       {/* Hero Section */}
@@ -61,13 +53,14 @@ export default function ContattiPage() {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-4xl">
             <h1 className="font-heading text-white text-[2rem] sm:text-5xl md:text-5xl lg:text-6xl leading-[1.15] md:leading-[1.1] tracking-tight mb-8 md:mb-10">
-              Costruiamo insieme la prossima fase{' '}
-              <span className="font-bold">della tua impresa</span>
+              {t.rich('title', {
+                b: (chunks) => <span className="font-bold">{chunks}</span>,
+              })}
             </h1>
 
             <div className="border-l-2 border-white/60 pl-4 max-w-xl max-md:animate-fade-left-delayed">
               <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
-                Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
+                {t('paragraph')}
               </p>
             </div>
           </div>

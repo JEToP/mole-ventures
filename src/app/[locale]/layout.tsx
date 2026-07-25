@@ -1,12 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import dynamic from "next/dynamic";
-import "./globals.css";
-import Navbar from '@/components/Navbar';
+import { notFound } from "next/navigation";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import "../globals.css";
+import Navbar from "@/components/Navbar";
 import { ORGANIZATION_JSON_LD, WEBSITE_JSON_LD } from "@/lib/seo";
+import { routing } from "@/i18n/routing";
 
-const Footer = dynamic(() => import('@/components/Footer'));
-const CookieBanner = dynamic(() => import('@/components/CookieBanner'));
+const Footer = dynamic(() => import("@/components/Footer"));
+const CookieBanner = dynamic(() => import("@/components/CookieBanner"));
 
 const syne = Syne({
   variable: "--font-syne",
@@ -27,13 +31,10 @@ export const metadata: Metadata = {
     template: "Mole Venture - %s",
     default: "Mole Venture - Home",
   },
-  description: "Un meccanismo di ETA come linfa di cambiamento per una nuova fase di sviluppo.",
-  alternates: {
-    canonical: "/",
-  },
+  description:
+    "Un meccanismo di ETA come linfa di cambiamento per una nuova fase di sviluppo.",
   openGraph: {
     siteName: "Mole Venture",
-    locale: "it_IT",
     type: "website",
     images: [
       {
@@ -62,14 +63,28 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+// Pre-genera le route per ogni lingua in build.
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LocaleLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+  // Abilita il rendering statico per questa lingua.
+  setRequestLocale(locale);
+
   return (
     <html
-      lang="it"
+      lang={locale}
       className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-body font-light tracking-tight leading-snug text-[1.25rem] bg-[#01061A] text-white">
@@ -83,10 +98,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
         />
-        <Navbar />
-        <main className="flex-1 w-full flex flex-col">{children}</main>
-        <Footer />
-        <CookieBanner />
+        <NextIntlClientProvider>
+          <Navbar />
+          <main className="flex-1 w-full flex flex-col">{children}</main>
+          <Footer />
+          <CookieBanner />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

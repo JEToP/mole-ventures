@@ -1,0 +1,195 @@
+{
+  "LanguageSwitcher": {
+    "label": "Language"
+  },
+  "Nav": {
+    "home": "Home",
+    "method": "Method and strategy",
+    "areas": "Areas of intervention",
+    "insights": "Insights",
+    "contact": "Contact"
+  },
+  "Footer": {
+    "navigate": "Navigate",
+    "contacts": "Contact",
+    "rights": "All rights reserved.",
+    "poweredBy": "Powered by"
+  },
+  "Cookie": {
+    "text": "We use cookies to analyse traffic and improve your browsing experience on our website.",
+    "accept": "Accept all",
+    "decline": "Decline"
+  },
+  "Home": {
+    "hero": {
+      "title": "<b>ETA</b> (Entrepreneurship Through Acquisition) as a driver of change for a new phase of growth",
+      "paragraph": "We invest directly in the company to trigger the change and discontinuity needed to unlock untapped potential and generate the growth opportunities that follow"
+    },
+    "about": {
+      "label": "About us",
+      "intro": "We are a firm focused on Entrepreneurship Through Acquisition.",
+      "point1": "We acquire SMEs that need a phase of change and lead them first-hand.",
+      "point2": "We generate the discontinuity required to unlock the company's latent potential.",
+      "point3": "We build an ecosystem made of new entrepreneurship, qualified management and continuity with the company's historical DNA, guiding it towards a new phase of success.",
+      "moleAlt": "Stylised outline of the Mole Antonelliana, Mole Venture logo"
+    },
+    "team": {
+      "title": "Our team",
+      "intro": "We are professionals who have chosen to share the expertise and experience gained in senior and strategic roles within leading national and international organisations, so as to support every phase of change within the companies we acquire.",
+      "matteoGera": "Chief Executive with extensive and established experience in business development and full P&L management in family-owned businesses and multinationals operating in the Transportation, Rail, Aerospace & Defense, Energy and Industrial Goods sectors, in both national and international contexts. He has structured and led multiple M&A and integration transactions, and successfully completed a listing on Euronext Growth Milan, taking part in every step of the process.",
+      "francescoMotta": "Chief Executive with experience in business development and full P&L management in multinationals and SMEs operating in the Automation, Machinery, Rail and Automotive sectors. Experience in M&A and turnaround processes. Ten years based in Shanghai plus two in India to experience change first-hand. Business Angel since 2020, active in several communities, with investments in around ten start-ups across multiple sectors.",
+      "openProfile": "Open {name}'s profile",
+      "closeProfile": "Close {name}'s profile"
+    },
+    "values": {
+      "title": "Our values",
+      "rispetto": {
+        "name": "Respect",
+        "description": "Every company has its own history, which must be understood and respected. Change and discontinuity must always be approached with respect for the journey taken, for the people who made it happen and for the company's intrinsic values."
+      },
+      "ascolto": {
+        "name": "Listening",
+        "description": "People embrace and implement change when they contribute to shaping and defining it. For us this contribution is a key element of the process, and active listening is therefore the common denominator underpinning any transformation project."
+      },
+      "cambiamento": {
+        "name": "Change",
+        "description": "A system evolves successfully if it keeps renewing itself and anticipating new needs. Standing still prevents a company from seeing the steps required to face new challenges of scale. We act to question habits and ways of working that undermine transformation, and with it the opportunity for new growth."
+      },
+      "coerenza": {
+        "name": "Consistency",
+        "description": "After a phase of shared definition, implementing change requires a strong capacity for consistency, perseverance and respect for what has been agreed, both in terms of direction and of the values guiding the delivery of the plan."
+      },
+      "dinamicita": {
+        "name": "Dynamism",
+        "description": "The ability to evolve, and to evolve quickly along the path set out, is essential. We generate the impulses needed for a system to overcome its natural inertia and gain competitiveness through its own dynamism."
+      },
+      "trasparenza": {
+        "name": "Transparency",
+        "description": "Transparency towards all stakeholders involved is essential to keep reading the various signals and to build relationships of trust with employees, clients, partners and shareholders, supporting the shared path of growth and success of the company."
+      },
+      "valorizzazione": {
+        "name": "Value creation",
+        "description": "A system grows if its value is recognised: in the value of people, in client relationships, in the value attributed to products and services, and in KPIs. Creating value so that this journey is measurable, recognised and never self-referential."
+      }
+    },
+    "contactCta": {
+      "title": "Let's build the next phase of your business together",
+      "paragraph": "Every project starts with listening. Tell us about your company.",
+      "button": "Get in touch"
+    }
+  },
+  "Method": {
+    "hero": {
+      "title": "Our method",
+      "paragraph": "To keep evolving, every company must set out its own path of growth, evolution and strengthening by questioning its own status quo. We work on renewing the company's external and internal ecosystem, with new partners, new resources and new ideas to make possible the scenarios that could not previously materialise."
+    },
+    "seoH1": "Our approach to business development",
+    "phases": {
+      "title": "The 5 phases of our intervention",
+      "intro": "We are listening, to identify companies and entrepreneurs who want to bring new growth to their existing business and become, together with us, the authors of lasting entrepreneurial and managerial change. Our method follows a precise structure, divided into 5 phases.",
+      "cta": "Discover our areas of intervention",
+      "fase1": {
+        "title": "Listening and analysis",
+        "description": "We carry out accurate scouting of interesting companies first-hand, engaging with shareholders to understand in detail their journey, their history, their pain points and their untapped opportunities. We identify how to lay the foundations for new growth and the kind of resources needed to achieve it."
+      },
+      "fase2": {
+        "title": "Acquisition and entry",
+        "description": "Once the alignment between the new investment and management group and the historical shareholders has been finalised, we work on the discipline of the various company functions, applying the strategic choices discussed while respecting existing value, and introducing the new elements identified during the discussion and definition of the new business plan."
+      },
+      "fase3": {
+        "title": "Business plan and discontinuity",
+        "description": "We launch the deployment of the business plan and the discontinuity actions identified, so that the system can overcome inertia and resume a path of growth. The outputs of all previous analyses thus become clear inputs defining the direction to follow and the pace required to stay aligned with the objectives set."
+      },
+      "fase4": {
+        "title": "Execution and oversight",
+        "description": "The process of professionalising management, ensuring transparency and following up serves to secure the key operational and financial KPIs, safeguarding both market development and the integration of processes and any external growth included in the agreed development plan."
+      },
+      "fase5": {
+        "title": "The next phase",
+        "description": "While implementing the development plan initially defined, and in line with the rationale behind the original investment, we bring the company to a new turning point so as to open up several possible scenarios: a classic exit to other financial operators or industrial groups, the start of a new phase of growth with further steps up, or a long-term investment (supply chain creation, scale-building and consolidating M&A) depending on market conditions and the opportunities generated."
+      }
+    }
+  },
+  "Areas": {
+    "hero": {
+      "title": "Our areas of intervention",
+      "paragraph": "We work inside the company system with day-to-day actions across all key business areas and functions, to instil the dynamics needed to execute the shared development plan."
+    },
+    "area1": {
+      "title": "Strategic intervention",
+      "description": "Together we build, on the one hand, the strategic development plan and its operational deployment, so as to focus on rapid and effective execution of the transformation process and, on the other, a clear vision of where to take the company and of the actions needed to get there."
+    },
+    "area2": {
+      "title": "Organisation",
+      "description": "After analysing the organisational structure, we help it evolve to better meet the needs of the transformation process. We work on retaining key people, developing internal talent and bringing in the necessary skills, as well as on delegation and accountability processes. A company grows and develops if the people within it grow and develop."
+    },
+    "area3": {
+      "title": "Operations and Finance",
+      "description": "We optimise operational processes, from supply chain to delivery. We define financial dashboards, profitability KPIs and any improvements, along with the risk map and mitigation plans. Operational efficiency and constant focus on margin improvement as the engine of sustainable growth."
+    },
+    "area4": {
+      "title": "Innovation and digitalisation",
+      "description": "Reviewing business processes and activities in light of the latest developments in AI, automation and digitalisation as key drivers of improved profitability. We enhance company data, patents and know-how, and strengthen internal R&D to make the company competitive in the medium to long term and to preserve the transfer of know-how."
+    },
+    "area5": {
+      "title": "Sales and Business Development",
+      "description": "We work to extend and diversify the value chain, pricing and margin management. We build cross-selling and upselling strategies based on existing strengths, and develop marketing plans and commercial alliances to extend and grow the offering and the client portfolio. We structure the actions required and their implementation to support entry into new markets or geographies."
+    },
+    "area6": {
+      "title": "Next steps",
+      "description": "We define the next trajectory: consolidating M&A transactions, expansion into new markets, broadening of the product portfolio, investment and skills requirements — and we take direct action to deploy what is needed."
+    },
+    "prevArea": "Previous area",
+    "nextArea": "Next area"
+  },
+  "Insights": {
+    "seoH1": "Insights on our sector"
+  },
+  "Contact": {
+    "hero": {
+      "title": "Let's build the next phase <b>of your business</b> together",
+      "paragraph": "Every project starts with listening. Tell us about your company."
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "company": "Company",
+      "companyPlaceholder": "Your company",
+      "phone": "Phone",
+      "phonePlaceholder": "Your number",
+      "email": "Email",
+      "emailPlaceholder": "Your email",
+      "subject": "Subject",
+      "subjectPlaceholder": "What would you like to talk to us about?",
+      "message": "Message",
+      "messagePlaceholder": "Tell us about your company...",
+      "submit": "Send message",
+      "sending": "Sending…",
+      "success": "Message sent. We will get back to you as soon as possible.",
+      "errorSend": "Sending failed, please try again.",
+      "errorConnection": "Connection error, please try again."
+    }
+  },
+  "Metadata": {
+    "home": {
+      "title": "Entrepreneurship Through Acquisition | Mole Venture",
+      "description": "Discover how we invest in Italian SMEs through Entrepreneurship Through Acquisition to guide them into a new phase of growth."
+    },
+    "method": {
+      "title": "Our Method and Our Approach | Mole Venture",
+      "description": "Discover our method. We work within the business ecosystem to optimise operations and drive the growth of your company."
+    },
+    "areas": {
+      "title": "Areas of intervention for business development | Mole Venture",
+      "description": "Discover the areas we work on to deliver the development plan for your company."
+    },
+    "insights": {
+      "title": "Insights on our sector | Mole Venture",
+      "description": "Discover a selection of articles, studies and insights on Entrepreneurship Through Acquisition."
+    },
+    "contact": {
+      "title": "Contact | Generational Handover and SME Sale | Mole Venture",
+      "description": "Contact the Mole Venture team to discuss the generational handover or the sale of your company."
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "LanguageSwitcher": {
+    "label": "Lingua"
+  },
+  "Nav": {
+    "home": "Home",
+    "method": "Metodo e strategia",
+    "areas": "Aree di intervento",
+    "insights": "Insights",
+    "contact": "Contatti"
+  },
+  "Footer": {
+    "navigate": "Naviga",
+    "contacts": "Contatti",
+    "rights": "Tutti i diritti riservati.",
+    "poweredBy": "Powered by"
+  },
+  "Cookie": {
+    "text": "Utilizziamo i cookie per analizzare il traffico e migliorare l'esperienza di navigazione sul nostro sito.",
+    "accept": "Accetta tutti",
+    "decline": "Rifiuta"
+  },
+  "Home": {
+    "hero": {
+      "title": "Un meccanismo di <b>ETA</b> (Entrepreneurship Through Acquisition) come motore di cambiamento per una nuova fase di sviluppo",
+      "paragraph": "Investiamo in prima persona nell'azienda per innescare le dinamiche di cambiamento e di discontinuità necessarie a sbloccare il potenziale inespresso e generare le successive opportunità di sviluppo"
+    },
+    "about": {
+      "label": "Chi siamo",
+      "intro": "Siamo una realtà focalizzata su processi di Entrepreneurship Through Acquisition.",
+      "point1": "Acquisiamo PMI che necessitano di una fase di cambiamento e le guidiamo in prima persona.",
+      "point2": "Generiamo la discontinuità necessaria per sbloccare il potenziale latente dell'impresa.",
+      "point3": "Costruiamo un ecosistema fatto di nuova imprenditorialità, management qualificato e continuità con il suo DNA storico, accompagnandola verso una nuova fase di successo.",
+      "moleAlt": "Contorno stilizzato della Mole Antonelliana, logo Mole Venture"
+    },
+    "team": {
+      "title": "Il nostro team",
+      "intro": "Siamo professionisti che hanno deciso di condividere le loro competenze e le precedenti esperienze maturate in ruoli apicali e strategici in realtà di rilievo nazionali e internazionali così da poter sostenere ogni fase di cambiamento all'interno delle realtà acquisite.",
+      "matteoGera": "Chief Executive con importanti e consolidate esperienze di sviluppo business e di gestione di P&L completi in aziende family owned business e multinazionali operanti nei settori Transportation, Rail, Aerospace & Defense, Energy e Industrial Goods sia in contesti nazionali che internazionali. Strutturato e diretto molteplici operazioni di M&A e integrazione. Finalizzata con successo una quotazione all'Euronext Growth Milan partecipando a tutti gli step del processo.",
+      "francescoMotta": "Chief Executive con esperienze di sviluppo business e di gestione di P&L completi in multinazionali e PMI operanti nei settori Automation, Machinery, Rail, Automotive. Esperienza nel processo di M&A e di turn-around. 10 anni di permanenza a Shanghai + 2 in India per vivere il cambiamento da vicino. Business Angel dal 2020, attivo in diverse community, con investimenti in una decina di start-up multi settore.",
+      "openProfile": "Apri il profilo di {name}",
+      "closeProfile": "Chiudi il profilo di {name}"
+    },
+    "values": {
+      "title": "I nostri valori",
+      "rispetto": {
+        "name": "Rispetto",
+        "description": "Ogni azienda ha una sua storia che va capita e rispettata. Un cambiamento, una discontinuità va sempre affrontata con il rispetto del percorso fatto, delle persone che lo hanno realizzato e dei valori intrinseci dell'azienda."
+      },
+      "ascolto": {
+        "name": "Ascolto",
+        "description": "Le persone aderiscono e attuano il cambiamento se contribuiscono alla sua definizione e impostazione. Per noi questa contribuzione è un elemento chiave del processo e quindi l'ascolto attivo è il denominatore alla base del progetto di trasformazione."
+      },
+      "cambiamento": {
+        "name": "Cambiamento",
+        "description": "Un sistema evolve con successo se continua a rinnovarsi e ad anticipare le nuove esigenze. L'immobilismo impedisce ad un'azienda di vedere i passi necessari ad affrontare le nuove sfide dimensionanti. Noi agiamo per rimettere in discussione abitudini e modalità operative che minano la trasformazione e quindi le opportunità di nuova crescita."
+      },
+      "coerenza": {
+        "name": "Coerenza",
+        "description": "Dopo una fase di condivisione, l'attuazione del cambiamento passa per una importante capacità di coerenza, costanza, e rispetto di quanto definito sia a livello di direzione che di valori attuativi del piano."
+      },
+      "dinamicita": {
+        "name": "Dinamicità",
+        "description": "La capacità di evolvere e di evolvere velocemente seguendo il percorso tracciato è vitale. Noi siamo i generatori di quegli impulsi che sono necessari a far sì che un sistema vinca la sua inerzia naturale per acquisire competitività grazie al suo dinamismo."
+      },
+      "trasparenza": {
+        "name": "Trasparenza",
+        "description": "La trasparenza verso tutti gli stakeholders coinvolti è fondamentale per permettere sempre la lettura dei vari segnali e costruire relazioni di fiducia con dipendenti, Clienti, partners e azionisti, che favoriscono il percorso condiviso di crescita e di successo dell'azienda."
+      },
+      "valorizzazione": {
+        "name": "Valorizzazione",
+        "description": "Un sistema cresce se lo si valorizza: nel valore delle persone, nelle relazioni con i Clienti, nel valore riconosciuto ai prodotti e servizi e nei KPI. Valorizzare in modo che questo percorso sia misurabile, riconosciuto e non autoreferenziale."
+      }
+    },
+    "contactCta": {
+      "title": "Costruiamo insieme la prossima fase della tua impresa",
+      "paragraph": "Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.",
+      "button": "Contattaci"
+    }
+  },
+  "Method": {
+    "hero": {
+      "title": "Il nostro metodo",
+      "paragraph": "Ogni azienda per continuare a evolvere deve impostare il proprio percorso di crescita, di evoluzione e di rafforzamento rimettendo in discussione il proprio status quo. Noi lavoriamo sul rinnovare l'ecosistema esterno ed interno all'azienda, nuovi soci, nuove risorse e idee per rendere possibili scenari che non riuscivano a materializzarsi."
+    },
+    "seoH1": "Il nostro approccio allo sviluppo aziendale",
+    "phases": {
+      "title": "Le 5 fasi dell'intervento",
+      "intro": "Siamo in ascolto per identificare aziende e imprenditori che vogliono dare un nuovo sviluppo alla realtà esistente, e diventare, insieme a noi, autori di un cambiamento imprenditoriale e manageriale duraturo. Il nostro metodo segue una struttura precisa, divisa in 5 fasi.",
+      "cta": "Scopri le aree di intervento",
+      "fase1": {
+        "title": "Ascolto e analisi",
+        "description": "Eseguiamo in prima persona uno scouting accurato delle realtà interessanti, confrontandoci con gli azionisti per capire nel dettaglio il percorso, la storia, i punti di difficoltà e le opportunità inespresse. Capiamo come poter gettare le basi per un nuovo sviluppo e la tipologia di risorse necessarie alla realizzazione dello stesso."
+      },
+      "fase2": {
+        "title": "Acquisizione e ingresso",
+        "description": "Una volta finalizzata la convergenza tra il nuovo gruppo di investimento e di management insieme agli azionisti storici, lavoriamo sulla disciplina delle varie funzioni aziendali, applicando le scelte strategiche discusse nel rispetto del valore esistente e introducendo i nuovi elementi identificati nella fase di discussione e definizione del nuovo piano industriale."
+      },
+      "fase3": {
+        "title": "Piano industriale e discontinuità",
+        "description": "Avviamo il deployment del piano industriale e le azioni di discontinuità identificate al fine di permettere al sistema di vincere l'inerzia per riprendere un percorso di sviluppo. Gli output di tutte le analisi fatte in precedenza diventano quindi input chiari della direzione da seguire e del ritmo necessario per rimanere allineati agli obiettivi prefissati."
+      },
+      "fase4": {
+        "title": "Esecuzione e presidio",
+        "description": "Il processo di managerializzazione, trasparenza e follow up serve a mettere in sicurezza i principali KPI operativi e finanziari per assicurare sia gli sviluppi di mercato che le integrazioni di processi e di eventuali crescite per linee esterne inserite nel piano di sviluppo concordato."
+      },
+      "fase5": {
+        "title": "La fase successiva",
+        "description": "Durante l'attuazione del piano di sviluppo inizialmente definito, e in allineamento con le logiche che hanno accompagnato l'investimento iniziale, portiamo l'azienda ad un nuovo punto di svolta in modo da predisporre la percorribilità su diversi possibili scenari: una fase di exit classica verso altri operatori finanziari o gruppi industriali, l'avvio di una nuova fase di sviluppo con ulteriori step di crescita, oppure un investimento di lungo periodo (creazione di filiera, M&A dimensionanti e aggregative) a seconda degli scenari di mercato e delle opportunità generate."
+      }
+    }
+  },
+  "Areas": {
+    "hero": {
+      "title": "Le aree di intervento",
+      "paragraph": "Lavoriamo all'interno del sistema azienda con azioni quotidiane su tutte le principali aree e funzioni aziendali per innestare le dinamiche necessarie all'esecuzione del piano di sviluppo condiviso."
+    },
+    "area1": {
+      "title": "Intervento Strategico",
+      "description": "Costruiamo insieme da un lato il piano di sviluppo strategico e il suo deployment operativo per concentrarci su un'esecuzione rapida ed efficace del processo di trasformazione e dall'altro una visione chiara su dove portare l'azienda e sulle azioni necessarie per arrivarci."
+    },
+    "area2": {
+      "title": "Organizzazione",
+      "description": "Dopo aver analizzato la struttura organizzativa, la facciamo evolvere per rispondere al meglio ai bisogni del processo di trasformazione. Lavoriamo sulla retention delle persone chiave, sullo sviluppo dei talenti interni e sull'inserimento delle competenze necessarie, sui processi di delega e di responsabilizzazione. Un'azienda cresce e si sviluppa se crescono e si sviluppano le persone che la abitano."
+    },
+    "area3": {
+      "title": "Operations e Finance",
+      "description": "Ottimizziamo i processi operativi, dalla supply chain alla delivery. Definiamo le dashboard finanziarie, i KPI di redditività e gli eventuali miglioramenti, la mappa dei rischi con i piani di mitigazione. L'efficienza operativa e la continua attenzione all'incremento dei margini come motore della sostenibilità della crescita."
+    },
+    "area4": {
+      "title": "Innovazione e digitalizzazione",
+      "description": "La revisione dei processi e delle attività aziendali alla luce degli ultimi sviluppi legati all'AI, alle automazioni e alla digitalizzazione come fattori chiave dell'incremento di redditività. Valorizziamo dati, brevetti e know-how aziendale, rafforziamo la R&D interna per rendere l'azienda competitiva nel medio-lungo periodo e per non disperdere la trasmissione del know-how."
+    },
+    "area5": {
+      "title": "Sales e Sviluppo Business",
+      "description": "Lavoriamo per estendere e diversificare la catena del valore, il pricing e la gestione della marginalità. Costruiamo strategie di cross-selling e upselling legate ai punti di forza esistenti, sviluppiamo piani di marketing e di alleanze commerciali per estendere e incrementare l'offerta e il portafoglio clienti. Strutturiamo le azioni necessarie e la loro implementazione per favorire l'ingresso in nuovi mercati o geografie."
+    },
+    "area6": {
+      "title": "Next steps",
+      "description": "Definiamo la traiettoria successiva: operazioni M&A aggregative, espansione su nuovi mercati, ampliamento del portafoglio prodotti, fabbisogno di investimento e di competenze e ci attiviamo in prima persona per il deployment delle azioni necessarie."
+    },
+    "prevArea": "Area precedente",
+    "nextArea": "Area successiva"
+  },
+  "Insights": {
+    "seoH1": "Insights sul nostro settore"
+  },
+  "Contact": {
+    "hero": {
+      "title": "Costruiamo insieme la prossima fase <b>della tua impresa</b>",
+      "paragraph": "Ogni progetto inizia da un ascolto. Raccontaci la tua realtà."
+    },
+    "form": {
+      "name": "Nome",
+      "namePlaceholder": "Il tuo nome",
+      "company": "Azienda",
+      "companyPlaceholder": "La tua azienda",
+      "phone": "Telefono",
+      "phonePlaceholder": "Il tuo numero",
+      "email": "Email",
+      "emailPlaceholder": "La tua email",
+      "subject": "Oggetto",
+      "subjectPlaceholder": "Di cosa vorresti parlarci?",
+      "message": "Messaggio",
+      "messagePlaceholder": "Raccontaci la tua realtà...",
+      "submit": "Invia messaggio",
+      "sending": "Invio in corso…",
+      "success": "Messaggio inviato. Ti risponderemo al più presto.",
+      "errorSend": "Invio non riuscito, riprova.",
+      "errorConnection": "Errore di connessione, riprova."
+    }
+  },
+  "Metadata": {
+    "home": {
+      "title": "Entrepreneurship Through Acquisition | Mole Venture",
+      "description": "Scopri come investiamo in PMI italiane attraverso l'Entrepreneurship Through Acquisition per guidarle in una nuova fase di sviluppo."
+    },
+    "method": {
+      "title": "Il Nostro Metodo e il Nostro Approccio | Mole Venture",
+      "description": "Scopri il nostro metodo. Lavoriamo all'interno dell'ecosistema aziendale per ottimizzare le operazioni e garantire lo sviluppo della tua impresa."
+    },
+    "areas": {
+      "title": "Aree di intervento per lo sviluppo d'impresa | Mole Venture",
+      "description": "Scopri le aree di intervento su cui lavoriamo per attuare il piano di sviluppo della tua impresa."
+    },
+    "insights": {
+      "title": "Insights sul nostro settore | Mole Venture",
+      "description": "Scopri una selezione di articoli, studi e insights sul Entrepreneurship Through Acquisition"
+    },
+    "contact": {
+      "title": "Contatti | Passaggio Generazionale e Vendita PMI | Mole Venture",
+      "description": "Contatta il team di Mole Venture per discutere del passaggio generazionale o della vendita della tua impresa."
+    }
+  }
+}

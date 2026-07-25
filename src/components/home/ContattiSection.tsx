@@ -1,7 +1,9 @@
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function ContattiSection() {
+  const t = useTranslations('Home.contactCta');
   return (
     <section className="relative w-full overflow-hidden bg-[#05155E]">
       {/* Sfondo mobile (verticale) */}
@@ -22,10 +24,10 @@ export default function ContattiSection() {
         <div className="mb-12 md:mb-16">
           <div className="max-w-4xl">
             <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 leading-tight">
-              Costruiamo insieme la prossima<br /> fase della tua impresa
+              {t('title')}
             </h2>
             <p className="font-body font-light text-white text-base md:text-xl leading-relaxed max-w-xl">
-              Ogni progetto inizia da un ascolto. Raccontaci la tua realtà.
+              {t('paragraph')}
             </p>
           </div>
         </div>
@@ -36,7 +38,7 @@ export default function ContattiSection() {
             href="/contatti"
             className="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 font-body text-base font-semibold text-blue-deep transition-colors duration-300 hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-deep md:text-lg"
           >
-            Contattaci
+            {t('button')}
             <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
           </Link>
         </div>

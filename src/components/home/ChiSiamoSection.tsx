@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function ChiSiamoSection() {
+  const t = useTranslations('Home.about');
   const sectionRef = useRef<HTMLElement>(null);
   const [revealed, setRevealed] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -61,7 +63,7 @@ export default function ChiSiamoSection() {
         <svg
           viewBox="0 0 54 91"
           role="img"
-          aria-label="Contorno stilizzato della Mole Antonelliana, logo Mole Venture"
+          aria-label={t('moleAlt')}
           className="pointer-events-none select-none text-white absolute z-0 right-4 bottom-6 h-[60%] opacity-[0.18] md:right-auto md:left-[10%] md:bottom-6 md:top-auto md:translate-y-0 md:h-[80%] md:opacity-[0.7]"
           style={{
             clipPath: isDesktop && !revealed ? 'inset(100% 0 0 0)' : 'inset(0% 0 0 0)',
@@ -78,34 +80,24 @@ export default function ChiSiamoSection() {
         {/* ===== Colonna sinistra: solo etichetta "Chi siamo" ===== */}
         <div className="relative z-10 w-full md:w-[40%] flex-shrink-0 px-6 md:px-10 pt-16 md:pt-16">
           <h2 className="font-heading text-white text-3xl md:text-4xl font-semibold leading-[1.05]">
-            Chi<br className="hidden md:block" /> siamo
+            {t('label')}
           </h2>
         </div>
 
         {/* ===== Colonna destra: titolo + punti ===== */}
         <div className="relative z-10 flex-1 flex flex-col justify-center px-6 md:px-12 pt-8 pb-20 md:py-20">
           <p className="font-heading text-white text-2xl md:text-3xl lg:text-4xl font-semibold leading-[1.15] tracking-tight mb-10 md:mb-12 max-w-2xl">
-            Siamo una realtà focalizzata su processi di{' '}
-            <span className="text-white">Entrepreneurship Through Acquisition</span>.
+            {t('intro')}
           </p>
 
           <ul className="flex flex-col gap-7 md:gap-8 max-w-2xl">
-            <li className="border-l-2 border-white/70 pl-5">
-              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
-                Acquisiamo PMI che necessitano di una fase di cambiamento e le guidiamo in prima persona.
-              </p>
-            </li>
-            <li className="border-l-2 border-white/70 pl-5">
-              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
-                Generiamo la discontinuità necessaria per sbloccare il potenziale latente dell&apos;impresa.
-              </p>
-            </li>
-            <li className="border-l-2 border-white/70 pl-5">
-              <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
-                Costruiamo un ecosistema fatto di nuova imprenditorialità, management qualificato e
-                continuità con il suo DNA storico, accompagnandola verso una nuova fase di successo.
-              </p>
-            </li>
+            {(['point1', 'point2', 'point3'] as const).map((key) => (
+              <li key={key} className="border-l-2 border-white/70 pl-5">
+                <p className="font-body font-light text-white text-base md:text-xl leading-relaxed">
+                  {t(key)}
+                </p>
+              </li>
+            ))}
           </ul>
         </div>
 

@@ -7,27 +7,17 @@ import { getImageProps } from "next/image";
 
 import ReactDOM from "react-dom";
 import { OG_IMAGE } from "@/lib/seo";
+import { buildPageMetadata } from "@/lib/seo";
+import type { Locale } from "@/i18n/routing";
 
-export const metadata = {
-  title: {
-    absolute: "Entrepreneurship Through Acquisition e sviluppo PMI | Mole Venture",
-  },
-  description:
-    "Scopri come investiamo in PMI italiane attraverso l'Entrepreneurship Through Acquisition per guidarle in una nuova fase di sviluppo.",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "Entrepreneurship Through Acquisition e sviluppo PMI | Mole Venture",
-    description:
-      "Scopri come investiamo in PMI italiane attraverso l'Entrepreneurship Through Acquisition per guidarle in una nuova fase di sviluppo.",
-    url: "/",
-    siteName: "Mole Venture",
-    locale: "it_IT",
-    type: "website",
-    images: [OG_IMAGE],
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  return buildPageMetadata({ locale, page: "home", pathname: "/" });
+}
 
 function preloadImage(src: string) {
   const { props } = getImageProps({ src, alt: "", width: 1920, height: 1080 });

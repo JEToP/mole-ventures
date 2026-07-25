@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Footer del sito. Componente separato: va inserito nel layout globale
@@ -10,14 +11,16 @@ import Link from "next/link";
 // ──────────────────────────────────────────────────────────────────────────────
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/metodo-e-strategia", label: "Metodo e strategia" },
-  { href: "/aree-di-intervento", label: "Aree di intervento" },
-  { href: "/insights", label: "Insights" },
-  { href: "/contatti", label: "Contatti" },
-];
+  { href: "/", labelKey: "home" },
+  { href: "/metodo-e-strategia", labelKey: "method" },
+  { href: "/aree-di-intervento", labelKey: "areas" },
+  { href: "/insights", labelKey: "insights" },
+  { href: "/contatti", labelKey: "contact" },
+] as const;
 
 export default function Footer() {
+  const t = useTranslations("Footer");
+  const tNav = useTranslations("Nav");
   const year = new Date().getFullYear();
 
   return (
@@ -41,7 +44,7 @@ export default function Footer() {
           {/* Colonna navigazione – nascosta su mobile */}
           <div className="hidden md:block">
             <h3 className="font-heading text-white text-sm md:text-base font-semibold uppercase tracking-[0.15em] mb-5">
-              Naviga
+              {t("navigate")}
             </h3>
             <ul className="flex flex-col gap-3">
               {navLinks.map((link) => (
@@ -50,7 +53,7 @@ export default function Footer() {
                     href={link.href}
                     className="font-body font-light text-white/70 text-sm md:text-base hover:text-blue-soft transition-colors duration-200"
                   >
-                    {link.label}
+                    {tNav(link.labelKey)}
                   </Link>
                 </li>
               ))}
@@ -60,7 +63,7 @@ export default function Footer() {
           {/* Colonna contatti (solo email + sede) */}
           <div className="flex flex-col items-end md:items-start">
             <h3 className="hidden md:block font-heading text-white text-sm md:text-base font-semibold uppercase tracking-[0.15em] mb-5">
-              Contatti
+              {t("contacts")}
             </h3>
             <ul className="flex flex-col gap-1 md:gap-3 font-body font-light text-white/70 text-sm md:text-base text-right md:text-left">
               <li>
@@ -81,10 +84,10 @@ export default function Footer() {
           <p className="font-body font-light text-white/45 text-xs md:text-sm leading-relaxed">
             {/* TODO: sostituire con la ragione sociale e la P.IVA reali */}
             © {year} Mole Venture. P.IVA 13453620018.<br />
-            Tutti i diritti riservati.
+            {t("rights")}
           </p>
           <p className="font-body font-light text-white/45 text-xs md:text-sm">
-            Powered by{" "}
+            {t("poweredBy")}{" "}
             <a
               href="https://jetop.com"
               target="_blank"
