@@ -143,7 +143,9 @@
     "nextArea": "Next area"
   },
   "Insights": {
-    "seoH1": "Insights on our sector"
+    "seoH1": "Insights on our sector",
+    "title": "ETA on SMEs, a rapidly evolving sector",
+    "paragraph": "The Italian SME sector, central to the national economy and representing 90% of Italian entrepreneurship, is attracting more and more attention in terms of investments. The ETA approach, even in Italy, is beginning to carve out a significant position and is constantly evolving."
   },
   "Contact": {
     "hero": {

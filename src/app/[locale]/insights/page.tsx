@@ -79,10 +79,22 @@ const PRESS: PressItem[] = [
 export default function InsightsPage() {
   const t = useTranslations("Insights");
   return (
-    <main className="relative w-full bg-white pt-28 pb-16 md:pt-44 md:pb-24">
+    <main className="relative w-full bg-white pt-36 pb-16 md:pt-56 md:pb-24">
       {/* H1 SEO (nascosto visivamente, presente nel DOM per i motori di ricerca) */}
       <h1 className="sr-only">{t("seoH1")}</h1>
       <div className="mx-auto w-full max-w-7xl px-6 md:px-12">
+        {/* Titolo e paragrafo introduttivo */}
+        <div className="mb-12 md:mb-16">
+          <h2 className="font-heading text-[#05155E] text-3xl md:text-4xl lg:text-5xl font-semibold mb-6 tracking-tight">
+            {t("title")}
+          </h2>
+          <div className="border-l-2 border-[#05155E]/60 pl-4 max-w-4xl">
+            <p className="font-body font-light text-gray-800 text-base md:text-xl leading-relaxed">
+              {t("paragraph")}
+            </p>
+          </div>
+        </div>
+
         {/* MOBILE LAYOUT: Elenco testata + articolo */}
         <div className="flex flex-col gap-4 md:hidden">
           {PRESS.map((item) => (
