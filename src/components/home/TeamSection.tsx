@@ -8,11 +8,11 @@ import { useTranslations } from "next-intl";
 // Per aggiungere un membro del team, aggiungi un oggetto a questo array.
 // Le foto vanno in public/images/team/<id>.<ext>
 // ──────────────────────────────────────────────────────────────────────────────
-const teamMembers = [
+const teamMembersRow1 = [
   {
     id: "matteoGera",
     name: "Matteo Gera",
-    photo: "/images/team/matteo-gera.jpg",
+    photo: "/images/team/matteo-gera.png",
     photoClass: "object-cover scale-[1.25] -translate-y-3",
   },
   {
@@ -22,6 +22,32 @@ const teamMembers = [
     photoClass: "object-cover origin-top scale-[1.18]",
   },
 ] as const;
+
+const teamMembersRow2 = [
+  {
+    id: "claraSegrado",
+    name: "Clara Segrado",
+    photo: "/images/team/clara-segrado.png",
+    photoClass: "object-cover scale-[1.2] -translate-y-10",
+  },
+  {
+    id: "alessandroSchiffini",
+    name: "Alessandro Schiffini",
+    photo: "/images/team/alessandro-schiffini.png",
+    photoClass: "object-cover scale-[1.2] -translate-y-1",
+  },
+] as const;
+
+const teamMembersRow3 = [
+  {
+    id: "borisNettuno",
+    name: "Boris Nettuno",
+    photo: "/images/team/boris-nettuno.png",
+    photoClass: "object-cover scale-[1.25] -translate-y-3",
+  },
+] as const;
+
+const allRows = [teamMembersRow1, teamMembersRow2, teamMembersRow3];
 
 // ── Placeholder SVG persona ───────────────────────────────────────────────────
 function PersonIcon({ className }: { className?: string }) {
@@ -69,87 +95,102 @@ export default function TeamSection() {
         </p>
 
         {/* ── Accordion orizzontale: card "glass" con foto CONTENUTA a sinistra ─── */}
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:h-[440px]">
-          {teamMembers.map((member) => {
-            const isActive = member.id === activeId;
-            const isCollapsed = activeId !== null && !isActive;
+        <div className="flex flex-col gap-6 md:gap-8">
+          {allRows.map((row, rowIndex) => {
+            // Controlliamo se in questa specifica riga c'è una card attiva
+            const isRowActive = row.some(m => m.id === activeId);
+
             return (
-              <div
-                key={member.id}
-                onMouseLeave={() =>
-                  setActiveId((curr) => (curr === member.id ? null : curr))
-                }
-                aria-expanded={isActive}
-                className={`group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:hover:border-white/25
-                  ${activeId === null ? "md:flex-1" : isActive ? "md:flex-[3.2]" : "md:flex-[1]"}
-                `}
-              >
-                {/* Foto CONTENUTA. Mobile: in cima, ritratto full-width.
-                    Desktop: colonna a sinistra; quando la card è collassata la
-                    foto si restringe per lasciar spazio alla strip glass col
-                    nome ruotato. */}
-                <div
-                  className={`relative w-full aspect-[4/5] shrink-0 overflow-hidden transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:aspect-auto md:h-full ${
-                    isCollapsed ? "md:w-40 lg:w-48" : "md:w-60 lg:w-72"
-                  }`}
-                >
-                  <Image
-                    src={member.photo}
-                    alt={member.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 300px"
-                    className={member.photoClass}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                  <div className="absolute inset-0 -z-10 flex items-center justify-center bg-white/5">
-                    <PersonIcon className="w-16 h-16 text-white/25" />
-                  </div>
-                </div>
+              <div key={rowIndex} className="flex flex-col md:flex-row gap-6 md:gap-8 md:h-[440px]">
+                {row.map((member) => {
+                  const isActive = member.id === activeId;
+                  // La card si "collassa" solo se la SUA riga è attiva ma lei non lo è
+                  const isCollapsed = isRowActive && !isActive;
+                  
+                  return (
+                    <div
+                      key={member.id}
+                      onMouseLeave={() =>
+                        setActiveId((curr) => (curr === member.id ? null : curr))
+                      }
+                      aria-expanded={isActive}
+                      className={`group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] backdrop-blur-md transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:hover:border-white/25
+                        ${!isRowActive ? "md:flex-1" : isActive ? "md:flex-[3.2]" : "md:flex-[1]"}
+                      `}
+                    >
+                      {/* Foto CONTENUTA. Mobile: in cima, ritratto full-width.
+                          Desktop: colonna a sinistra; quando la card è collassata la
+                          foto si restringe per lasciar spazio alla strip glass col
+                          nome ruotato. */}
+                      <div
+                        className={`relative w-full aspect-[4/5] shrink-0 overflow-hidden transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:aspect-auto md:h-full ${
+                          isCollapsed ? "md:w-40 lg:w-48" : "md:w-60 lg:w-72"
+                        }`}
+                      >
+                        <Image
+                          src={member.photo}
+                          alt={member.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 300px"
+                          className={member.photoClass}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                        <div className="absolute inset-0 -z-10 flex items-center justify-center bg-white/5">
+                          <PersonIcon className="w-16 h-16 text-white/25" />
+                        </div>
+                      </div>
 
-                {/* Colonna testo. Da collassato: centra il nome (verticale) */}
-                <div className="relative min-w-0 flex-1 p-6 md:p-7 flex flex-col justify-end">
-                  {/* Toggle +/− in alto a destra */}
-                  <button
-                    type="button"
-                    onMouseEnter={() => setActiveId(member.id)}
-                    onFocus={() => setActiveId(member.id)}
-                    onClick={() => setActiveId(isActive ? null : member.id)}
-                    aria-expanded={isActive}
-                    aria-label={
-                      isActive
-                        ? t("closeProfile", { name: member.name })
-                        : t("openProfile", { name: member.name })
-                    }
-                    className="hidden md:flex absolute top-6 right-6 z-20 h-9 w-9 items-center justify-center rounded-full border border-white/40 text-white text-xl leading-none cursor-pointer transition-all duration-300 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft"
-                  >
-                    {isActive ? "−" : "+"}
-                  </button>
+                      {/* Colonna testo. Da collassato: centra il nome (verticale) */}
+                      <div className="relative min-w-0 flex-1 p-6 md:p-7 flex flex-col justify-end">
+                        {/* Toggle +/− in alto a destra */}
+                        <button
+                          type="button"
+                          onMouseEnter={() => setActiveId(member.id)}
+                          onFocus={() => setActiveId(member.id)}
+                          onClick={() => setActiveId(isActive ? null : member.id)}
+                          aria-expanded={isActive}
+                          aria-label={
+                            isActive
+                              ? t("closeProfile", { name: member.name })
+                              : t("openProfile", { name: member.name })
+                          }
+                          className="hidden md:flex absolute top-6 right-6 z-20 h-9 w-9 items-center justify-center rounded-full border border-white/40 text-white text-xl leading-none cursor-pointer transition-all duration-300 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft"
+                        >
+                          {isActive ? "−" : "+"}
+                        </button>
 
-                  {/* Nome: ruota di 90° in senso antiorario (fulcro prima lettera)
-                      + una leggera traslazione nella STESSA transizione, così da
-                      centrarlo un po' nella striscia verticale restando fluido
-                      (niente scatto di layout). */}
-                  <div
-                    className={`inline-block w-fit origin-bottom-left transition-transform duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
-                      isCollapsed ? "md:-rotate-90 md:-translate-y-4 md:translate-x-[30px]" : "md:rotate-0"
-                    }`}
-                  >
-                    <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight whitespace-nowrap">
-                      {member.name}
-                    </h3>
-                  </div>
+                        {/* Nome: ruota di 90° in senso antiorario (fulcro prima lettera)
+                            + una leggera traslazione nella STESSA transizione, così da
+                            centrarlo un po' nella striscia verticale restando fluido
+                            (niente scatto di layout). */}
+                        <div
+                          className={`inline-block w-fit origin-bottom-left transition-transform duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
+                            isCollapsed ? "md:-rotate-90 md:-translate-y-4 md:translate-x-[30px]" : "md:rotate-0"
+                          }`}
+                        >
+                          <h3 className="font-heading text-white text-xl md:text-2xl font-semibold leading-tight whitespace-nowrap">
+                            {member.name}
+                          </h3>
+                        </div>
 
-                  {/* Bio: sempre visibile su mobile, solo se attivo su desktop */}
-                  <p
-                    className={`font-body font-light text-white/85 text-base md:text-lg leading-relaxed mt-4 max-w-lg transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:overflow-hidden
-                      ${isActive ? "opacity-100 md:max-h-96" : "opacity-100 md:max-h-0 md:opacity-0"}
-                    `}
-                  >
-                    {t(member.id)}
-                  </p>
-                </div>
+                        {/* Bio: sempre visibile su mobile, solo se attivo su desktop */}
+                        <p
+                          className={`font-body font-light text-white/85 text-base md:text-lg leading-relaxed mt-4 max-w-lg transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)] md:overflow-hidden
+                            ${isActive ? "opacity-100 md:max-h-96" : "opacity-100 md:max-h-0 md:opacity-0"}
+                          `}
+                        >
+                          {t(member.id)}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Spacer destro se c'è un solo membro per allinearlo a sinistra,
+                    lo spacer occupa la restante metà (md:flex-1) */}
+                {row.length === 1 && <div className="hidden md:block md:flex-1" aria-hidden="true" />}
               </div>
             );
           })}
